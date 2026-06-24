@@ -1924,22 +1924,26 @@ export default function App() {
       {/* FAQ SECTION */}
       <section id="faq" className="faq-section white-bg">
         <div className="section-content">
-          <div className="section-header">
-            <h2 className="section-title text-black">Frequently <span className="highlight-olive">Asked Questions</span></h2>
-          </div>
+          <div className="faq-layout">
+            <div className="faq-heading">
+              <span className="black-pill-tag">Support FAQ</span>
+              <h2 className="section-title text-black">Frequently <span className="highlight-olive">Asked Questions</span></h2>
+              <p>Quick answers for warranty, delivery, financing, and purchase support.</p>
+            </div>
 
-          <div className="faq-accordion">
-            {faqs.map(faq => (
-              <div key={faq.id} className={`faq-item ${openFaqId === faq.id ? 'open' : ''}`}>
-                <button className="faq-question-btn" onClick={() => setOpenFaqId(openFaqId === faq.id ? null : faq.id)}>
-                  <span className="faq-question text-black">{faq.question}</span>
-                  <span className="faq-arrow">{openFaqId === faq.id ? '▼' : '▶'}</span>
-                </button>
-                <div className="faq-answer-container">
-                  <p className="faq-answer">{faq.answer}</p>
+            <div className="faq-accordion">
+              {faqs.map(faq => (
+                <div key={faq.id} className={`faq-item ${openFaqId === faq.id ? 'open' : ''}`}>
+                  <button className="faq-question-btn" onClick={() => setOpenFaqId(openFaqId === faq.id ? null : faq.id)}>
+                    <span className="faq-question text-black">{faq.question}</span>
+                    <span className="faq-arrow">{openFaqId === faq.id ? '▼' : '▶'}</span>
+                  </button>
+                  <div className="faq-answer-container">
+                    <p className="faq-answer">{faq.answer}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Support features */}
