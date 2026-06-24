@@ -3594,7 +3594,11 @@ export default function App() {
                             navigate('blog-post', { id: post.slug });
                           }}
                         >
-                          {displayImage ? <img src={displayImage} alt={post.title} /> : null}
+                          <img
+                            src={displayImage || heroLoader}
+                            alt={post.title}
+                            className={displayImage ? 'blog-page-custom-image' : 'blog-page-fallback-image'}
+                          />
                           <span>{post.category}</span>
                         </a>
                         <div className="blog-page-card-body">
@@ -3692,6 +3696,7 @@ export default function App() {
                     <img
                       src={displayImage || heroLoader}
                       alt={selectedBlogPost.title}
+                      className={displayImage ? 'blog-post-custom-image' : 'blog-post-fallback-image'}
                       onError={() => setHeroImageError(true)}
                     />
                   ) : (
