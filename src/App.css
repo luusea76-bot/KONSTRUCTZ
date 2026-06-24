@@ -799,10 +799,12 @@ section {
 
 /* ENGINE BRANDS */
 .engine-brands-section {
-  padding: 52px 0;
+  padding: 60px 0;
   background:
-    linear-gradient(rgba(15, 17, 14, 0.72), rgba(15, 17, 14, 0.78)),
-    url('/src/assets/track_loader_farm.png') center / cover no-repeat;
+    radial-gradient(circle at 50% 0%, rgba(96, 122, 78, 0.2), transparent 30%),
+    linear-gradient(180deg, #10130e 0%, #151a12 100%);
+  border-top: 1px solid rgba(96, 122, 78, 0.32);
+  border-bottom: 1px solid rgba(96, 122, 78, 0.28);
 }
 
 .brands-showcase {
@@ -820,8 +822,9 @@ section {
   min-width: 116px;
   padding: 7px 18px;
   border-radius: 999px;
-  background: #b9ab82;
+  background: var(--accent);
   color: #ffffff;
+  box-shadow: 0 12px 24px rgba(96, 122, 78, 0.22);
   font-size: 11px;
   font-weight: 800;
   line-height: 1;
@@ -841,7 +844,7 @@ section {
 .brands-subtitle {
   margin: 12px auto 26px;
   max-width: 740px;
-  color: rgba(255, 255, 255, 0.86);
+  color: rgba(243, 244, 246, 0.78);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -849,23 +852,25 @@ section {
 .brands-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 
 .brand-card-item {
   min-height: 178px;
-  border-radius: 4px;
+  border: 1px solid rgba(96, 122, 78, 0.2);
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #ffffff;
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .brand-card-item:hover {
-  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.24);
+  border-color: rgba(96, 122, 78, 0.46);
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.3);
   transform: translateY(-4px);
 }
 
@@ -876,7 +881,8 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #224a25;
+  background:
+    linear-gradient(145deg, rgba(96, 122, 78, 0.96), rgba(48, 69, 38, 0.98));
 }
 
 .engine-logo-img {
@@ -894,8 +900,8 @@ section {
   align-items: center;
   justify-content: center;
   padding: 12px 10px;
-  color: #224a25;
-  background: #ffffff;
+  color: #304526;
+  background: #fbfcfa;
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: 900;
