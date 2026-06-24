@@ -288,9 +288,10 @@ section {
 
 .hero-display-title {
   color: #ffffff;
-  font-size: clamp(76px, 8vw, 132px);
-  font-weight: 300;
-  line-height: 0.94;
+  font-family: 'Lilita One', var(--font-heading);
+  font-size: clamp(82px, 8.6vw, 144px);
+  font-weight: 400;
+  line-height: 0.9;
   letter-spacing: 0;
   margin-bottom: 26px;
 }
