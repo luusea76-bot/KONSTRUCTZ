@@ -936,6 +936,7 @@ export default function App() {
   
   // Image error states for fallbacks
   const [heroImageError, setHeroImageError] = useState(false);
+  const [heroVideoError, setHeroVideoError] = useState(false);
   const [crusherImageError, setCrusherImageError] = useState(false);
   const [activeSystemAttachment, setActiveSystemAttachment] = useState(0);
   const [systemSlideDirection, setSystemSlideDirection] = useState('next');
@@ -2323,7 +2324,7 @@ export default function App() {
           {/* HERO SECTION */}
           <section id="home" className="hero-section dark-bg">
             <img src={heroLoader} alt="KONSTRUCTZ Heavy Wheel Loader" className="hero-background-image" />
-            {!heroImageError && (
+            {!heroVideoError && (
               <video
                 className="hero-background-video"
                 autoPlay
@@ -2333,7 +2334,7 @@ export default function App() {
                 preload="metadata"
                 poster={heroLoader}
                 aria-label="Konstructz heavy wheel loader in motion"
-                onError={() => setHeroImageError(true)}
+                onError={() => setHeroVideoError(true)}
               >
                 <source src={heroVideo} type="video/mp4" />
               </video>
