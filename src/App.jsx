@@ -281,6 +281,7 @@ export default function App() {
   const [activeAttachmentSubcategory, setActiveAttachmentSubcategory] = useState('All');
   const [attachmentsDropdownOpen, setAttachmentsDropdownOpen] = useState(false);
   const [addedCartItem, setAddedCartItem] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [storedCsvName, setStoredCsvName] = useState('');
   const [storedCsvText, setStoredCsvText] = useState('');
   const [csvPreviewRows, setCsvPreviewRows] = useState([]);
@@ -1178,6 +1179,17 @@ export default function App() {
       {/* HEADER / NAVBAR */}
       <header className={`main-header dark-bg ${currentView === 'home' ? 'home-header' : ''}`}>
         <div className="header-content">
+          {/* Mobile Menu Button */}
+          <button 
+            className={`mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle Menu"
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+
           <nav className="nav-links nav-links-left">
             <a href="?page=home" onClick={(e) => { e.preventDefault(); navigate('home'); }}>Home</a>
             <div className="nav-item-dropdown">
@@ -1363,6 +1375,159 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {/* MOBILE NAVIGATION DRAWER */}
+      <div className={`mobile-menu-drawer ${mobileMenuOpen ? 'show' : ''}`}>
+        <div className="mobile-menu-header">
+          <a href="?page=home" className="logo" onClick={(e) => { e.preventDefault(); navigate('home'); setMobileMenuOpen(false); }}>
+            <img src={konstructzLogo} alt="KONSTRUCTZ" className="logo-img" />
+          </a>
+          <button className="mobile-menu-close" onClick={() => setMobileMenuOpen(false)}>×</button>
+        </div>
+        <nav className="mobile-nav-links">
+          <a href="?page=home" onClick={(e) => { e.preventDefault(); navigate('home'); setMobileMenuOpen(false); }}>Home</a>
+          
+          {/* Equipment Accordion */}
+          <div className="mobile-accordion">
+            <button 
+              className="mobile-accordion-trigger" 
+              onClick={() => {
+                setDropdownOpen(!dropdownOpen);
+                setAttachmentsDropdownOpen(false);
+              }}
+            >
+              <span>Equipment</span>
+              <span className="arrow">▾</span>
+            </button>
+            <div className={`mobile-accordion-content ${dropdownOpen ? 'show' : ''}`}>
+              <a
+                href="?page=all-products&category=Konstructz"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('all-products', { category: 'Konstructz', subcategory: 'All' });
+                  setMobileMenuOpen(false);
+                  setDropdownOpen(false);
+                }}
+              >
+                View All KONSTRUCTZ
+              </a>
+              {konstructzSubcategories.map(sub => (
+                <a
+                  key={sub}
+                  href={`?page=all-products&category=Konstructz&subcategory=${encodeURIComponent(sub)}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('all-products', { category: 'Konstructz', subcategory: sub });
+                    setMobileMenuOpen(false);
+                    setDropdownOpen(false);
+                  }}
+                >
+                  {sub}
+                </a>
+              ))}
+              {equipmentMenuItems.map(item => (
+                <a
+                  key={item.id}
+                  href={`?page=all-products&category=${encodeURIComponent(item.id)}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('all-products', { category: item.id });
+                    setMobileMenuOpen(false);
+                    setDropdownOpen(false);
+                  }}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Attachments Accordion */}
+          <div className="mobile-accordion">
+            <button 
+              className="mobile-accordion-trigger" 
+              onClick={() => {
+                setAttachmentsDropdownOpen(!attachmentsDropdownOpen);
+                setDropdownOpen(false);
+              }}
+            >
+              <span>Attachments</span>
+              <span className="arrow">▾</span>
+            </button>
+            <div className={`mobile-accordion-content ${attachmentsDropdownOpen ? 'show' : ''}`}>
+              <a 
+                href="?page=attachments" 
+                onClick={(e) => { 
+                  e.preventDefault(); 
+                  setActiveAttachmentFilter('All Attachments'); 
+                  setActiveAttachmentSubcategory('All'); 
+                  navigate('attachments'); 
+                  setMobileMenuOpen(false); 
+                  setAttachmentsDropdownOpen(false); 
+                }}
+              >
+                View All Attachments
+              </a>
+              {attachmentMenus.map(menu => (
+                <a 
+                  key={menu.id}
+                  href="?page=attachments"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveAttachmentMenu(menu.id);
+                    setActiveAttachmentFilter(menu.id);
+                    setActiveAttachmentSubcategory('All');
+                    navigate('attachments');
+                    setMobileMenuOpen(false);
+                    setAttachmentsDropdownOpen(false);
+                  }}
+                >
+                  {menu.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <a href="?page=blog" onClick={(e) => { e.preventDefault(); navigate('blog'); setMobileMenuOpen(false); }}>Blog</a>
+          <a href="?page=topic" onClick={(e) => { e.preventDefault(); navigate('topic'); setMobileMenuOpen(false); }}>Topic</a>
+          <a href="?page=support" onClick={(e) => { e.preventDefault(); navigate('support'); setMobileMenuOpen(false); }}>Support</a>
+          <a href="?page=about" onClick={(e) => { e.preventDefault(); navigate('about'); setMobileMenuOpen(false); }}>About Us</a>
+          <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); setMobileMenuOpen(false); }}>Contact</a>
+        </nav>
+
+        <div className="mobile-menu-footer">
+          <div className="mobile-menu-actions">
+            {/* Search Input on Mobile */}
+            <div className="mobile-search-box">
+              <input 
+                type="text" 
+                placeholder="Search inventory..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setInventorySearchQuery(searchQuery);
+                    navigate('all-products');
+                    setMobileMenuOpen(false);
+                  }
+                }}
+              />
+            </div>
+            {/* Cart Link on Mobile */}
+            <button 
+              className="mobile-cart-btn" 
+              onClick={() => {
+                navigate('cart');
+                setMobileMenuOpen(false);
+              }}
+            >
+              <span>Shopping Cart ({cartCount})</span>
+            </button>
+            {/* Get Quote button */}
+            <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); setMobileMenuOpen(false); }} className="nav-cta">Get Quote</a>
+          </div>
+        </div>
+      </div>
 
       {currentView === 'home' ? (
         <>
