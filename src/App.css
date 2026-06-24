@@ -288,9 +288,9 @@ section {
 
 .hero-display-title {
   color: #ffffff;
-  font-family: 'Lilita One', var(--font-heading);
+  font-family: 'Belanosima', var(--font-heading);
   font-size: clamp(82px, 8.6vw, 144px);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 0.9;
   letter-spacing: 0;
   margin-bottom: 26px;
