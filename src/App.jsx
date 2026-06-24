@@ -1703,8 +1703,8 @@ export default function App() {
       {/* NEW PRODUCT SECTION */}
       <section id="products" className="products-section white-bg">
         <div className="section-content">
-          <div className="section-header">
-            <h2 className="section-title text-black">New Product</h2>
+          <div className="section-header products-section-header">
+            <h2 className="section-title text-black">Fresh Release.</h2>
           </div>
 
           <div className="products-carousel">

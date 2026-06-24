@@ -526,6 +526,18 @@ section {
   background: #f8fafc;
 }
 
+.products-section-header {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+.products-section-header .section-title {
+  font-size: clamp(38px, 4.8vw, 68px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
 .products-carousel {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
