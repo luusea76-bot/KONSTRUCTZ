@@ -1850,20 +1850,20 @@ export default function App() {
           <div className="featured-grid">
             <div className="featured-text-area">
               <span className="black-pill-tag">New Product</span>
-              <h2 className="featured-title text-black">New Konstructz <span className="highlight-olive">Stone Crusher</span></h2>
+              <h2 className="featured-title text-black">New Konstructz <span className="highlight-olive">SKOOP II Loader</span></h2>
               <p className="featured-desc">
-                Delivering strength, durability, and modern technology. Our crushers crush rocks faster and more efficiently. Built for contractors who demand reliable performance.
+                Compact power for daily jobsite work. Move soil, gravel, pallets, and materials with a nimble wheel loader built for contractors who need reliable performance in tight spaces.
               </p>
 
               <div className="features-pill-list">
-                <div className="feature-pill">✓ High Efficiency</div>
-                <div className="feature-pill">✓ Strong Crushing Capacity</div>
-                <div className="feature-pill">✓ Reliable Performance</div>
-                <div className="feature-pill">✓ Built for Tough Sites</div>
+                <div className="feature-pill">✓ Compact Jobsite Power</div>
+                <div className="feature-pill">✓ Smooth Material Handling</div>
+                <div className="feature-pill">✓ Easy Operator Visibility</div>
+                <div className="feature-pill">✓ Built for Tight Spaces</div>
               </div>
 
               <div className="featured-buttons">
-                <a href="#specs" className="cta-button white-pill-dark-border">Get Specification</a>
+                <a href="?page=product-detail&id=skoop-ii" onClick={(e) => { e.preventDefault(); navigate('product-detail', 'skoop-ii'); }} className="cta-button white-pill-dark-border">View SKOOP II</a>
                  <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="cta-button white-pill-dark-border">Contact Sales</a>
               </div>
             </div>
@@ -1873,7 +1873,7 @@ export default function App() {
                 {!crusherImageError ? (
                   <img 
                     src={stoneCrusher} 
-                    alt="KONSTRUCTZ Stone Crusher" 
+                    alt="KONSTRUCTZ SKOOP II wheel loader working on a construction site" 
                     className="featured-image"
                     onError={() => setCrusherImageError(true)}
                   />
@@ -1884,23 +1884,23 @@ export default function App() {
               <div className="spec-grid-overlay">
                 <div className="spec-grid-card">
                   <span className="spec-grid-icon">📏</span>
-                  <p>Feed Opening</p>
-                  <strong>250 x 400 mm</strong>
+                  <p>Operating Weight</p>
+                  <strong>1.8 Ton</strong>
                 </div>
                 <div className="spec-grid-card">
-                  <span className="spec-grid-icon">🪨</span>
-                  <p>Max Feed Size</p>
-                  <strong>210 mm</strong>
+                  <span className="spec-grid-icon">🛞</span>
+                  <p>Machine Type</p>
+                  <strong>Wheel Loader</strong>
                 </div>
                 <div className="spec-grid-card">
                   <span className="spec-grid-icon">⚡</span>
-                  <p>Capacity</p>
-                  <strong>15-45 t/h</strong>
+                  <p>Engine</p>
+                  <strong>Diesel Engine</strong>
                 </div>
                 <div className="spec-grid-card">
-                  <span className="spec-grid-icon">🔌</span>
-                  <p>Power</p>
-                  <strong>15-30 kW</strong>
+                  <span className="spec-grid-icon">🪣</span>
+                  <p>Use Case</p>
+                  <strong>Load & Carry</strong>
                 </div>
               </div>
             </div>
