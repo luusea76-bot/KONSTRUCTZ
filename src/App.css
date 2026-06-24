@@ -1356,9 +1356,13 @@ section {
 
 /* MACHINE USE CASES SECTION */
 .machine-use-section {
-  padding: 64px 0;
+  padding: 76px 0;
   background:
-    linear-gradient(180deg, rgba(210, 220, 208, 0.72), rgba(210, 220, 208, 0.48));
+    radial-gradient(circle at 12% 16%, rgba(96, 122, 78, 0.12), transparent 34%),
+    radial-gradient(circle at 92% 82%, rgba(96, 122, 78, 0.1), transparent 30%),
+    linear-gradient(180deg, #fbfcfa 0%, #f4f7f3 100%);
+  border-top: 1px solid rgba(96, 122, 78, 0.14);
+  border-bottom: 1px solid rgba(96, 122, 78, 0.14);
 }
 
 .machine-use-content {
@@ -1375,9 +1379,9 @@ section {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  border: 1px solid rgba(96, 122, 78, 0.45);
-  color: var(--bg-dark);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(96, 122, 78, 0.32);
+  color: #314229;
+  background: rgba(255, 255, 255, 0.86);
   padding: 8px 12px;
   font-family: var(--font-heading);
   font-size: 11px;
@@ -1431,15 +1435,17 @@ section {
 
 .machine-use-feature {
   background:
-    linear-gradient(145deg, #123f2e, #0f3326);
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.12), transparent 28%),
+    linear-gradient(145deg, #607a4e, #304526);
   color: #ffffff;
   padding: 38px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 476px;
-  border-radius: 4px;
-  box-shadow: 0 24px 52px rgba(18, 63, 46, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 26px 60px rgba(48, 69, 38, 0.2);
 }
 
 .machine-use-feature-tag {
@@ -1480,7 +1486,7 @@ section {
 
 .machine-use-stats strong {
   display: block;
-  color: #b8cdae;
+  color: #d8e5cf;
   font-family: var(--font-heading);
   font-size: 30px;
   line-height: 1;
@@ -1505,11 +1511,18 @@ section {
 .machine-use-card {
   position: relative;
   background: #ffffff;
-  border: 1px solid rgba(96, 122, 78, 0.18);
-  border-radius: 4px;
+  border: 1px solid rgba(96, 122, 78, 0.16);
+  border-radius: 14px;
   padding: 26px 26px;
   min-height: 150px;
-  box-shadow: 0 16px 34px rgba(15, 17, 14, 0.04);
+  box-shadow: 0 18px 38px rgba(15, 17, 14, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.machine-use-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(96, 122, 78, 0.34);
+  box-shadow: 0 24px 52px rgba(15, 17, 14, 0.1);
 }
 
 .machine-use-card::before {
