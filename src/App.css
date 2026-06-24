@@ -2760,6 +2760,224 @@ section {
   margin-bottom: 18px;
 }
 
+/* BLOG ADMIN */
+.admin-blog-page {
+  width: 100%;
+  background: #f8fafc;
+}
+
+.admin-blog-hero {
+  padding: 96px 0 58px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(96, 122, 78, 0.28), transparent 32%),
+    linear-gradient(135deg, #0f110e 0%, #1d2818 100%);
+}
+
+.admin-blog-hero .black-pill-tag {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.admin-blog-hero-content h1 {
+  max-width: 780px;
+  color: #ffffff;
+  font-size: clamp(42px, 6vw, 76px);
+  line-height: 0.96;
+  margin-top: 18px;
+}
+
+.admin-blog-hero-content p {
+  max-width: 680px;
+  color: rgba(243, 244, 246, 0.78);
+  margin-top: 18px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.admin-blog-workspace {
+  padding: 54px 0 86px;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(96, 122, 78, 0.08), transparent 28%),
+    #f8fafc;
+}
+
+.admin-blog-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.admin-blog-form,
+.admin-blog-list {
+  background: #ffffff;
+  border: 1px solid rgba(96, 122, 78, 0.16);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(15, 17, 14, 0.08);
+}
+
+.admin-blog-form-header,
+.admin-blog-list-header,
+.admin-form-actions,
+.admin-post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-eyebrow {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.admin-blog-form h2,
+.admin-blog-list h2 {
+  color: var(--text-light-bg);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.08;
+}
+
+.admin-blog-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  color: var(--text-light-bg);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-blog-form input,
+.admin-blog-form textarea {
+  width: 100%;
+  border: 1px solid #d9e1d6;
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text-light-bg);
+  background: #fbfcfa;
+  font: inherit;
+  outline: none;
+}
+
+.admin-blog-form textarea {
+  resize: vertical;
+}
+
+.admin-blog-form input:focus,
+.admin-blog-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(96, 122, 78, 0.12);
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-section-editor {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(96, 122, 78, 0.18);
+}
+
+.admin-section-editor h3 {
+  font-size: 18px;
+}
+
+.admin-section-group {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.admin-status {
+  margin-top: 16px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-form-actions {
+  margin-top: 22px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.admin-primary-btn,
+.admin-ghost-btn,
+.admin-post-actions button {
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-primary-btn {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.admin-ghost-btn,
+.admin-post-actions button {
+  border: 1px solid rgba(96, 122, 78, 0.28);
+  background: #ffffff;
+  color: var(--text-light-bg);
+}
+
+.admin-post-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.admin-post-card {
+  border: 1px solid rgba(96, 122, 78, 0.14);
+  border-radius: 14px;
+  padding: 18px;
+  background: #fbfcfa;
+}
+
+.admin-post-card span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+
+.admin-post-card h3 {
+  margin-top: 8px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.admin-post-card p {
+  margin-top: 8px;
+  color: var(--text-light-bg-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.admin-post-card small {
+  display: block;
+  margin-top: 10px;
+  color: #64748b;
+}
+
+.admin-post-actions {
+  margin-top: 14px;
+  justify-content: flex-start;
+}
+
 /* TESTIMONIALS */
 .testimonials-section {
   border-top: 1px solid var(--border-light-bg);
@@ -2964,6 +3182,10 @@ section {
 
   .faq-heading {
     position: static;
+  }
+
+  .admin-blog-grid {
+    grid-template-columns: 1fr;
   }
 
   .blog-page-sidebar {
@@ -3243,6 +3465,14 @@ section {
 
   .faq-heading .section-title {
     font-size: clamp(36px, 12vw, 52px);
+  }
+
+  .admin-form-row,
+  .admin-blog-form-header,
+  .admin-blog-list-header {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .spec-grid-overlay {

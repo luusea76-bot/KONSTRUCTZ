@@ -133,7 +133,7 @@ const engineLogos = [
   { name: 'Lead Acid Battery', src: recycleBatteryLogoAsset }
 ];
 
-const blogPosts = [
+const defaultBlogPosts = [
   {
     slug: 'excavator-maintenance-tips',
     title: 'Excavator maintenance tips: How to keep your excavator running smoothly.',
@@ -244,6 +244,60 @@ const blogPosts = [
   }
 ];
 
+const emptyBlogForm = {
+  slug: '',
+  title: '',
+  seoTitle: '',
+  seoDescription: '',
+  category: 'Guide',
+  date: '',
+  publishedDate: '',
+  updatedDate: '',
+  desc: '',
+  sectionOneTitle: '',
+  sectionOneBody: '',
+  sectionTwoTitle: '',
+  sectionTwoBody: '',
+  sectionThreeTitle: '',
+  sectionThreeBody: ''
+};
+
+const formatDisplayDate = (dateValue) => {
+  if (!dateValue) return '';
+  const date = new Date(`${dateValue}T00:00:00`);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date);
+};
+
+const createSlug = (value) => (
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+);
+
+const postToForm = (post) => ({
+  slug: post.slug,
+  title: post.title,
+  seoTitle: post.seoTitle,
+  seoDescription: post.seoDescription,
+  category: post.category,
+  date: post.date,
+  publishedDate: post.publishedDate,
+  updatedDate: post.updatedDate,
+  desc: post.desc,
+  sectionOneTitle: post.sections?.[0]?.h2 || '',
+  sectionOneBody: post.sections?.[0]?.body || '',
+  sectionTwoTitle: post.sections?.[1]?.h2 || '',
+  sectionTwoBody: post.sections?.[1]?.body || '',
+  sectionThreeTitle: post.sections?.[2]?.h2 || '',
+  sectionThreeBody: post.sections?.[2]?.body || ''
+});
+
 // High-fidelity SVG Fallbacks for a clean blueprint look when images are missing
 const WheelLoaderSvg = () => (
   <svg viewBox="0 0 100 60" className="machinery-svg-fallback" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -313,6 +367,17 @@ export default function App() {
   const [csvPreviewHeaders, setCsvPreviewHeaders] = useState([]);
   const [csvStatus, setCsvStatus] = useState('');
   const [checkoutItem, setCheckoutItem] = useState(null);
+  const [blogPosts, setBlogPosts] = useState(() => {
+    try {
+      const savedPosts = localStorage.getItem('konstructzBlogPosts');
+      return savedPosts ? JSON.parse(savedPosts) : defaultBlogPosts;
+    } catch {
+      return defaultBlogPosts;
+    }
+  });
+  const [blogAdminForm, setBlogAdminForm] = useState(emptyBlogForm);
+  const [editingBlogSlug, setEditingBlogSlug] = useState(null);
+  const [blogAdminStatus, setBlogAdminStatus] = useState('');
 
   const [formValues, setFormValues] = useState({
     firstName: '',
@@ -345,6 +410,87 @@ export default function App() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
+  };
+
+  const saveBlogPosts = (nextPosts) => {
+    setBlogPosts(nextPosts);
+    localStorage.setItem('konstructzBlogPosts', JSON.stringify(nextPosts));
+  };
+
+  const handleBlogAdminInput = (e) => {
+    const { name, value } = e.target;
+    setBlogAdminForm(prev => ({
+      ...prev,
+      [name]: value,
+      ...(name === 'title' && !editingBlogSlug ? { slug: createSlug(value) } : {})
+    }));
+  };
+
+  const resetBlogAdminForm = () => {
+    setBlogAdminForm(emptyBlogForm);
+    setEditingBlogSlug(null);
+  };
+
+  const handleEditBlogPost = (post) => {
+    setBlogAdminForm(postToForm(post));
+    setEditingBlogSlug(post.slug);
+    setBlogAdminStatus(`Editing "${post.title}"`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeleteBlogPost = (slug) => {
+    const nextPosts = blogPosts.filter(post => post.slug !== slug);
+    saveBlogPosts(nextPosts);
+    if (editingBlogSlug === slug) {
+      resetBlogAdminForm();
+    }
+    setBlogAdminStatus('Blog post deleted.');
+  };
+
+  const handleResetBlogPosts = () => {
+    saveBlogPosts(defaultBlogPosts);
+    resetBlogAdminForm();
+    setBlogAdminStatus('Blog posts reset to default content.');
+  };
+
+  const handleBlogAdminSubmit = (e) => {
+    e.preventDefault();
+    const today = new Date().toISOString().slice(0, 10);
+    const slug = createSlug(blogAdminForm.slug || blogAdminForm.title);
+    const publishedDate = blogAdminForm.publishedDate || today;
+    const updatedDate = blogAdminForm.updatedDate || today;
+    const sections = [
+      { h2: blogAdminForm.sectionOneTitle, body: blogAdminForm.sectionOneBody },
+      { h2: blogAdminForm.sectionTwoTitle, body: blogAdminForm.sectionTwoBody },
+      { h2: blogAdminForm.sectionThreeTitle, body: blogAdminForm.sectionThreeBody }
+    ].filter(section => section.h2 && section.body);
+
+    if (!slug || !blogAdminForm.title || !blogAdminForm.desc || sections.length === 0) {
+      setBlogAdminStatus('Please add a title, short description, and at least one section.');
+      return;
+    }
+
+    const nextPost = {
+      slug,
+      title: blogAdminForm.title,
+      seoTitle: blogAdminForm.seoTitle || `${blogAdminForm.title} | KONSTRUCTZ Blog`,
+      seoDescription: blogAdminForm.seoDescription || blogAdminForm.desc,
+      category: blogAdminForm.category || 'Guide',
+      date: blogAdminForm.date || formatDisplayDate(publishedDate),
+      publishedDate,
+      updatedDate,
+      desc: blogAdminForm.desc,
+      sections
+    };
+
+    const existingPost = blogPosts.find(post => post.slug === editingBlogSlug);
+    const nextPosts = existingPost
+      ? blogPosts.map(post => (post.slug === editingBlogSlug ? nextPost : post))
+      : [nextPost, ...blogPosts.filter(post => post.slug !== slug)];
+
+    saveBlogPosts(nextPosts);
+    resetBlogAdminForm();
+    setBlogAdminStatus(existingPost ? 'Blog post updated.' : 'Blog post published.');
   };
 
   useEffect(() => {
@@ -813,7 +959,7 @@ export default function App() {
     handleUrlChange();
     window.addEventListener('popstate', handleUrlChange);
     return () => window.removeEventListener('popstate', handleUrlChange);
-  }, [allInventory]);
+  }, [allInventory, blogPosts]);
 
   // Dynamic Page Title, Meta Description, and JSON-LD Structured Data
   useEffect(() => {
@@ -839,6 +985,11 @@ export default function App() {
       title = 'KONSTRUCTZ Blog | Machinery Guides, News & Field Tips';
       description = 'Read KONSTRUCTZ machinery guides, industry news, equipment tips, safety advice, and maintenance articles for construction crews.';
       canonicalPath = '/?page=blog';
+    } else if (currentView === 'admin-blog') {
+      title = 'Blog Admin Dashboard | KONSTRUCTZ';
+      description = 'Create, edit, and manage KONSTRUCTZ blog posts.';
+      canonicalPath = '/?page=admin-blog';
+      robotsContent = 'noindex, nofollow';
     } else if (currentView === 'topic') {
       title = 'Help Center & Topics | KONSTRUCTZ';
       description = 'Find answers about KONSTRUCTZ machinery warranties, delivery, payment, maintenance, spare parts, and support topics.';
@@ -2122,6 +2273,114 @@ export default function App() {
         </div>
       </section>
         </>
+      ) : currentView === 'admin-blog' ? (
+        <main className="admin-blog-page">
+          <section className="admin-blog-hero dark-bg">
+            <div className="section-content admin-blog-hero-content">
+              <span className="black-pill-tag">Admin Dashboard</span>
+              <h1>Manage blog posts</h1>
+              <p>Create, edit, and publish KONSTRUCTZ blog posts. Changes are saved in this browser and show immediately on the blog pages.</p>
+            </div>
+          </section>
+
+          <section className="admin-blog-workspace white-bg">
+            <div className="section-content admin-blog-grid">
+              <form className="admin-blog-form" onSubmit={handleBlogAdminSubmit}>
+                <div className="admin-blog-form-header">
+                  <div>
+                    <span className="admin-eyebrow">{editingBlogSlug ? 'Edit Post' : 'New Post'}</span>
+                    <h2>{editingBlogSlug ? 'Update article' : 'Write a blog post'}</h2>
+                  </div>
+                  {editingBlogSlug && (
+                    <button type="button" className="admin-ghost-btn" onClick={resetBlogAdminForm}>Cancel</button>
+                  )}
+                </div>
+
+                <label>
+                  Title
+                  <input name="title" value={blogAdminForm.title} onChange={handleBlogAdminInput} placeholder="Blog post title" />
+                </label>
+
+                <div className="admin-form-row">
+                  <label>
+                    Slug
+                    <input name="slug" value={blogAdminForm.slug} onChange={handleBlogAdminInput} placeholder="my-blog-post" />
+                  </label>
+                  <label>
+                    Category
+                    <input name="category" value={blogAdminForm.category} onChange={handleBlogAdminInput} placeholder="Buyer Guide" />
+                  </label>
+                </div>
+
+                <label>
+                  Short Description
+                  <textarea name="desc" value={blogAdminForm.desc} onChange={handleBlogAdminInput} rows="3" placeholder="Short summary shown on blog cards" />
+                </label>
+
+                <label>
+                  SEO Description
+                  <textarea name="seoDescription" value={blogAdminForm.seoDescription} onChange={handleBlogAdminInput} rows="3" placeholder="Meta description and article overview" />
+                </label>
+
+                <div className="admin-form-row">
+                  <label>
+                    Published Date
+                    <input type="date" name="publishedDate" value={blogAdminForm.publishedDate} onChange={handleBlogAdminInput} />
+                  </label>
+                  <label>
+                    Updated Date
+                    <input type="date" name="updatedDate" value={blogAdminForm.updatedDate} onChange={handleBlogAdminInput} />
+                  </label>
+                </div>
+
+                <div className="admin-section-editor">
+                  <h3>Article Sections</h3>
+                  {[
+                    ['sectionOneTitle', 'sectionOneBody', 'Section 1'],
+                    ['sectionTwoTitle', 'sectionTwoBody', 'Section 2'],
+                    ['sectionThreeTitle', 'sectionThreeBody', 'Section 3']
+                  ].map(([titleName, bodyName, label]) => (
+                    <div className="admin-section-group" key={titleName}>
+                      <input name={titleName} value={blogAdminForm[titleName]} onChange={handleBlogAdminInput} placeholder={`${label} heading`} />
+                      <textarea name={bodyName} value={blogAdminForm[bodyName]} onChange={handleBlogAdminInput} rows="4" placeholder={`${label} content`} />
+                    </div>
+                  ))}
+                </div>
+
+                {blogAdminStatus && <p className="admin-status">{blogAdminStatus}</p>}
+
+                <div className="admin-form-actions">
+                  <button type="submit" className="admin-primary-btn">{editingBlogSlug ? 'Update Post' : 'Publish Post'}</button>
+                  <button type="button" className="admin-ghost-btn" onClick={handleResetBlogPosts}>Reset Default Posts</button>
+                </div>
+              </form>
+
+              <aside className="admin-blog-list">
+                <div className="admin-blog-list-header">
+                  <span className="admin-eyebrow">Published</span>
+                  <h2>{blogPosts.length} posts</h2>
+                </div>
+
+                <div className="admin-post-stack">
+                  {blogPosts.map((post) => (
+                    <article className="admin-post-card" key={post.slug}>
+                      <div>
+                        <span>{post.category}</span>
+                        <h3>{post.title}</h3>
+                        <p>{post.desc}</p>
+                        <small>{post.slug} · Updated {post.updatedDate}</small>
+                      </div>
+                      <div className="admin-post-actions">
+                        <button type="button" onClick={() => handleEditBlogPost(post)}>Edit</button>
+                        <button type="button" onClick={() => handleDeleteBlogPost(post.slug)}>Delete</button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </aside>
+            </div>
+          </section>
+        </main>
       ) : currentView === 'blog' ? (
         <main className="blog-page">
           <section className="blog-page-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.5)), url(${constructionBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
