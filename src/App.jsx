@@ -3,23 +3,48 @@ import './App.css'
 import { attachmentProducts, catalogProducts, featuredProducts } from './data/catalog'
 import ProductCard from './components/ProductCard'
 import StoreEmbed from './components/StoreEmbed'
+import heroLoaderAsset from './assets/hero.png'
+import typhonFactoryEngineerAsset from './assets/typhon_factory_engineer.png'
+import loaderCarryingGravelAsset from './assets/loader_carrying_gravel.png'
+import trackLoaderFarmAsset from './assets/track_loader_farm.png'
+import dumperConstructionAsset from './assets/dumper_construction.png'
+import tigerWatermarkAsset from './assets/tiger_watermark.png'
+import tigerLogoAsset from './assets/tiger_logo.png'
+import konstructzLogoAsset from './assets/konstructz_logo.png'
+import supportHeroAsset from './assets/support_hero.png'
+import supportCallCenterAsset from './assets/support_call_center.png'
+import stoneCrusherAsset from './assets/products/stone-krusher.png'
+import stonekrusherLogoAsset from './assets/machine-logos/stonekrusher.png'
+import stonekrusherReflectionAsset from './assets/machine-logos/stonekrusher-reflection.png'
+import stompLogoAsset from './assets/machine-logos/stomp.png'
+import stompReflectionAsset from './assets/machine-logos/stomp-reflection.png'
+import spiderOneLogoAsset from './assets/machine-logos/spider-one.png'
+import spiderOneReflectionAsset from './assets/machine-logos/spider-one-reflection.png'
+import kuvuoLogoAsset from './assets/machine-logos/kuvuo.png'
+import kuvuoReflectionAsset from './assets/machine-logos/kuvuo-reflection.png'
+import hondaEngineLogoAsset from './assets/engine-logos/honda-power-equipment.png'
+import yanmarEngineLogoAsset from './assets/engine-logos/yanmar-engine.png'
+import kubotaEngineLogoAsset from './assets/engine-logos/kubota.png'
+import briggsStrattonLogoAsset from './assets/engine-logos/briggs-stratton.png'
+import batteryExpressLogoAsset from './assets/engine-logos/battery-express.png'
+import recycleBatteryLogoAsset from './assets/engine-logos/recycle-battery.png'
 
 // Image references
-const heroLoader = '/src/assets/hero.png';
+const heroLoader = heroLoaderAsset;
 const heroVideo = '/media/hero-wheel-loader.mp4';
 const aboutKonstructzMachinery = '/about-skoop-typhon-banner.png';
-const stoneCrusher = '/src/assets/stone_crusher.png';
-const constructionBg = '/src/assets/construction_bg.png';
+const stoneCrusher = stoneCrusherAsset;
+const constructionBg = trackLoaderFarmAsset;
 const loaderAction = '/src/assets/loader_action.png';
-const typhonFactoryEngineer = '/src/assets/typhon_factory_engineer.png';
-const loaderCarryingGravel = '/src/assets/loader_carrying_gravel.png';
-const trackLoaderFarm = '/src/assets/track_loader_farm.png';
-const dumperConstruction = '/src/assets/dumper_construction.png';
-const tigerWatermark = '/src/assets/tiger_watermark.png';
-const tigerLogo = '/src/assets/tiger_logo.png';
-const konstructzLogo = '/src/assets/konstructz_logo.png';
-const supportHero = '/src/assets/support_hero.png';
-const supportCallCenter = '/src/assets/support_call_center.png';
+const typhonFactoryEngineer = typhonFactoryEngineerAsset;
+const loaderCarryingGravel = loaderCarryingGravelAsset;
+const trackLoaderFarm = trackLoaderFarmAsset;
+const dumperConstruction = dumperConstructionAsset;
+const tigerWatermark = tigerWatermarkAsset;
+const tigerLogo = tigerLogoAsset;
+const konstructzLogo = konstructzLogoAsset;
+const supportHero = supportHeroAsset;
+const supportCallCenter = supportCallCenterAsset;
 
 const systemAttachmentSlides = [
   {
@@ -75,18 +100,18 @@ const systemAttachmentSlides = [
 const brandLogos = [
   {
     name: 'STONEKRUSHER',
-    src: '/src/assets/machine-logos/stonekrusher.png',
-    reflection: '/src/assets/machine-logos/stonekrusher-reflection.png'
+    src: stonekrusherLogoAsset,
+    reflection: stonekrusherReflectionAsset
   },
   {
     name: 'STOMP',
-    src: '/src/assets/machine-logos/stomp.png',
-    reflection: '/src/assets/machine-logos/stomp-reflection.png'
+    src: stompLogoAsset,
+    reflection: stompReflectionAsset
   },
   {
     name: 'SPIDER ONE',
-    src: '/src/assets/machine-logos/spider-one.png',
-    reflection: '/src/assets/machine-logos/spider-one-reflection.png'
+    src: spiderOneLogoAsset,
+    reflection: spiderOneReflectionAsset
   },
   {
     name: 'ThunderDump',
@@ -94,18 +119,18 @@ const brandLogos = [
   },
   {
     name: 'KUVUO',
-    src: '/src/assets/machine-logos/kuvuo.png',
-    reflection: '/src/assets/machine-logos/kuvuo-reflection.png'
+    src: kuvuoLogoAsset,
+    reflection: kuvuoReflectionAsset
   }
 ];
 
 const engineLogos = [
-  { name: 'Honda Engine', src: '/src/assets/engine-logos/honda-power-equipment.png' },
-  { name: 'Yanmar Engine', src: '/src/assets/engine-logos/yanmar-engine.png' },
-  { name: 'Kubota Engine', src: '/src/assets/engine-logos/kubota.png' },
-  { name: 'B & S Engine', src: '/src/assets/engine-logos/briggs-stratton.png' },
-  { name: 'Lithium Battery', src: '/src/assets/engine-logos/battery-express.png' },
-  { name: 'Lead Acid Battery', src: '/src/assets/engine-logos/recycle-battery.png' }
+  { name: 'Honda Engine', src: hondaEngineLogoAsset },
+  { name: 'Yanmar Engine', src: yanmarEngineLogoAsset },
+  { name: 'Kubota Engine', src: kubotaEngineLogoAsset },
+  { name: 'B & S Engine', src: briggsStrattonLogoAsset },
+  { name: 'Lithium Battery', src: batteryExpressLogoAsset },
+  { name: 'Lead Acid Battery', src: recycleBatteryLogoAsset }
 ];
 
 const blogPosts = [
@@ -1533,7 +1558,8 @@ export default function App() {
         <>
           {/* HERO SECTION */}
           <section id="home" className="hero-section dark-bg">
-            {!heroImageError ? (
+            <img src={heroLoader} alt="KONSTRUCTZ Heavy Wheel Loader" className="hero-background-image" />
+            {!heroImageError && (
               <video
                 className="hero-background-video"
                 autoPlay
@@ -1547,8 +1573,6 @@ export default function App() {
               >
                 <source src={heroVideo} type="video/mp4" />
               </video>
-            ) : (
-              <img src={heroLoader} alt="KONSTRUCTZ Heavy Wheel Loader" className="hero-background-image" />
             )}
             <div className="hero-overlay"></div>
             <div className="section-content hero-full-content">
