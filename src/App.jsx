@@ -133,6 +133,72 @@ const engineLogos = [
   { name: 'Lead Acid Battery', src: recycleBatteryLogoAsset }
 ];
 
+const defaultComments = [
+  {
+    id: 'c-1',
+    blogSlug: 'excavator-maintenance-tips',
+    authorName: 'Alex Mercer',
+    authorEmail: 'alex@mercerbuild.com',
+    content: 'This guide saved us a lot of trouble last week. We were having some pressure drop in the bucket hydraulic cylinders and cleaning the quick-connect fittings as suggested here solved it immediately!',
+    date: 'June 18, 2026',
+    status: 'Approved'
+  },
+  {
+    id: 'c-2',
+    blogSlug: 'choosing-wheel-loaders-and-skid-steers',
+    authorName: 'Sarah Jenkins',
+    authorEmail: 'sjenkins@jenkinslandscaping.com',
+    content: 'We ended up purchasing the SKOOP II wheel loader for our landscaping crew and the compact footprint has been a lifesaver in residential gated communities.',
+    date: 'June 20, 2026',
+    status: 'Approved'
+  },
+  {
+    id: 'c-3',
+    blogSlug: 'heavy-machinery-jobsite-safety',
+    authorName: 'Robert Thorne',
+    authorEmail: 'r.thorne@safetyfirst.org',
+    content: 'Excellent operating checklist. The visual hand signal agreement is often overlooked but crucial when working with high-noise attachments like augers and breakers.',
+    date: 'June 21, 2026',
+    status: 'Approved'
+  }
+];
+
+const defaultInquiries = [
+  {
+    id: 'inq-1',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'johndoe@builder.com',
+    phone: '+1 (555) 123-4567',
+    inquiryType: 'Get a quote',
+    message: 'I would like a quote for: 2 x Konstructz SKOOP II Loader, 1 x mini excavator track attachment.',
+    date: 'Jun 22, 2026, 09:14 AM',
+    status: 'Pending'
+  },
+  {
+    id: 'inq-2',
+    firstName: 'Michael',
+    lastName: 'Chang',
+    email: 'mchang@pacificexcavation.com',
+    phone: '+1 (555) 987-6543',
+    inquiryType: 'Product inquiry',
+    message: 'What is the shipping lead time to the Pacific Northwest for a fleet of 5 mini dumpers? We need these on-site by early August.',
+    date: 'Jun 23, 2026, 02:30 PM',
+    status: 'Contacted'
+  },
+  {
+    id: 'inq-3',
+    firstName: 'Amanda',
+    lastName: 'Ross',
+    email: 'aross@terradevelopers.com',
+    phone: '+1 (555) 456-7890',
+    inquiryType: 'Warranty Registration',
+    message: 'Registering WL100 loader (Serial #KN-WL100-8023) purchased direct last month. Everything is performing beautifully.',
+    date: 'Jun 24, 2026, 08:05 AM',
+    status: 'Closed'
+  }
+];
+
 const defaultBlogPosts = [
   {
     slug: 'excavator-maintenance-tips',
@@ -250,6 +316,7 @@ const emptyBlogForm = {
   seoTitle: '',
   seoDescription: '',
   category: 'Guide',
+  image: '',
   date: '',
   publishedDate: '',
   updatedDate: '',
@@ -286,6 +353,7 @@ const postToForm = (post) => ({
   seoTitle: post.seoTitle,
   seoDescription: post.seoDescription,
   category: post.category,
+  image: post.image || '',
   date: post.date,
   publishedDate: post.publishedDate,
   updatedDate: post.updatedDate,
@@ -341,6 +409,141 @@ const ExcavatorSvg = () => (
   </svg>
 );
 
+const topicFaqs = {
+  'Machines': [
+    {
+      id: 'machines-1',
+      question: 'What types of machines does KONSTRUCTZ manufacture?',
+      answer: 'KONSTRUCTZ offers premium, jobsite-ready machinery including mini excavators, wheel loaders, mini skid steers, dumpers, and specialized attachments built for contractors.'
+    },
+    {
+      id: 'machines-2',
+      question: 'What is the difference between the K2-500 and K2-731 wheel loaders?',
+      answer: 'The K2-500 is optimized for maximum tight-access maneuverability with a light footprint, while the K2-731 features a heavy-duty chassis, higher lift capacities, and an upgraded diesel engine package.'
+    },
+    {
+      id: 'machines-3',
+      question: 'Can I see the machines before purchasing?',
+      answer: 'Yes. We can coordinate virtual live tours, detailed video walkthroughs, and direct photos of our current stock. Contact our sales department to request detailed equipment reports.'
+    },
+    {
+      id: 'machines-4',
+      question: 'Are KONSTRUCTZ machines certified to international standards?',
+      answer: 'Absolutely. All our machines are fully certified with CE compliance, ISO manufacturing approvals, and EPA-compliant engines where applicable for target markets.'
+    }
+  ],
+  'Buying & pricing': [
+    {
+      id: 'buying-1',
+      question: 'How do I request a quote?',
+      answer: 'You can add equipment and attachments to your request list using the cart, then submit a quote request. Alternatively, contact us directly at sales@konstructz.com or call our support line.'
+    },
+    {
+      id: 'buying-2',
+      question: 'Are there any hidden fees or extra costs for purchases?',
+      answer: 'No, we provide completely transparent pricing. All standard import duties, local taxes, and freight handling charges are detailed clearly in your written quote before order finalization.'
+    },
+    {
+      id: 'buying-3',
+      question: 'What payment methods do you accept?',
+      answer: 'We accept Bank Wire Transfers (T/T), Letters of Credit (L/C) for commercial orders, and all major corporate credit cards for attachment orders.'
+    },
+    {
+      id: 'buying-4',
+      question: 'Do you offer bulk discounts for fleet purchases?',
+      answer: 'Yes, we offer tiered volume pricing for contractors and rental firms looking to acquire multiple units. Please request a custom quote from our sales department.'
+    }
+  ],
+  'Delivery': [
+    {
+      id: 'delivery-1',
+      question: 'Do you ship worldwide, and how are machines transported?',
+      answer: 'Yes, we ship globally. Heavy machines are secured in shipping containers or shipped via Roll-on/Roll-off (RoRo) ocean transport, then delivered via flatbed trucks directly to your yard or jobsite.'
+    },
+    {
+      id: 'delivery-2',
+      question: 'What is the typical lead time for delivery?',
+      answer: 'In-stock machinery is typically prepared and shipped within 7-10 business days. Custom builds or backordered equipment have a lead time of 45-60 days depending on manufacturer backlog.'
+    },
+    {
+      id: 'delivery-3',
+      question: 'How can I track my shipment?',
+      answer: 'Once your order departs our logistics center, you will receive a tracking link along with bill of lading documentation, freight carrier details, and regular email status updates.'
+    },
+    {
+      id: 'delivery-4',
+      question: 'What happens if the machine is damaged during transit?',
+      answer: 'All shipments are fully insured. In the extremely rare event of transit damage, document it immediately on the delivery receipt and contact us so we can process the insurance claim and dispatch replacement parts or a technician.'
+    }
+  ],
+  'Warranty': [
+    {
+      id: 'warranty-1',
+      question: 'What does the KONSTRUCTZ warranty cover?',
+      answer: 'We provide a comprehensive 1-Year/1000-Hour warranty covering all major components including the engine, hydraulic pump, transmission, and main structural chassis.'
+    },
+    {
+      id: 'warranty-2',
+      question: 'How do I file a warranty claim?',
+      answer: 'You can submit a claim online via our Support page or email support@konstructz.com with your machine serial number, operating hours, a description of the issue, and photos/videos.'
+    },
+    {
+      id: 'warranty-3',
+      question: 'Can I extend my warranty?',
+      answer: 'Yes, we offer extended protection plans (up to 3 years or 3000 hours) that can be purchased at the time of order or before your standard 1-year warranty expires.'
+    },
+    {
+      id: 'warranty-4',
+      question: 'Does the warranty cover wear items?',
+      answer: 'The standard warranty does not cover normal wear-and-tear items such as filters, fluids, seals, tracks, teeth, or hoses, unless they fail due to a verified manufacturing defect.'
+    }
+  ],
+  'Service & parts': [
+    {
+      id: 'service-1',
+      question: 'How do I order replacement parts?',
+      answer: 'We maintain a fully stocked parts inventory. You can order replacement parts directly from our online support portal or email our parts specialists at support@konstructz.com.'
+    },
+    {
+      id: 'service-2',
+      question: 'Who performs maintenance on my machine?',
+      answer: 'KONSTRUCTZ machines are designed with standard mechanical and hydraulic layouts that any certified diesel technician can service. We also partner with local service hubs to assist with repairs.'
+    },
+    {
+      id: 'service-3',
+      question: 'Where can I find user manuals and service schedules?',
+      answer: 'Operation and maintenance manuals, wiring diagrams, and parts books are shipped with each machine. PDF versions are also available for download in our digital Support portal.'
+    },
+    {
+      id: 'service-4',
+      question: 'What is the recommended service interval?',
+      answer: 'We recommend performing a break-in service after the first 50 hours of operation, followed by regular scheduled maintenance every 250 hours (engine oil, filters, hydraulic checks, and lubrication).'
+    }
+  ],
+  'Financing': [
+    {
+      id: 'financing-1',
+      question: 'Do you offer in-house financing or leasing?',
+      answer: 'Yes. We work with leading equipment finance partners to offer flexible leasing, lease-to-own, and standard commercial financing plans tailored to your business needs.'
+    },
+    {
+      id: 'financing-2',
+      question: 'What are the general criteria for financing approval?',
+      answer: 'Commercial approval typically requires a minimum of 2 years in business, a good business credit history, and a completed commercial credit application form.'
+    },
+    {
+      id: 'financing-3',
+      question: 'Can attachments and delivery fees be financed?',
+      answer: 'Yes, you can bundle attachments, bucket accessories, spare parts packages, and shipping costs directly into your equipment finance contract.'
+    },
+    {
+      id: 'financing-4',
+      question: 'Are there any tax advantages to financing?',
+      answer: 'Under Section 179 of the IRS tax code, businesses may be eligible to write off the full purchase price of qualifying equipment in the tax year it is put into service. Consult your accountant for details.'
+    }
+  ]
+};
+
 export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -359,6 +562,7 @@ export default function App() {
   const [activeAttachmentFilter, setActiveAttachmentFilter] = useState('All Attachments');
   const [activeAttachmentSubcategory, setActiveAttachmentSubcategory] = useState('All');
   const [attachmentsDropdownOpen, setAttachmentsDropdownOpen] = useState(false);
+  const [topicDropdownOpen, setTopicDropdownOpen] = useState(false);
   const [addedCartItem, setAddedCartItem] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [storedCsvName, setStoredCsvName] = useState('');
@@ -376,6 +580,43 @@ export default function App() {
     }
   });
   const [blogAdminForm, setBlogAdminForm] = useState(emptyBlogForm);
+
+  const [comments, setComments] = useState(() => {
+    try {
+      const savedComments = localStorage.getItem('konstructzComments');
+      return savedComments ? JSON.parse(savedComments) : defaultComments;
+    } catch {
+      return defaultComments;
+    }
+  });
+
+  const [inquiries, setInquiries] = useState(() => {
+    try {
+      const savedInquiries = localStorage.getItem('konstructzInquiries');
+      return savedInquiries ? JSON.parse(savedInquiries) : defaultInquiries;
+    } catch {
+      return defaultInquiries;
+    }
+  });
+
+  const [productViews, setProductViews] = useState(() => {
+    try {
+      const savedViews = localStorage.getItem('konstructzProductViews');
+      return savedViews ? JSON.parse(savedViews) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const [dashboardTab, setDashboardTab] = useState('overview');
+  const [inquirySearch, setInquirySearch] = useState('');
+  const [inquiryStatusFilter, setInquiryStatusFilter] = useState('All');
+  
+  const [commentForm, setCommentForm] = useState({
+    authorName: '',
+    authorEmail: '',
+    content: ''
+  });
   const [editingBlogSlug, setEditingBlogSlug] = useState(null);
   const [blogAdminStatus, setBlogAdminStatus] = useState('');
 
@@ -410,6 +651,26 @@ export default function App() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
+    try {
+      const savedInquiries = localStorage.getItem('konstructzInquiries');
+      const inquiriesList = savedInquiries ? JSON.parse(savedInquiries) : defaultInquiries;
+      const newInquiry = {
+        id: `inq-${Date.now()}`,
+        firstName: formValues.firstName,
+        lastName: formValues.lastName,
+        email: formValues.email,
+        phone: formValues.phone,
+        inquiryType: formValues.inquiryType || 'Product inquiry',
+        message: formValues.message,
+        date: new Date().toLocaleString('en-US', { hour12: true, month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        status: 'Pending'
+      };
+      const nextInquiries = [newInquiry, ...inquiriesList];
+      setInquiries(nextInquiries);
+      localStorage.setItem('konstructzInquiries', JSON.stringify(nextInquiries));
+    } catch (err) {
+      console.error('Failed to save inquiry:', err);
+    }
   };
 
   const saveBlogPosts = (nextPosts) => {
@@ -424,6 +685,29 @@ export default function App() {
       [name]: value,
       ...(name === 'title' && !editingBlogSlug ? { slug: createSlug(value) } : {})
     }));
+  };
+
+  const handleBlogImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setBlogAdminStatus('Please select an image file.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setBlogAdminForm(prev => ({
+        ...prev,
+        image: String(reader.result || '')
+      }));
+      setBlogAdminStatus('Image uploaded successfully.');
+    };
+    reader.onerror = () => {
+      setBlogAdminStatus('Failed to read image file.');
+    };
+    reader.readAsDataURL(file);
   };
 
   const resetBlogAdminForm = () => {
@@ -453,6 +737,62 @@ export default function App() {
     setBlogAdminStatus('Blog posts reset to default content.');
   };
 
+  const handleDeleteComment = (commentId) => {
+    const nextComments = comments.filter(c => c.id !== commentId);
+    setComments(nextComments);
+    localStorage.setItem('konstructzComments', JSON.stringify(nextComments));
+  };
+
+  const handleToggleCommentStatus = (commentId) => {
+    const nextComments = comments.map(c => {
+      if (c.id === commentId) {
+        const newStatus = c.status === 'Approved' ? 'Pending' : 'Approved';
+        return { ...c, status: newStatus };
+      }
+      return c;
+    });
+    setComments(nextComments);
+    localStorage.setItem('konstructzComments', JSON.stringify(nextComments));
+  };
+
+  const handleDeleteInquiry = (inquiryId) => {
+    const nextInquiries = inquiries.filter(inq => inq.id !== inquiryId);
+    setInquiries(nextInquiries);
+    localStorage.setItem('konstructzInquiries', JSON.stringify(nextInquiries));
+  };
+
+  const handleUpdateInquiryStatus = (inquiryId, newStatus) => {
+    const nextInquiries = inquiries.map(inq => {
+      if (inq.id === inquiryId) {
+        return { ...inq, status: newStatus };
+      }
+      return inq;
+    });
+    setInquiries(nextInquiries);
+    localStorage.setItem('konstructzInquiries', JSON.stringify(nextInquiries));
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if (!commentForm.authorName || !commentForm.authorEmail || !commentForm.content) {
+      return;
+    }
+    const newComment = {
+      id: `c-${Date.now()}`,
+      blogSlug: selectedBlogPost.slug,
+      authorName: commentForm.authorName,
+      authorEmail: commentForm.authorEmail,
+      content: commentForm.content,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      status: 'Approved'
+    };
+    
+    const nextComments = [newComment, ...comments];
+    setComments(nextComments);
+    localStorage.setItem('konstructzComments', JSON.stringify(nextComments));
+    setCommentForm({ authorName: '', authorEmail: '', content: '' });
+  };
+
   const handleBlogAdminSubmit = (e) => {
     e.preventDefault();
     const today = new Date().toISOString().slice(0, 10);
@@ -476,6 +816,7 @@ export default function App() {
       seoTitle: blogAdminForm.seoTitle || `${blogAdminForm.title} | KONSTRUCTZ Blog`,
       seoDescription: blogAdminForm.seoDescription || blogAdminForm.desc,
       category: blogAdminForm.category || 'Guide',
+      image: blogAdminForm.image,
       date: blogAdminForm.date || formatDisplayDate(publishedDate),
       publishedDate,
       updatedDate,
@@ -498,11 +839,27 @@ export default function App() {
       if (!e.target.closest('.nav-item-dropdown')) {
         setDropdownOpen(false);
         setAttachmentsDropdownOpen(false);
+        setTopicDropdownOpen(false);
       }
     };
     document.addEventListener('click', handleOutsideClick);
     return () => document.removeEventListener('click', handleOutsideClick);
   }, []);
+
+  useEffect(() => {
+    if (currentView === 'product-detail' && selectedProduct) {
+      try {
+        const savedViews = localStorage.getItem('konstructzProductViews');
+        const views = savedViews ? JSON.parse(savedViews) : {};
+        const itemId = selectedProduct.id;
+        views[itemId] = (views[itemId] || 0) + 1;
+        setProductViews(views);
+        localStorage.setItem('konstructzProductViews', JSON.stringify(views));
+      } catch (err) {
+        console.error('Failed to update product views:', err);
+      }
+    }
+  }, [currentView, selectedProduct]);
 
   useEffect(() => {
     if (window.location.hash && currentView === 'home') {
@@ -585,6 +942,52 @@ export default function App() {
 
   // FAQ Expand state
   const [openFaqId, setOpenFaqId] = useState(null);
+  const [activeTopicCategory, setActiveTopicCategory] = useState('Hub');
+
+  // Custom Topic Subpage Interactive States
+  const [costVal, setCostVal] = useState(25000);
+  const [termVal, setTermVal] = useState(36);
+  const [trackingNum, setTrackingNum] = useState('');
+  const [trackingResult, setTrackingResult] = useState(null);
+  const [activeWarrantyComponent, setActiveWarrantyComponent] = useState('Engine');
+  const [activeServiceInterval, setActiveServiceInterval] = useState('50 Hours');
+  const [activeMachineTab, setActiveMachineTab] = useState('All');
+
+  const handleTrackShipment = (e) => {
+    e.preventDefault();
+    if (!trackingNum.trim()) return;
+    const num = trackingNum.trim().toUpperCase();
+    if (num.includes('KON')) {
+      setTrackingResult({
+        status: 'In Transit',
+        origin: 'KONSTRUCTZ Assembly Plant',
+        destination: 'Client Delivery Yard',
+        progress: 65,
+        steps: [
+          { name: 'Order Processed', date: 'June 10, 2026', done: true },
+          { name: 'Ocean Liner Loaded', date: 'June 15, 2026', done: true },
+          { name: 'Customs Clearance', date: 'Estimated June 28, 2026', current: true },
+          { name: 'Final Flatbed Delivery', date: 'Estimated July 02, 2026', pending: true }
+        ]
+      });
+    } else {
+      setTrackingResult({
+        error: 'Tracking number not found. Try entering a code like "KON-9831" or "KON-8422".'
+      });
+    }
+  };
+
+  const handleTagClick = (tag) => {
+    let mapped = 'Machines';
+    if (tag === 'Warranty') mapped = 'Warranty';
+    else if (tag === 'Delivery') mapped = 'Delivery';
+    else if (tag === 'Spare parts' || tag === 'Maintenance') mapped = 'Service & parts';
+    else if (tag === 'Payment') mapped = 'Buying & pricing';
+    else if (tag === 'Request a demo') mapped = 'Machines';
+    
+    navigate('topic', { 'topic-category': mapped });
+    setOpenFaqId(null);
+  };
 
   const products = catalogProducts;
   const homeProducts = featuredProducts;
@@ -712,6 +1115,27 @@ export default function App() {
     const productList = cartItems
       .map(item => `${item.quantity} x ${item.name}`)
       .join(', ');
+
+    try {
+      const savedInquiries = localStorage.getItem('konstructzInquiries');
+      const inquiriesList = savedInquiries ? JSON.parse(savedInquiries) : defaultInquiries;
+      const newInquiry = {
+        id: `inq-${Date.now()}`,
+        firstName: 'Cart',
+        lastName: 'User',
+        email: 'customer@konstructz.com',
+        phone: 'N/A',
+        inquiryType: 'Get a quote',
+        message: productList ? `Cart Quote Request: ${productList}` : 'Requested quote for items.',
+        date: new Date().toLocaleString('en-US', { hour12: true, month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        status: 'Pending'
+      };
+      const nextInquiries = [newInquiry, ...inquiriesList];
+      setInquiries(nextInquiries);
+      localStorage.setItem('konstructzInquiries', JSON.stringify(nextInquiries));
+    } catch (err) {
+      console.error(err);
+    }
 
     setAddedCartItem(null);
     navigate('contact', { inquiry: 'Get a quote' });
@@ -862,9 +1286,18 @@ export default function App() {
     window.history.pushState({}, '', newUrl);
 
     // Sync state
-    setCurrentView(view);
+    setCurrentView(view === 'store-data' ? 'admin-blog' : view);
+    if (view === 'store-data') {
+      setDashboardTab('inventory');
+    }
+    if (view === 'admin-blog' && additionalParams.tab) {
+      setDashboardTab(additionalParams.tab);
+    }
     if (view === 'contact' && additionalParams.inquiry) {
       setFormValues(prev => ({ ...prev, inquiryType: additionalParams.inquiry }));
+    }
+    if (view === 'topic') {
+      setActiveTopicCategory(additionalParams['topic-category'] || 'Hub');
     }
     if (additionalParams.id) {
       const item = allInventory.find(p => p.id === additionalParams.id || p.slug === additionalParams.id);
@@ -901,6 +1334,7 @@ export default function App() {
       const category = params.get('category');
       const subcategory = params.get('subcategory');
       const search = params.get('search');
+      const topicCategory = params.get('topic-category');
 
       if (view !== 'store' && view !== 'checkout' && window.location.hash.startsWith('#!')) {
         window.history.replaceState({}, '', `${window.location.pathname}${window.location.search}`);
@@ -910,7 +1344,10 @@ export default function App() {
         window.history.replaceState({}, '', `${window.location.pathname}?page=home`);
       }
 
-      if ((view === 'product-detail' || view === 'checkout') && productId) {
+      if (view === 'store-data') {
+        setCurrentView('admin-blog');
+        setDashboardTab('inventory');
+      } else if ((view === 'product-detail' || view === 'checkout') && productId) {
         const item = allInventory.find(p => p.id === productId || p.slug === productId);
         if (item) {
           setSelectedProduct(item);
@@ -930,6 +1367,12 @@ export default function App() {
         }
       } else {
         setCurrentView(view);
+        if (view === 'topic') {
+          setActiveTopicCategory(topicCategory || 'Hub');
+        }
+        if (view === 'admin-blog' && params.get('tab')) {
+          setDashboardTab(params.get('tab'));
+        }
         if (view === 'contact') {
           const inquiry = params.get('inquiry');
           if (inquiry) {
@@ -963,7 +1406,7 @@ export default function App() {
 
   // Dynamic Page Title, Meta Description, and JSON-LD Structured Data
   useEffect(() => {
-    const siteUrl = 'https://konstructzmachinery.com';
+    const siteUrl = 'https://konstructz.com';
     const siteName = 'KONSTRUCTZ';
     const defaultImage = `${siteUrl}/favicon.svg`;
     let title = 'KONSTRUCTZ | Premium Construction Equipment';
@@ -991,9 +1434,35 @@ export default function App() {
       canonicalPath = '/?page=admin-blog';
       robotsContent = 'noindex, nofollow';
     } else if (currentView === 'topic') {
-      title = 'Help Center & Topics | KONSTRUCTZ';
-      description = 'Find answers about KONSTRUCTZ machinery warranties, delivery, payment, maintenance, spare parts, and support topics.';
-      canonicalPath = '/?page=topic';
+      if (activeTopicCategory === 'Machines') {
+        title = 'Mini Skid Steer Safety & Technical Performance | KONSTRUCTZ';
+        description = 'Technical specifications, engine options, maintenance schedule, and operational safety protocols for the TYPHON STOMP mini skid steer loader.';
+        canonicalPath = '/?page=topic&topic-category=Machines';
+      } else if (activeTopicCategory === 'Buying & pricing') {
+        title = 'Commercial Machinery Purchase Guide & Cost Calculator | KONSTRUCTZ';
+        description = 'Estimate monthly financing payments with our interactive calculator, view our transparent fleet order discounts, and browse the ordering fulfillment timeline.';
+        canonicalPath = '/?page=topic&topic-category=Buying%20%26%20pricing';
+      } else if (activeTopicCategory === 'Delivery') {
+        title = 'Global Freight Logistics & Shipping Status Tracker | KONSTRUCTZ';
+        description = 'Track your heavy machinery dispatch status with our real-time booking code tracker and learn about ocean containerized vs. RoRo shipping methods.';
+        canonicalPath = '/?page=topic&topic-category=Delivery';
+      } else if (activeTopicCategory === 'Warranty') {
+        title = 'Official 12-Month Factory Warranty & Component Coverage | KONSTRUCTZ';
+        description = 'Review the official KONSTRUCTZ limited warranty coverage details for engines, hydraulics, crawler tracks, structural chassis, and wear items.';
+        canonicalPath = '/?page=topic&topic-category=Warranty';
+      } else if (activeTopicCategory === 'Service & parts') {
+        title = 'Preventative Maintenance Log & OEM Spare Parts Price List | KONSTRUCTZ';
+        description = 'Scheduled service checklists for 50h break-in, 250h, 500h, and 1000h operating intervals, plus pricing for filters, drive belts, and bucket teeth.';
+        canonicalPath = '/?page=topic&topic-category=Service%20%26%20parts';
+      } else if (activeTopicCategory === 'Financing') {
+        title = 'Commercial Equipment Leasing & Loan Options Matrix | KONSTRUCTZ';
+        description = 'Compare FMV lease structures, $1 buyout leasing terms, and commercial bank loans for financing capital construction equipment. Check credit criteria.';
+        canonicalPath = '/?page=topic&topic-category=Financing';
+      } else {
+        title = 'Help Center & Topics | KONSTRUCTZ';
+        description = 'Find answers about KONSTRUCTZ machinery warranties, delivery, payment, maintenance, spare parts, and support topics.';
+        canonicalPath = '/?page=topic';
+      }
     } else if (currentView === 'support') {
       title = 'Service & Support | KONSTRUCTZ';
       description = 'Get official KONSTRUCTZ heavy machinery user manuals, documents, and technical service support. Apply for online self-service repairs and inquire about value-added services.';
@@ -1135,7 +1604,7 @@ export default function App() {
         '@type': 'BlogPosting',
         'headline': selectedBlogPost.title,
         'description': (selectedBlogPost.seoDescription || selectedBlogPost.desc).substring(0, 300),
-        'image': 'https://konstructzmachinery.com/favicon.svg',
+        'image': 'https://konstructz.com/favicon.svg',
         'datePublished': selectedBlogPost.publishedDate,
         'dateModified': selectedBlogPost.updatedDate || selectedBlogPost.publishedDate,
         'author': {
@@ -1147,7 +1616,7 @@ export default function App() {
           'name': 'KONSTRUCTZ',
           'logo': {
             '@type': 'ImageObject',
-            'url': 'https://konstructzmachinery.com/favicon.svg'
+            'url': 'https://konstructz.com/favicon.svg'
           }
         },
         'mainEntityOfPage': {
@@ -1160,7 +1629,7 @@ export default function App() {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
         'name': 'KONSTRUCTZ',
-        'image': 'https://konstructzmachinery.com/favicon.svg',
+        'image': 'https://konstructz.com/favicon.svg',
         'address': {
           '@type': 'PostalAddress',
           'streetAddress': '1200 Industrial Parkway, Suite A',
@@ -1170,7 +1639,7 @@ export default function App() {
           'addressCountry': 'US'
         },
         'telephone': '+1-555-234-9800',
-        'email': 'sales@konstructzmachinery.com',
+        'email': 'sales@konstructz.com',
         'url': siteUrl
       };
     }
@@ -1257,7 +1726,7 @@ export default function App() {
       script.innerHTML = JSON.stringify(schemaData);
       document.head.appendChild(script);
     }
-  }, [currentView, selectedProduct, selectedBlogPost, checkoutItem, activeCategory]);
+  }, [currentView, selectedProduct, selectedBlogPost, checkoutItem, activeCategory, activeTopicCategory]);
 
 
   const filteredInventory = allInventory.filter(item => {
@@ -1367,14 +1836,21 @@ export default function App() {
           </button>
 
           <nav className="nav-links nav-links-left">
-            <a href="?page=home" onClick={(e) => { e.preventDefault(); navigate('home'); }}>Home</a>
+            <a 
+              href="?page=home" 
+              className={currentView === 'home' ? 'active' : ''} 
+              onClick={(e) => { e.preventDefault(); navigate('home'); }}
+            >
+              Home
+            </a>
             <div className="nav-item-dropdown">
               <button 
-                className="nav-dropdown-trigger-btn"
+                className={`nav-dropdown-trigger-btn ${currentView === 'all-products' || currentView === 'product-detail' ? 'active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
                   setDropdownOpen(!dropdownOpen);
                   setAttachmentsDropdownOpen(false);
+                  setTopicDropdownOpen(false);
                 }}
               >
                 Equipment ▾
@@ -1444,11 +1920,12 @@ export default function App() {
             </div>
             <div className="nav-item-dropdown">
               <button
-                className="nav-dropdown-trigger-btn"
+                className={`nav-dropdown-trigger-btn ${currentView === 'attachments' ? 'active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
                   setAttachmentsDropdownOpen(!attachmentsDropdownOpen);
                   setDropdownOpen(false);
+                  setTopicDropdownOpen(false);
                 }}
               >
                 Attachments ▾
@@ -1491,7 +1968,13 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <a href="?page=blog" onClick={(e) => { e.preventDefault(); navigate('blog'); }}>Blog</a>
+            <a 
+              href="?page=blog" 
+              className={currentView === 'blog' || currentView === 'blog-post' || currentView === 'admin-blog' ? 'active' : ''} 
+              onClick={(e) => { e.preventDefault(); navigate('blog'); }}
+            >
+              Blog
+            </a>
           </nav>
 
           <a href="?page=home" className="logo" onClick={(e) => { e.preventDefault(); navigate('home'); }}>
@@ -1500,10 +1983,63 @@ export default function App() {
 
           <div className="header-right-col">
             <nav className="nav-links nav-links-right">
-              <a href="?page=topic" onClick={(e) => { e.preventDefault(); navigate('topic'); }}>Topic</a>
-              <a href="?page=support" onClick={(e) => { e.preventDefault(); navigate('support'); }}>Support</a>
-              <a href="?page=about" onClick={(e) => { e.preventDefault(); navigate('about'); }}>About Us</a>
-              <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }}>Contact</a>
+              <div className="nav-item-dropdown">
+                <button
+                  className={`nav-dropdown-trigger-btn ${currentView === 'topic' ? 'active' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setTopicDropdownOpen(!topicDropdownOpen);
+                    setDropdownOpen(false);
+                    setAttachmentsDropdownOpen(false);
+                  }}
+                >
+                  Topic ▾
+                </button>
+                <div className={`dropdown-menu topic-dropdown glass-panel ${topicDropdownOpen ? 'show' : ''}`}>
+                  {[
+                    'Machines',
+                    'Buying & pricing',
+                    'Delivery',
+                    'Warranty',
+                    'Service & parts',
+                    'Financing'
+                  ].map(category => (
+                    <a
+                      key={category}
+                      href={`?page=topic&topic-category=${encodeURIComponent(category)}`}
+                      className="equipment-menu-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate('topic', { 'topic-category': category });
+                        setTopicDropdownOpen(false);
+                      }}
+                    >
+                      {category}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <a 
+                href="?page=support" 
+                className={currentView === 'support' ? 'active' : ''} 
+                onClick={(e) => { e.preventDefault(); navigate('support'); }}
+              >
+                Support
+              </a>
+              <a 
+                href="?page=about" 
+                className={currentView === 'about' ? 'active' : ''} 
+                onClick={(e) => { e.preventDefault(); navigate('about'); }}
+              >
+                About Us
+              </a>
+              <a 
+                href="?page=contact" 
+                className={currentView === 'contact' ? 'active' : ''} 
+                onClick={(e) => { e.preventDefault(); navigate('contact'); }}
+              >
+                Contact
+              </a>
             </nav>
 
             <div className="header-actions">
@@ -1561,12 +2097,18 @@ export default function App() {
           <button className="mobile-menu-close" onClick={() => setMobileMenuOpen(false)}>×</button>
         </div>
         <nav className="mobile-nav-links">
-          <a href="?page=home" onClick={(e) => { e.preventDefault(); navigate('home'); setMobileMenuOpen(false); }}>Home</a>
+          <a 
+            href="?page=home" 
+            className={currentView === 'home' ? 'active' : ''} 
+            onClick={(e) => { e.preventDefault(); navigate('home'); setMobileMenuOpen(false); }}
+          >
+            Home
+          </a>
           
           {/* Equipment Accordion */}
           <div className="mobile-accordion">
             <button 
-              className="mobile-accordion-trigger" 
+              className={`mobile-accordion-trigger ${currentView === 'all-products' || currentView === 'product-detail' ? 'active' : ''}`} 
               onClick={() => {
                 setDropdownOpen(!dropdownOpen);
                 setAttachmentsDropdownOpen(false);
@@ -1621,7 +2163,7 @@ export default function App() {
           {/* Attachments Accordion */}
           <div className="mobile-accordion">
             <button 
-              className="mobile-accordion-trigger" 
+              className={`mobile-accordion-trigger ${currentView === 'attachments' ? 'active' : ''}`} 
               onClick={() => {
                 setAttachmentsDropdownOpen(!attachmentsDropdownOpen);
                 setDropdownOpen(false);
@@ -1664,11 +2206,82 @@ export default function App() {
             </div>
           </div>
 
-          <a href="?page=blog" onClick={(e) => { e.preventDefault(); navigate('blog'); setMobileMenuOpen(false); }}>Blog</a>
-          <a href="?page=topic" onClick={(e) => { e.preventDefault(); navigate('topic'); setMobileMenuOpen(false); }}>Topic</a>
-          <a href="?page=support" onClick={(e) => { e.preventDefault(); navigate('support'); setMobileMenuOpen(false); }}>Support</a>
-          <a href="?page=about" onClick={(e) => { e.preventDefault(); navigate('about'); setMobileMenuOpen(false); }}>About Us</a>
-          <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); setMobileMenuOpen(false); }}>Contact</a>
+          <a 
+            href="?page=blog" 
+            className={currentView === 'blog' || currentView === 'blog-post' || currentView === 'admin-blog' ? 'active' : ''} 
+            onClick={(e) => { e.preventDefault(); navigate('blog'); setMobileMenuOpen(false); }}
+          >
+            Blog
+          </a>
+          {/* Topic Accordion */}
+          <div className="mobile-accordion">
+            <button 
+              className={`mobile-accordion-trigger ${currentView === 'topic' ? 'active' : ''}`} 
+              onClick={() => {
+                setTopicDropdownOpen(!topicDropdownOpen);
+                setDropdownOpen(false);
+                setAttachmentsDropdownOpen(false);
+              }}
+            >
+              <span>Topic</span>
+              <span className="arrow">▾</span>
+            </button>
+            <div className={`mobile-accordion-content ${topicDropdownOpen ? 'show' : ''}`}>
+              <a 
+                href="?page=topic" 
+                onClick={(e) => { 
+                  e.preventDefault(); 
+                  navigate('topic'); 
+                  setMobileMenuOpen(false); 
+                  setTopicDropdownOpen(false); 
+                }}
+              >
+                View Help Center
+              </a>
+              {[
+                'Machines',
+                'Buying & pricing',
+                'Delivery',
+                'Warranty',
+                'Service & parts',
+                'Financing'
+              ].map(category => (
+                <a 
+                  key={category}
+                  href={`?page=topic&topic-category=${encodeURIComponent(category)}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('topic', { 'topic-category': category });
+                    setMobileMenuOpen(false);
+                    setTopicDropdownOpen(false);
+                  }}
+                >
+                  {category}
+                </a>
+              ))}
+            </div>
+          </div>
+          <a 
+            href="?page=support" 
+            className={currentView === 'support' ? 'active' : ''} 
+            onClick={(e) => { e.preventDefault(); navigate('support'); setMobileMenuOpen(false); }}
+          >
+            Support
+          </a>
+          <a 
+            href="?page=about" 
+            className={currentView === 'about' ? 'active' : ''} 
+            onClick={(e) => { e.preventDefault(); navigate('about'); setMobileMenuOpen(false); }}
+          >
+            About Us
+          </a>
+          <a 
+            href="?page=contact" 
+            className={currentView === 'contact' ? 'active' : ''} 
+            onClick={(e) => { e.preventDefault(); navigate('contact'); setMobileMenuOpen(false); }}
+          >
+            Contact
+          </a>
         </nav>
 
         <div className="mobile-menu-footer">
@@ -2197,25 +2810,41 @@ export default function App() {
           </div>
 
           <div className="blog-grid">
-            {blogPosts.map((post) => (
-              <article key={post.slug} className="blog-card-white">
-                <div className="blog-img-placeholder">
-                  {!heroImageError ? (
-                    <img 
-                      src={heroLoader} 
-                      alt={post.title} 
-                      className="blog-card-img"
-                      onError={() => setHeroImageError(true)}
-                    />
-                  ) : (
-                    <WheelLoaderSvg />
-                  )}
-                </div>
-                <div className="blog-card-info">
-                  <span className="blog-card-cat">{post.category}</span>
-                  <h3 className="blog-card-name text-black">{post.title}</h3>
-                  <span className="blog-card-date">Published {post.date} · Updated {post.updatedDate}</span>
-                  <p className="blog-card-desc">{post.desc}</p>
+            {blogPosts.map((post) => {
+              // Extract image URL from description if post.image is missing
+              let displayImage = post.image;
+              let displayDesc = post.desc || '';
+              
+              if (displayDesc) {
+                const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
+                const match = displayDesc.match(urlRegex);
+                if (match) {
+                  if (!displayImage) {
+                    displayImage = match[0];
+                  }
+                  displayDesc = displayDesc.replace(urlRegex, '').trim();
+                }
+              }
+
+              return (
+                <article key={post.slug} className="blog-card-white">
+                  <div className="blog-img-placeholder">
+                    {!heroImageError ? (
+                      <img 
+                        src={displayImage || heroLoader} 
+                        alt={post.title} 
+                        className="blog-card-img"
+                        onError={() => setHeroImageError(true)}
+                      />
+                    ) : (
+                      <WheelLoaderSvg />
+                    )}
+                  </div>
+                  <div className="blog-card-info">
+                    <span className="blog-card-cat">{post.category}</span>
+                    <h3 className="blog-card-name text-black">{post.title}</h3>
+                    <span className="blog-card-date">Published {post.date} · Updated {post.updatedDate}</span>
+                    <p className="blog-card-desc">{displayDesc}</p>
                   <a
                     href={`?page=blog-post&id=${post.slug}`}
                     className="blog-card-link"
@@ -2229,7 +2858,8 @@ export default function App() {
                   </a>
                 </div>
               </article>
-            ))}
+            );
+          })}
           </div>
         </div>
       </section>
@@ -2275,111 +2905,652 @@ export default function App() {
         </>
       ) : currentView === 'admin-blog' ? (
         <main className="admin-blog-page">
-          <section className="admin-blog-hero dark-bg">
-            <div className="section-content admin-blog-hero-content">
-              <span className="black-pill-tag">Admin Dashboard</span>
-              <h1>Manage blog posts</h1>
-              <p>Create, edit, and publish KONSTRUCTZ blog posts. Changes are saved in this browser and show immediately on the blog pages.</p>
-            </div>
-          </section>
+          <div className="dashboard-container">
+            {/* Dashboard Sidebar */}
+            <aside className="dashboard-sidebar">
+              <div className="sidebar-header">
+                <span className="admin-eyebrow">Console</span>
+                <h2>KONSTRUCTZ</h2>
+              </div>
+              <nav className="sidebar-nav">
+                <button 
+                  className={`sidebar-nav-btn ${dashboardTab === 'overview' ? 'active' : ''}`}
+                  onClick={() => setDashboardTab('overview')}
+                >
+                  <span className="nav-icon">📊</span> Overview
+                </button>
+                <button 
+                  className={`sidebar-nav-btn ${dashboardTab === 'blog' ? 'active' : ''}`}
+                  onClick={() => setDashboardTab('blog')}
+                >
+                  <span className="nav-icon">📝</span> Blog Posts
+                </button>
+                <button 
+                  className={`sidebar-nav-btn ${dashboardTab === 'inquiries' ? 'active' : ''}`}
+                  onClick={() => setDashboardTab('inquiries')}
+                >
+                  <span className="nav-icon">📥</span> Inquiries ({inquiries.length})
+                </button>
+                <button 
+                  className={`sidebar-nav-btn ${dashboardTab === 'comments' ? 'active' : ''}`}
+                  onClick={() => setDashboardTab('comments')}
+                >
+                  <span className="nav-icon">💬</span> Comments ({comments.length})
+                </button>
+                <button 
+                  className={`sidebar-nav-btn ${dashboardTab === 'inventory' ? 'active' : ''}`}
+                  onClick={() => setDashboardTab('inventory')}
+                >
+                  <span className="nav-icon">📂</span> Inventory CSV
+                </button>
+              </nav>
+              <div className="sidebar-footer">
+                <button className="sidebar-nav-btn back-home-btn" onClick={() => navigate('home')}>
+                  ← Back to Site
+                </button>
+              </div>
+            </aside>
 
-          <section className="admin-blog-workspace white-bg">
-            <div className="section-content admin-blog-grid">
-              <form className="admin-blog-form" onSubmit={handleBlogAdminSubmit}>
-                <div className="admin-blog-form-header">
-                  <div>
-                    <span className="admin-eyebrow">{editingBlogSlug ? 'Edit Post' : 'New Post'}</span>
-                    <h2>{editingBlogSlug ? 'Update article' : 'Write a blog post'}</h2>
+            {/* Dashboard Main Content */}
+            <section className="dashboard-main">
+              {dashboardTab === 'overview' && (
+                <div className="dashboard-overview-tab">
+                  <div className="tab-title-block">
+                    <span className="admin-eyebrow">Performance Metrics</span>
+                    <h2>Dashboard Overview</h2>
+                    <p>Real-time site stats, recent inquiries, product views, and comments moderation.</p>
                   </div>
-                  {editingBlogSlug && (
-                    <button type="button" className="admin-ghost-btn" onClick={resetBlogAdminForm}>Cancel</button>
-                  )}
-                </div>
 
-                <label>
-                  Title
-                  <input name="title" value={blogAdminForm.title} onChange={handleBlogAdminInput} placeholder="Blog post title" />
-                </label>
-
-                <div className="admin-form-row">
-                  <label>
-                    Slug
-                    <input name="slug" value={blogAdminForm.slug} onChange={handleBlogAdminInput} placeholder="my-blog-post" />
-                  </label>
-                  <label>
-                    Category
-                    <input name="category" value={blogAdminForm.category} onChange={handleBlogAdminInput} placeholder="Buyer Guide" />
-                  </label>
-                </div>
-
-                <label>
-                  Short Description
-                  <textarea name="desc" value={blogAdminForm.desc} onChange={handleBlogAdminInput} rows="3" placeholder="Short summary shown on blog cards" />
-                </label>
-
-                <label>
-                  SEO Description
-                  <textarea name="seoDescription" value={blogAdminForm.seoDescription} onChange={handleBlogAdminInput} rows="3" placeholder="Meta description and article overview" />
-                </label>
-
-                <div className="admin-form-row">
-                  <label>
-                    Published Date
-                    <input type="date" name="publishedDate" value={blogAdminForm.publishedDate} onChange={handleBlogAdminInput} />
-                  </label>
-                  <label>
-                    Updated Date
-                    <input type="date" name="updatedDate" value={blogAdminForm.updatedDate} onChange={handleBlogAdminInput} />
-                  </label>
-                </div>
-
-                <div className="admin-section-editor">
-                  <h3>Article Sections</h3>
-                  {[
-                    ['sectionOneTitle', 'sectionOneBody', 'Section 1'],
-                    ['sectionTwoTitle', 'sectionTwoBody', 'Section 2'],
-                    ['sectionThreeTitle', 'sectionThreeBody', 'Section 3']
-                  ].map(([titleName, bodyName, label]) => (
-                    <div className="admin-section-group" key={titleName}>
-                      <input name={titleName} value={blogAdminForm[titleName]} onChange={handleBlogAdminInput} placeholder={`${label} heading`} />
-                      <textarea name={bodyName} value={blogAdminForm[bodyName]} onChange={handleBlogAdminInput} rows="4" placeholder={`${label} content`} />
+                  {/* KPI Grid */}
+                  <div className="kpi-grid">
+                    <div className="kpi-card">
+                      <div className="kpi-icon-wrap">📥</div>
+                      <div className="kpi-info">
+                        <span>Total Inquiries</span>
+                        <strong>{inquiries.length}</strong>
+                        <span className="kpi-trend up">↑ 12% this week</span>
+                      </div>
                     </div>
-                  ))}
+                    <div className="kpi-card">
+                      <div className="kpi-icon-wrap">💬</div>
+                      <div className="kpi-info">
+                        <span>Active Comments</span>
+                        <strong>{comments.length}</strong>
+                        <span className="kpi-trend up">↑ 4% this week</span>
+                      </div>
+                    </div>
+                    <div className="kpi-card">
+                      <div className="kpi-icon-wrap">📝</div>
+                      <div className="kpi-info">
+                        <span>Blog Articles</span>
+                        <strong>{blogPosts.length}</strong>
+                        <span className="kpi-trend">Published posts</span>
+                      </div>
+                    </div>
+                    <div className="kpi-card">
+                      <div className="kpi-icon-wrap">🛞</div>
+                      <div className="kpi-info">
+                        <span>Catalog Items</span>
+                        <strong>{allInventory.length}</strong>
+                        <span className="kpi-trend">Machines & attachments</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Charts & Breakdown Grid */}
+                  <div className="charts-grid-container">
+                    {/* Top Viewed Products (pure HTML/CSS chart) */}
+                    <div className="analytics-card">
+                      <h3>Top Viewed Equipment (Analytics)</h3>
+                      <p className="card-subtitle">Page views count per product</p>
+                      
+                      <div className="analytics-bar-chart">
+                        {allInventory.slice(0, 5).map(item => {
+                          const viewsCount = productViews[item.id] || 0;
+                          const maxViews = Math.max(...allInventory.map(i => productViews[i.id] || 0), 1);
+                          const percentage = Math.min((viewsCount / maxViews) * 100, 100);
+                          
+                          return (
+                            <div className="chart-bar-row" key={item.id}>
+                              <span className="chart-item-label">{item.name}</span>
+                              <div className="chart-bar-outer">
+                                <div 
+                                  className="chart-bar-fill" 
+                                  style={{ width: `${viewsCount > 0 ? percentage : 5}%` }}
+                                ></div>
+                              </div>
+                              <span className="chart-item-value">{viewsCount} views</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Sales Inquiry Pipeline */}
+                    <div className="analytics-card">
+                      <h3>Inquiry Status Breakdown</h3>
+                      <p className="card-subtitle">Pipeline distribution for active leads</p>
+                      
+                      <div className="pipeline-bars">
+                        {(() => {
+                          const total = inquiries.length || 1;
+                          const pendingCount = inquiries.filter(i => i.status === 'Pending').length;
+                          const contactedCount = inquiries.filter(i => i.status === 'Contacted').length;
+                          const closedCount = inquiries.filter(i => i.status === 'Closed').length;
+
+                          return (
+                            <>
+                              <div className="pipeline-row">
+                                <div className="pipeline-info">
+                                  <span>Pending Review</span>
+                                  <strong>{pendingCount} ({Math.round(pendingCount / total * 100)}%)</strong>
+                                </div>
+                                <div className="pipeline-bar-outer">
+                                  <div className="pipeline-bar-fill pending" style={{ width: `${pendingCount / total * 100}%` }}></div>
+                                </div>
+                              </div>
+                              <div className="pipeline-row">
+                                <div className="pipeline-info">
+                                  <span>Contacted / In Progress</span>
+                                  <strong>{contactedCount} ({Math.round(contactedCount / total * 100)}%)</strong>
+                                </div>
+                                <div className="pipeline-bar-outer">
+                                  <div className="pipeline-bar-fill contacted" style={{ width: `${contactedCount / total * 100}%` }}></div>
+                                </div>
+                              </div>
+                              <div className="pipeline-row">
+                                <div className="pipeline-info">
+                                  <span>Closed / Completed</span>
+                                  <strong>{closedCount} ({Math.round(closedCount / total * 100)}%)</strong>
+                                </div>
+                                <div className="pipeline-bar-outer">
+                                  <div className="pipeline-bar-fill closed" style={{ width: `${closedCount / total * 100}%` }}></div>
+                                </div>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Inquiries Panel */}
+                  <div className="recent-activity-panel">
+                    <div className="activity-header">
+                      <h3>Recent Sales Enquiries</h3>
+                      <button className="view-all-btn" onClick={() => setDashboardTab('inquiries')}>View All Inquiries</button>
+                    </div>
+                    
+                    <div className="dashboard-table-wrapper">
+                      <table className="dashboard-table">
+                        <thead>
+                          <tr>
+                            <th>Customer</th>
+                            <th>Inquiry Type</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {inquiries.length === 0 ? (
+                            <tr>
+                              <td colSpan="5" className="empty-table-cell">No inquiries received yet.</td>
+                            </tr>
+                          ) : (
+                            inquiries.slice(0, 3).map(inq => (
+                              <tr key={inq.id}>
+                                <td>
+                                  <strong>{inq.firstName} {inq.lastName}</strong>
+                                  <small>{inq.email}</small>
+                                </td>
+                                <td><span className="type-badge">{inq.inquiryType}</span></td>
+                                <td className="message-cell" title={inq.message}>{inq.message}</td>
+                                <td>{inq.date}</td>
+                                <td>
+                                  <span className={`status-pill ${inq.status?.toLowerCase() || 'pending'}`}>
+                                    {inq.status || 'Pending'}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
+              )}
 
-                {blogAdminStatus && <p className="admin-status">{blogAdminStatus}</p>}
+              {dashboardTab === 'blog' && (
+                <div className="dashboard-blog-tab">
+                  <div className="tab-title-block">
+                    <span className="admin-eyebrow">Content Management</span>
+                    <h2>Blog Articles Manager</h2>
+                    <p>Create new articles or edit existing published posts on the site.</p>
+                  </div>
 
-                <div className="admin-form-actions">
-                  <button type="submit" className="admin-primary-btn">{editingBlogSlug ? 'Update Post' : 'Publish Post'}</button>
-                  <button type="button" className="admin-ghost-btn" onClick={handleResetBlogPosts}>Reset Default Posts</button>
+                  <div className="admin-blog-grid">
+                    <form className="admin-blog-form" onSubmit={handleBlogAdminSubmit}>
+                      <div className="admin-blog-form-header">
+                        <div>
+                          <span className="admin-eyebrow">{editingBlogSlug ? 'Edit Post' : 'New Post'}</span>
+                          <h2>{editingBlogSlug ? 'Update Article' : 'Write a Blog Post'}</h2>
+                        </div>
+                        {editingBlogSlug && (
+                          <button type="button" className="admin-ghost-btn" onClick={resetBlogAdminForm}>Cancel</button>
+                        )}
+                      </div>
+
+                      <label>
+                        Title *
+                        <input name="title" value={blogAdminForm.title} onChange={handleBlogAdminInput} placeholder="Blog post title" />
+                      </label>
+
+                      <div className="admin-form-row">
+                        <label>
+                          Slug
+                          <input name="slug" value={blogAdminForm.slug} onChange={handleBlogAdminInput} placeholder="my-blog-post" />
+                        </label>
+                        <label>
+                          Category
+                          <input name="category" value={blogAdminForm.category} onChange={handleBlogAdminInput} placeholder="Buyer Guide" />
+                        </label>
+                      </div>
+
+                      <label>
+                        Short Description *
+                        <textarea name="desc" value={blogAdminForm.desc} onChange={handleBlogAdminInput} rows="3" placeholder="Short summary shown on blog cards" />
+                      </label>
+
+                      <div className="image-field-container">
+                        <label style={{ display: 'block' }}>
+                          Featured Image
+                          <div className="image-uploader-wrapper">
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              id="blog-image-upload" 
+                              onChange={handleBlogImageUpload} 
+                              style={{ display: 'none' }}
+                            />
+                            <label htmlFor="blog-image-upload" className="image-upload-dropzone">
+                              {blogAdminForm.image ? (
+                                <div className="image-preview-stage">
+                                  <img src={blogAdminForm.image} alt="Preview" />
+                                  <span className="change-img-badge">Change Image</span>
+                                </div>
+                              ) : (
+                                <div className="upload-placeholder">
+                                  <span className="upload-icon">📷</span>
+                                  <span>Click to select image file</span>
+                                  <span className="upload-meta">Formats: PNG, JPG, WEBP</span>
+                                </div>
+                              )}
+                            </label>
+                            
+                            <div className="image-url-alternative">
+                              <span>or paste image URL:</span>
+                              <input 
+                                name="image" 
+                                value={blogAdminForm.image} 
+                                onChange={handleBlogAdminInput} 
+                                placeholder="https://example.com/blog-image.jpg" 
+                              />
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <label>
+                        SEO Description
+                        <textarea name="seoDescription" value={blogAdminForm.seoDescription} onChange={handleBlogAdminInput} rows="3" placeholder="Meta description and article overview" />
+                      </label>
+
+                      <div className="admin-form-row">
+                        <label>
+                          Published Date
+                          <input type="date" name="publishedDate" value={blogAdminForm.publishedDate} onChange={handleBlogAdminInput} />
+                        </label>
+                        <label>
+                          Updated Date
+                          <input type="date" name="updatedDate" value={blogAdminForm.updatedDate} onChange={handleBlogAdminInput} />
+                        </label>
+                      </div>
+
+                      <div className="admin-section-editor">
+                        <h3>Article Sections</h3>
+                        {[
+                          ['sectionOneTitle', 'sectionOneBody', 'Section 1'],
+                          ['sectionTwoTitle', 'sectionTwoBody', 'Section 2'],
+                          ['sectionThreeTitle', 'sectionThreeBody', 'Section 3']
+                        ].map(([titleName, bodyName, label]) => (
+                          <div className="admin-section-group" key={titleName}>
+                            <input name={titleName} value={blogAdminForm[titleName]} onChange={handleBlogAdminInput} placeholder={`${label} heading`} />
+                            <textarea name={bodyName} value={blogAdminForm[bodyName]} onChange={handleBlogAdminInput} rows="4" placeholder={`${label} content`} />
+                          </div>
+                        ))}
+                      </div>
+
+                      {blogAdminStatus && <p className="admin-status">{blogAdminStatus}</p>}
+
+                      <div className="admin-form-actions">
+                        <button type="submit" className="admin-primary-btn">{editingBlogSlug ? 'Update Post' : 'Publish Post'}</button>
+                        <button type="button" className="admin-ghost-btn" onClick={handleResetBlogPosts}>Reset Default Posts</button>
+                      </div>
+                    </form>
+
+                    <aside className="admin-blog-list">
+                      <div className="admin-blog-list-header">
+                        <span className="admin-eyebrow">Published</span>
+                        <h2>{blogPosts.length} articles</h2>
+                      </div>
+
+                      <div className="admin-post-stack">
+                        {blogPosts.map((post) => (
+                          <article className="admin-post-card" key={post.slug}>
+                            <div>
+                              <span>{post.category}</span>
+                              <h3>{post.title}</h3>
+                              <p>{post.desc}</p>
+                              <small>{post.slug} · Updated {post.updatedDate}</small>
+                            </div>
+                            <div className="admin-post-actions">
+                              <button type="button" onClick={() => handleEditBlogPost(post)}>Edit</button>
+                              <button type="button" onClick={() => handleDeleteBlogPost(post.slug)}>Delete</button>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    </aside>
+                  </div>
                 </div>
-              </form>
+              )}
 
-              <aside className="admin-blog-list">
-                <div className="admin-blog-list-header">
-                  <span className="admin-eyebrow">Published</span>
-                  <h2>{blogPosts.length} posts</h2>
+              {dashboardTab === 'inquiries' && (
+                <div className="dashboard-inquiries-tab">
+                  <div className="tab-title-block">
+                    <span className="admin-eyebrow">Customer Buying Data</span>
+                    <h2>Sales Inquiries & Quote Requests</h2>
+                    <p>Track direct website purchases, product configuration inquiries, and sales leads.</p>
+                  </div>
+
+                  {/* Filter & Search Rail */}
+                  <div className="table-controls-rail">
+                    <div className="search-bar">
+                      <input 
+                        type="text" 
+                        placeholder="Search leads name, email or messages..." 
+                        value={inquirySearch} 
+                        onChange={(e) => setInquirySearch(e.target.value)}
+                      />
+                    </div>
+                    <div className="filter-tabs">
+                      {['All', 'Pending', 'Contacted', 'Closed'].map(status => (
+                        <button 
+                          key={status} 
+                          className={`filter-tab-btn ${inquiryStatusFilter === status ? 'active' : ''}`}
+                          onClick={() => setInquiryStatusFilter(status)}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="dashboard-table-wrapper">
+                    <table className="dashboard-table">
+                      <thead>
+                        <tr>
+                          <th>Customer Info</th>
+                          <th>Inquiry Type</th>
+                          <th style={{ width: '40%' }}>Message Details</th>
+                          <th>Date Received</th>
+                          <th>Status Pipeline</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          const filtered = inquiries.filter(inq => {
+                            const matchesStatus = inquiryStatusFilter === 'All' || inq.status === inquiryStatusFilter;
+                            const term = inquirySearch.toLowerCase();
+                            const matchesSearch = 
+                              inq.firstName?.toLowerCase().includes(term) ||
+                              inq.lastName?.toLowerCase().includes(term) ||
+                              inq.email?.toLowerCase().includes(term) ||
+                              inq.message?.toLowerCase().includes(term) ||
+                              inq.inquiryType?.toLowerCase().includes(term);
+                            return matchesStatus && matchesSearch;
+                          });
+
+                          if (filtered.length === 0) {
+                            return (
+                              <tr>
+                                <td colSpan="6" className="empty-table-cell">No matching inquiries found.</td>
+                              </tr>
+                            );
+                          }
+
+                          return filtered.map(inq => (
+                            <tr key={inq.id}>
+                              <td>
+                                <div className="customer-info-cell">
+                                  <strong>{inq.firstName} {inq.lastName}</strong>
+                                  <span>📧 {inq.email}</span>
+                                  {inq.phone && inq.phone !== 'N/A' && <span>📞 {inq.phone}</span>}
+                                </div>
+                              </td>
+                              <td>
+                                <span className="type-badge">{inq.inquiryType}</span>
+                              </td>
+                              <td>
+                                <p className="inquiry-message-para">{inq.message}</p>
+                              </td>
+                              <td>{inq.date}</td>
+                              <td>
+                                <select 
+                                  value={inq.status || 'Pending'} 
+                                  onChange={(e) => handleUpdateInquiryStatus(inq.id, e.target.value)}
+                                  className={`status-select-dropdown ${inq.status?.toLowerCase() || 'pending'}`}
+                                >
+                                  <option value="Pending">Pending</option>
+                                  <option value="Contacted">Contacted</option>
+                                  <option value="Closed">Closed</option>
+                                </select>
+                              </td>
+                              <td>
+                                <button 
+                                  type="button" 
+                                  className="action-delete-btn" 
+                                  onClick={() => handleDeleteInquiry(inq.id)}
+                                  title="Delete inquiry"
+                                >
+                                  🗑 Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ));
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+              )}
 
-                <div className="admin-post-stack">
-                  {blogPosts.map((post) => (
-                    <article className="admin-post-card" key={post.slug}>
+              {dashboardTab === 'comments' && (
+                <div className="dashboard-comments-tab">
+                  <div className="tab-title-block">
+                    <span className="admin-eyebrow">Community Moderation</span>
+                    <h2>Blog Comments Moderator</h2>
+                    <p>Review, approve, reject, or delete visitor comments left on blog posts.</p>
+                  </div>
+
+                  <div className="dashboard-table-wrapper">
+                    <table className="dashboard-table">
+                      <thead>
+                        <tr>
+                          <th>Author</th>
+                          <th>Related Blog Post</th>
+                          <th style={{ width: '45%' }}>Comment Text</th>
+                          <th>Date Posted</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {comments.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="empty-table-cell">No comments submitted yet.</td>
+                          </tr>
+                        ) : (
+                          comments.map(c => {
+                            const post = blogPosts.find(p => p.slug === c.blogSlug);
+                            return (
+                              <tr key={c.id}>
+                                <td>
+                                  <strong>{c.authorName}</strong>
+                                  <small>{c.authorEmail}</small>
+                                </td>
+                                <td>
+                                  <span className="post-link-span" onClick={() => navigate('blog-post', { id: c.blogSlug })} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--accent)' }}>
+                                    {post ? post.title : c.blogSlug}
+                                  </span>
+                                </td>
+                                <td>
+                                  <p className="comment-text-body">{c.content}</p>
+                                </td>
+                                <td>{c.date}</td>
+                                <td>
+                                  <span className={`status-pill ${c.status?.toLowerCase() === 'approved' ? 'closed' : 'pending'}`}>
+                                    {c.status || 'Pending'}
+                                  </span>
+                                </td>
+                                <td>
+                                  <div className="comment-actions-cell">
+                                    <button 
+                                      type="button" 
+                                      className="action-approve-btn" 
+                                      onClick={() => handleToggleCommentStatus(c.id)}
+                                    >
+                                      {c.status === 'Approved' ? 'Reject' : 'Approve'}
+                                    </button>
+                                    <button 
+                                      type="button" 
+                                      className="action-delete-btn" 
+                                      onClick={() => handleDeleteComment(c.id)}
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {dashboardTab === 'inventory' && (
+                <div className="dashboard-inventory-tab">
+                  <div className="tab-title-block">
+                    <span className="admin-eyebrow">Data Store Mapping</span>
+                    <h2>Store Product CSV Uploader</h2>
+                    <p>Upload a product catalog CSV here to save it locally in the browser and preview mapping rules.</p>
+                  </div>
+
+                  <div className="csv-store-layout">
+                    <div className="csv-uploader-panel">
                       <div>
-                        <span>{post.category}</span>
-                        <h3>{post.title}</h3>
-                        <p>{post.desc}</p>
-                        <small>{post.slug} · Updated {post.updatedDate}</small>
+                        <h2 className="csv-panel-title text-black">CSV File Upload</h2>
+                        <p className="csv-panel-copy">
+                          Select a comma-separated inventory sheet. The system saves it in browser memory and displays the top 10 preview rows.
+                        </p>
                       </div>
-                      <div className="admin-post-actions">
-                        <button type="button" onClick={() => handleEditBlogPost(post)}>Edit</button>
-                        <button type="button" onClick={() => handleDeleteBlogPost(post.slug)}>Delete</button>
+
+                      <label className="csv-dropzone" htmlFor="product-csv-file">
+                        <span className="csv-dropzone-title">Choose CSV File</span>
+                        <span className="csv-dropzone-meta">Accepted format: .csv</span>
+                        <input
+                          id="product-csv-file"
+                          type="file"
+                          accept=".csv,text/csv"
+                          onChange={handleCsvUpload}
+                        />
+                      </label>
+
+                      <div className="csv-actions">
+                        <button className="cta-button black-pill-btn" onClick={handleDownloadCsv}>
+                          Download CSV
+                        </button>
+                        <button className="cta-button white-pill-dark-border" onClick={handleClearCsv}>
+                          Clear Stored CSV
+                        </button>
                       </div>
-                    </article>
-                  ))}
+
+                      {csvStatus && <p className="csv-status">{csvStatus}</p>}
+                    </div>
+
+                    <div className="csv-summary-panel">
+                      <h2 className="csv-panel-title text-black">Stored Metadata</h2>
+                      <div className="csv-summary-grid">
+                        <div className="csv-summary-item">
+                          <span>File Name</span>
+                          <strong>{storedCsvName || 'No file uploaded'}</strong>
+                        </div>
+                        <div className="csv-summary-item">
+                          <span>Headers</span>
+                          <strong>{csvPreviewHeaders.length}</strong>
+                        </div>
+                        <div className="csv-summary-item">
+                          <span>Stored Rows</span>
+                          <strong>{csvPreviewRows.length}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="csv-preview-wrap" style={{ marginTop: '28px' }}>
+                    <div className="csv-preview-header">
+                      <h2 className="csv-panel-title text-black">CSV Data Grid Preview</h2>
+                      <p>Visualizing the top 10 items in the active CSV.</p>
+                    </div>
+
+                    {csvPreviewHeaders.length > 0 ? (
+                      <div className="csv-table-scroll">
+                        <table className="csv-preview-table">
+                          <thead>
+                            <tr>
+                              {csvPreviewHeaders.map((header, index) => (
+                                <th key={`${header}-${index}`}>{header || `Col ${index + 1}`}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {csvPreviewRows.map((row, rowIndex) => (
+                              <tr key={`csv-row-${rowIndex}`}>
+                                {csvPreviewHeaders.map((_, colIndex) => (
+                                  <td key={`csv-cell-${rowIndex}-${colIndex}`}>{row[colIndex] || ''}</td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="csv-empty-state">
+                        <h3>No sheet data parsed</h3>
+                        <p>Upload a product CSV to inspect the data records.</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </aside>
-            </div>
-          </section>
+              )}
+            </section>
+          </div>
         </main>
       ) : currentView === 'blog' ? (
         <main className="blog-page">
@@ -2396,27 +3567,44 @@ export default function App() {
               <div className="blog-page-main">
                 <h2 className="blog-page-kicker text-black">Choose the categories you like</h2>
                 <div className="blog-page-grid">
-                  {blogPosts.map((post) => (
-                    <article key={post.slug} className="blog-page-card">
-                      <a
-                        href={`?page=blog-post&id=${post.slug}`}
-                        className="blog-page-card-media"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedBlogPost(post);
-                          navigate('blog-post', { id: post.slug });
-                        }}
-                      >
-                        <span>{post.category}</span>
-                      </a>
-                      <div className="blog-page-card-body">
-                        <div className="blog-page-card-meta">
+                  {blogPosts.map((post) => {
+                    // Extract image URL from description if post.image is missing
+                    let displayImage = post.image;
+                    let displayDesc = post.desc || '';
+                    
+                    if (displayDesc) {
+                      const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
+                      const match = displayDesc.match(urlRegex);
+                      if (match) {
+                        if (!displayImage) {
+                          displayImage = match[0];
+                        }
+                        displayDesc = displayDesc.replace(urlRegex, '').trim();
+                      }
+                    }
+
+                    return (
+                      <article key={post.slug} className="blog-page-card">
+                        <a
+                          href={`?page=blog-post&id=${post.slug}`}
+                          className={`blog-page-card-media ${displayImage ? 'has-image' : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSelectedBlogPost(post);
+                            navigate('blog-post', { id: post.slug });
+                          }}
+                        >
+                          {displayImage ? <img src={displayImage} alt={post.title} /> : null}
                           <span>{post.category}</span>
-                          <time dateTime={post.updatedDate}>{post.updatedDate}</time>
-                          <span>KONSTRUCTZ</span>
-                        </div>
-                        <h3>{post.title}</h3>
-                        <p>{post.desc}</p>
+                        </a>
+                        <div className="blog-page-card-body">
+                          <div className="blog-page-card-meta">
+                            <span>{post.category}</span>
+                            <time dateTime={post.updatedDate}>{post.updatedDate}</time>
+                            <span>KONSTRUCTZ</span>
+                          </div>
+                          <h3>{post.title}</h3>
+                          <p>{displayDesc}</p>
                         <a
                           href={`?page=blog-post&id=${post.slug}`}
                           className="blog-page-read"
@@ -2430,7 +3618,8 @@ export default function App() {
                         </a>
                       </div>
                     </article>
-                  ))}
+                  );
+                })}
                 </div>
               </div>
 
@@ -2490,34 +3679,196 @@ export default function App() {
           <article className="blog-post-article white-bg">
             <div className="section-content blog-post-content">
               <div className="blog-post-featured-image">
-                {!heroImageError ? (
-                  <img
-                    src={heroLoader}
-                    alt={selectedBlogPost.title}
-                    onError={() => setHeroImageError(true)}
-                  />
-                ) : (
-                  <WheelLoaderSvg />
-                )}
+                {(() => {
+                  let displayImage = selectedBlogPost.image;
+                  if (!displayImage && selectedBlogPost.desc) {
+                    const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
+                    const match = selectedBlogPost.desc.match(urlRegex);
+                    if (match) {
+                      displayImage = match[0];
+                    }
+                  }
+                  return !heroImageError ? (
+                    <img
+                      src={displayImage || heroLoader}
+                      alt={selectedBlogPost.title}
+                      onError={() => setHeroImageError(true)}
+                    />
+                  ) : (
+                    <WheelLoaderSvg />
+                  );
+                })()}
               </div>
 
-              <div className="blog-post-body">
-                <h2>Overview</h2>
-                <p>{selectedBlogPost.seoDescription}</p>
+              <div className="blog-post-shell">
+                <div className="blog-post-main-column">
+                  <div className="blog-post-summary-card">
+                    <span>Field guide</span>
+                    <h2>Article overview</h2>
+                    <p>{(() => {
+                      let displayDesc = selectedBlogPost.seoDescription || selectedBlogPost.desc || '';
+                      const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
+                      return displayDesc.replace(urlRegex, '').trim();
+                    })()}</p>
+                  </div>
 
-                {selectedBlogPost.sections.map((section) => (
-                  <section key={section.h2}>
-                    <h2>{section.h2}</h2>
-                    <p>{section.body}</p>
-                    {section.h3 && (
-                      <>
-                        <h3>{section.h3}</h3>
-                        <p>{section.h3Body}</p>
-                      </>
+                  <div className="blog-post-body">
+                    {selectedBlogPost.sections.map((section, index) => (
+                      <section key={section.h2} id={`article-section-${index + 1}`}>
+                        <span className="blog-post-section-label">Step {String(index + 1).padStart(2, '0')}</span>
+                        <h2>{section.h2}</h2>
+                        <p>{section.body}</p>
+                        {section.h3 && (
+                          <>
+                            <h3>{section.h3}</h3>
+                            <p>{section.h3Body}</p>
+                          </>
+                        )}
+                      </section>
+                    ))}
+
+                    <div className="blog-post-cta-panel">
+                      <span>Need the right machine?</span>
+                      <h3>Talk with KONSTRUCTZ before you buy.</h3>
+                      <p>Send us your jobsite, material, and budget details. We can help match the equipment to the work instead of guessing.</p>
+                      <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }}>Request guidance</a>
+                    </div>
+                  </div>
+                </div>
+
+                <aside className="blog-post-sidebar">
+                  <div className="blog-post-side-card">
+                    <span className="blog-post-side-kicker">Article details</span>
+                    <dl>
+                      <div>
+                        <dt>Category</dt>
+                        <dd>{selectedBlogPost.category}</dd>
+                      </div>
+                      <div>
+                        <dt>Published</dt>
+                        <dd>{selectedBlogPost.date}</dd>
+                      </div>
+                      <div>
+                        <dt>Updated</dt>
+                        <dd>{selectedBlogPost.updatedDate}</dd>
+                      </div>
+                      <div>
+                        <dt>Author</dt>
+                        <dd>KONSTRUCTZ Team</dd>
+                      </div>
+                    </dl>
+                  </div>
+
+                  <div className="blog-post-side-card">
+                    <span className="blog-post-side-kicker">In this guide</span>
+                    <nav className="blog-post-toc">
+                      {selectedBlogPost.sections.map((section, index) => (
+                        <a href={`#article-section-${index + 1}`} key={section.h2}>
+                          {String(index + 1).padStart(2, '0')} {section.h2}
+                        </a>
+                      ))}
+                    </nav>
+                  </div>
+                </aside>
+              </div>
+
+              <div className="blog-related-posts">
+                <div className="blog-related-header">
+                  <span>Keep reading</span>
+                  <h2>More KONSTRUCTZ guides</h2>
+                </div>
+                <div className="blog-related-grid">
+                  {blogPosts
+                    .filter((post) => post.slug !== selectedBlogPost.slug)
+                    .slice(0, 3)
+                    .map((post) => (
+                      <a
+                        key={post.slug}
+                        href={`?page=blog-post&id=${post.slug}`}
+                        className="blog-related-card"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedBlogPost(post);
+                          navigate('blog-post', { id: post.slug });
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                      >
+                        <span>{post.category}</span>
+                        <h3>{post.title}</h3>
+                        <p>{post.desc}</p>
+                      </a>
+                    ))}
+                </div>
+              </div>
+
+              {/* Blog Comments Section */}
+              <div className="blog-comments-container">
+                  <hr className="comments-divider" />
+                  <h3 className="comments-heading">
+                    Comments ({comments.filter(c => c.blogSlug === selectedBlogPost.slug && c.status === 'Approved').length})
+                  </h3>
+                  
+                  <div className="comments-stack">
+                    {comments.filter(c => c.blogSlug === selectedBlogPost.slug && c.status === 'Approved').length === 0 ? (
+                      <p className="no-comments-placeholder">No comments yet. Be the first to share your thoughts!</p>
+                    ) : (
+                      comments
+                        .filter(c => c.blogSlug === selectedBlogPost.slug && c.status === 'Approved')
+                        .map(comment => (
+                          <div key={comment.id} className="user-comment-card">
+                            <div className="comment-header-row">
+                              <strong className="commenter-name text-black">{comment.authorName}</strong>
+                              <span className="comment-timestamp">{comment.date}</span>
+                            </div>
+                            <p className="comment-body-text">{comment.content}</p>
+                          </div>
+                        ))
                     )}
-                  </section>
-                ))}
-              </div>
+                  </div>
+
+                  <form className="comment-reply-form" onSubmit={handleCommentSubmit}>
+                    <h3>Leave a Comment</h3>
+                    <p className="comment-form-note">Your email address will not be published. Required fields are marked *</p>
+                    
+                    <div className="comment-input-row">
+                      <label>
+                        Name *
+                        <input 
+                          type="text" 
+                          required 
+                          placeholder="John Doe" 
+                          value={commentForm.authorName} 
+                          onChange={(e) => setCommentForm(prev => ({ ...prev, authorName: e.target.value }))}
+                        />
+                      </label>
+                      <label>
+                        Email *
+                        <input 
+                          type="email" 
+                          required 
+                          placeholder="john@example.com" 
+                          value={commentForm.authorEmail} 
+                          onChange={(e) => setCommentForm(prev => ({ ...prev, authorEmail: e.target.value }))}
+                        />
+                      </label>
+                    </div>
+                    
+                    <label className="comment-textarea-label">
+                      Comment *
+                      <textarea 
+                        required 
+                        rows="5" 
+                        placeholder="Share your thoughts or questions about this machine/guide..." 
+                        value={commentForm.content} 
+                        onChange={(e) => setCommentForm(prev => ({ ...prev, content: e.target.value }))}
+                      />
+                    </label>
+                    
+                    <button type="submit" className="cta-button accent-pill-btn comment-submit-btn">
+                      Post Comment
+                    </button>
+                  </form>
+                </div>
             </div>
           </article>
         </main>
@@ -2615,196 +3966,737 @@ export default function App() {
           </section>
         </main>
       ) : currentView === 'topic' ? (
-        <main className="topic-page">
-          <section className="topic-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.54)), url(${constructionBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-            <div className="topic-hero-overlay"></div>
-            <div className="section-content topic-hero-content">
-              <p>
-                Whether you have questions about our machines, need technical support, want to request a quote, or are ready to place an order, our team is here to help every step of the way.
-              </p>
-            </div>
-          </section>
+        <main className={`topic-page ${activeTopicCategory === 'Hub' ? 'hub-view' : 'category-view'}`}>
+          {activeTopicCategory === 'Hub' ? (
+            /* HUB LANDING VIEW */
+            <>
+              <section className="topic-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.54)), url(${constructionBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className="topic-hero-overlay"></div>
+                <div className="section-content topic-hero-content">
+                  <h1 className="hero-display-title" style={{ fontFamily: "'PT Serif', Georgia, serif" }}>Help Center & Documentation</h1>
+                  <p>
+                    Find technical performance parameters, safety guidelines, buying guides, shipping tracking, warranty information, and financing matrices.
+                  </p>
+                </div>
+              </section>
 
-          <section className="topic-help white-bg">
-            <div className="section-content topic-help-content">
-              <div className="topic-title-block">
-                <span className="topic-section-line"></span>
-                <span className="topic-section-label">Help center</span>
-                <h1>Frequently asked questions</h1>
-                <p>Popular searches</p>
-              </div>
+              <section className="topic-help white-bg">
+                <div className="section-content topic-help-content">
+                  <div className="topic-title-block" style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <span className="topic-section-line" style={{ margin: '0 auto 12px auto', display: 'block' }}></span>
+                    <span className="topic-section-label" style={{ display: 'block', fontSize: '18px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}>Support Center</span>
+                    <h2 style={{ fontSize: '32px', marginTop: '10px' }}>How can we help you today?</h2>
+                    <p style={{ fontSize: '16px', color: '#64748b' }}>Select a category below or try popular search tags:</p>
+                  </div>
 
-              <div className="topic-search-tags" aria-label="Popular searches">
-                {['Warranty', 'Delivery', 'Request a demo', 'Payment', 'Maintenance', 'Spare parts'].map(tag => (
-                  <button key={tag}>{tag}</button>
-                ))}
-              </div>
-
-              <div className="topic-faq-layout">
-                <aside className="topic-category-list">
-                  <h2>Category</h2>
-                  {[
-                    'Machines',
-                    'Buying & pricing',
-                    'Delivery',
-                    'Warranty',
-                    'Service & parts',
-                    'Financing'
-                  ].map(category => (
-                    <button key={category} className={category === 'Machines' ? 'active' : ''}>
-                      <span className="topic-category-icon">▣</span>
-                      {category}
-                    </button>
-                  ))}
-                </aside>
-
-                <div className="topic-faq-panel">
-                  {[
-                    {
-                      id: 'topic-1',
-                      question: 'What types of machines does KONSTRUCTZ manufacture?',
-                      answer: 'KONSTRUCTZ offers compact and jobsite-ready machinery including mini excavators, wheel loaders, mini skid steers, dumpers, rollers, forklifts, and attachments.'
-                    },
-                    {
-                      id: 'topic-2',
-                      question: 'What is the difference between the K2-500 and K2-731 wheel loaders?',
-                      answer: 'The right loader depends on operating weight, lift requirements, engine package, and jobsite access. Our team can help compare models against your daily workload.'
-                    },
-                    {
-                      id: 'topic-3',
-                      question: 'Can I see the machines before purchasing?',
-                      answer: 'Yes. Contact our sales team to request photos, video walkthroughs, available demos, or current inventory details before you place an order.'
-                    },
-                    {
-                      id: 'topic-4',
-                      question: 'Are KONSTRUCTZ machines certified to international standards?',
-                      answer: 'Machines are selected and documented for the target market. Ask our team for the exact compliance and certification details for your machine and destination.'
-                    }
-                  ].map(item => (
-                    <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
-                      <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
-                        <span>{item.question}</span>
-                        <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                  <div className="topic-search-tags" style={{ justifyContent: 'center', marginBottom: '40px' }} aria-label="Popular searches">
+                    {['Warranty', 'Delivery', 'Request a demo', 'Payment', 'Maintenance', 'Spare parts'].map(tag => (
+                      <button 
+                        key={tag}
+                        onClick={() => handleTagClick(tag)}
+                        className=""
+                      >
+                        {tag}
                       </button>
-                      <div className="topic-faq-answer">
-                        <p>{item.answer}</p>
+                    ))}
+                  </div>
+
+                  {/* Hub Grid */}
+                  <div className="topic-hub-grid">
+                    {[
+                      { id: 'Machines', title: 'Machines & Safety', icon: '⚙️', desc: 'Technical specifications, engine options, operational safety rules and break-in protocols for heavy loaders and excavators.' },
+                      { id: 'Buying & pricing', title: 'Buying & Pricing', icon: '🏷️', desc: 'Transparent purchase process, step-by-step acquisition flow, and our interactive commercial payment calculator.' },
+                      { id: 'Delivery', title: 'Delivery & Logistics', icon: '🚢', desc: 'Ocean freight vs. RoRo shipping methods, custom clearance checkpoints, and live delivery code tracker.' },
+                      { id: 'Warranty', title: 'Warranty & Claims', icon: '🛡️', desc: 'Our official 12-Month factory warranty certificate and detailed component coverage inspector.' },
+                      { id: 'Service & parts', title: 'Service & Parts', icon: '🔧', desc: 'Scheduled preventative maintenance checklists, operating hour schedules, and OEM spare parts pricing.' },
+                      { id: 'Financing', title: 'Commercial Financing', icon: '🏦', desc: 'Compare equipment loans, FMV leases, and $1 buyout options, and check business approval criteria.' }
+                    ].map(card => (
+                      <div key={card.id} className="topic-hub-card glass-panel" onClick={() => navigate('topic', { 'topic-category': card.id })}>
+                        <div className="hub-card-icon">{card.icon}</div>
+                        <h3>{card.title}</h3>
+                        <p>{card.desc}</p>
+                        <span className="hub-card-link">Explore Details →</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* General Hub FAQs */}
+                  <div className="topic-hub-faq-box" style={{ marginTop: '60px', borderTop: '1px solid #e2e8f0', paddingTop: '40px' }}>
+                    <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center' }}>Help Center General FAQs</h3>
+                    <div className="topic-subpage-faq-section" style={{ maxWidth: '800px', margin: '0 auto' }}>
+                      {[
+                        { id: 'gen-1', question: 'How do I contact customer support directly?', answer: 'You can email us directly at sales@konstructz.com, call our hotline, or submit a form through our Contact page. We respond to all inquiries within 24 hours.' },
+                        { id: 'gen-2', question: 'Can I purchase spare parts directly from the site?', answer: 'Yes, select the parts under our "Service & Parts" section and click "Request Parts Quote". A sales representative will confirm availability and draft a secure invoice for your order.' }
+                      ].map(item => (
+                        <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
+                          <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
+                            <span>{item.question}</span>
+                            <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                          </button>
+                          <div className="topic-faq-answer">
+                            <p>{item.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : (
+            /* BREADCRUMB & BESPOKE PAGE VIEWS */
+            <div className="category-subpage-container">
+              <div className="category-subpage-nav-header">
+                <div className="section-content">
+                  <a href="?page=topic" onClick={(e) => { e.preventDefault(); navigate('topic'); }} className="back-hub-link">
+                    ← Back to Help Center Hub
+                  </a>
+                  <span className="breadcrumb-separator">/</span>
+                  <span className="breadcrumb-current">{activeTopicCategory}</span>
+                </div>
+              </div>
+
+              {/* A. MACHINES & SAFETY (skidsteers.org layout) */}
+              {activeTopicCategory === 'Machines' && (
+                <div className="topic-subpage-content machines-safety-subpage theme-white-doc">
+                  <div className="section-content doc-narrow-wrap">
+                    <span className="doc-kicker-tag">TECHNICAL DOCUMENTATION & SAFETY</span>
+                    <h1 className="doc-main-title">TYPHON STOMP Mini Skid Steer</h1>
+                    <p className="doc-subtitle">
+                      A heavy-duty, track-sole mini loader engineered for compact construction and precision earth-moving.
+                    </p>
+
+                    {/* Technical Performance Table */}
+                    <div className="doc-section-block">
+                      <h2 className="doc-section-header">Technical Performance</h2>
+                      <div className="doc-table-wrapper">
+                        <table className="doc-spec-table">
+                          <thead>
+                            <tr>
+                              <th>Parameter</th>
+                              <th>Specification</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Model</td>
+                              <td>LH180S</td>
+                            </tr>
+                            <tr>
+                              <td>Operating Load</td>
+                              <td>200 kg</td>
+                            </tr>
+                            <tr>
+                              <td>Max Lifting Force</td>
+                              <td>375 kg</td>
+                            </tr>
+                            <tr>
+                              <td>Bucket Capacity</td>
+                              <td>0.15 m³</td>
+                            </tr>
+                            <tr>
+                              <td>Travel Speed</td>
+                              <td>0 ~ 5 km/h</td>
+                            </tr>
+                            <tr>
+                              <td>Hydraulic System Pressure</td>
+                              <td>17 Mpa</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
-                  ))}
 
-                  <div className="topic-contact-box">
-                    <strong>Still have a question?</strong>
-                    <p>Our team is ready to help. Reach out and we will get back to you within 24 hours.</p>
-                    <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }}>
-                      Contact Us ↗
-                    </a>
+                    {/* 2-Column Grid */}
+                    <div className="doc-grid-2">
+                      <div className="doc-card card-yellow-accent">
+                        <h3>Engine Options</h3>
+                        <ul>
+                          <li><strong>Gasoline:</strong> Briggs & Stratton 13.5hp, 17.5kW (23HP) @ 3600rpm.</li>
+                          <li><strong>Diesel:</strong> KOOP KD2V80, Water-cooled, 14kW (20HP) @ 3000rpm.</li>
+                          <li><strong>Safety:</strong> Compatible with Honda GX series featuring the Oil Alert™ automatic shutdown system.</li>
+                        </ul>
+                      </div>
+
+                      <div className="doc-card card-yellow-accent">
+                        <h3>Maintenance Schedule</h3>
+                        <ul>
+                          <li><strong>Daily:</strong> Check all fluid levels and grease lubricating points.</li>
+                          <li><strong>50 Hours:</strong> Clean oil cooler and inspect battery/air filters.</li>
+                          <li><strong>100 Hours:</strong> First engine oil change.</li>
+                          <li><strong>250 Hours:</strong> Replace hydraulic fluid and return filters.</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Operational Safety */}
+                    <div className="doc-section-block">
+                      <h2 className="doc-section-header">Operational Safety</h2>
+                      <ul className="doc-bullet-list">
+                        <li><strong>Slope Stability:</strong> Maintain a low bucket position; do not exceed 12° fuel tank angle or 20° driving slope.</li>
+                        <li><strong>Precision Steering:</strong> Independent dual-handle controls for tracks and lift arm mechanics.</li>
+                        <li><strong>Hydraulic Connection:</strong> Features a quick-attach mount plate for rapid, secure attachment swaps.</li>
+                      </ul>
+                    </div>
+
+                    {/* 3-Column Grid */}
+                    <div className="doc-grid-3">
+                      <div className="doc-card">
+                        <h4>Strategic Job-Site Planning</h4>
+                        <ul className="card-bullet-list">
+                          <li><strong>Utility Locating:</strong> Always notify "One-Call" or local utility services to mark existing lines before any ground-penetrating work.</li>
+                          <li><strong>Overhead Awareness:</strong> Note the location and height of all overhead lines to ensure a fully lifted arm will not make contact.</li>
+                          <li><strong>Site Classification:</strong> Classify zones as "Electric" or "Natural Gas" if working within 10 feet (3m) of buried lines.</li>
+                          <li><strong>Terrain Assessment:</strong> Inspect for changes in elevation, railroad crossings, and soil conditions prior to transport.</li>
+                        </ul>
+                      </div>
+
+                      <div className="doc-card">
+                        <h4>Dual-Handle Maneuverability</h4>
+                        <ul className="card-bullet-list">
+                          <li><strong>Drive System:</strong> Independent track controls allow for 360-degree zero-turn capability.</li>
+                          <li><strong>Multi-Function Left Joystick:</strong> Manages the left tracks while moving the handle right/left raises or lowers the lift arm.</li>
+                          <li><strong>Multi-Function Right Joystick:</strong> Manages the right tracks while side movement controls the bucket tilt (dump and curl).</li>
+                          <li><strong>Variable Throttle:</strong> Toggle engine speeds from low (Turtle) for delicate work to high (Rabbit) for maximum load moving.</li>
+                        </ul>
+                      </div>
+
+                      <div className="doc-card">
+                        <h4>Optimal Capacity Protocol</h4>
+                        <p className="card-intro-text">
+                          To maximize the long-term efficiency of your engine and hydraulic systems, follow this 100-hour break-in schedule:
+                        </p>
+                        <table className="card-inner-table">
+                          <thead>
+                            <tr>
+                              <th>Operational Hours</th>
+                              <th>Max Load Capacity</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Within 10 Hours</td>
+                              <td>50% Capacity</td>
+                            </tr>
+                            <tr>
+                              <td>10 to 100 Hours</td>
+                              <td>80% Capacity</td>
+                            </tr>
+                            <tr>
+                              <td>After 100 Hours</td>
+                              <td>100% Capacity</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Advanced Operational Safety Highlight Panel */}
+                    <div className="doc-highlight-panel yellow-alert-panel">
+                      <h3>Advanced Operational Safety</h3>
+                      <p>Operating a mini skid steer requires strict adherence to terrain safety to prevent rollovers and mechanical failure.</p>
+                      <ul>
+                        <li><strong>Slope Weight Management:</strong> Always operate with the "heavy end" of the unit uphill; remember that a full bucket makes the front heavy, while an empty bucket makes the rear heavy.</li>
+                        <li><strong>Critical Tilt Limits:</strong> Do not exceed a roll angle of 12° on slopes to prevent spillage.</li>
+                        <li><strong>Engine Safety:</strong> Honda-equipped models feature an Oil Alert™ system that prevents engine damage by stopping the motor if crankcase oil falls below safe limits.</li>
+                      </ul>
+                    </div>
                   </div>
+                </div>
+              )}
+
+              {/* B. BUYING & PRICING */}
+              {activeTopicCategory === 'Buying & pricing' && (
+                <div className="topic-subpage-content buying-subpage theme-slate-calculator">
+                  <div className="section-content doc-narrow-wrap">
+                    <span className="subpage-kicker">COMMERCIAL ACQUISITION & CALCULATORS</span>
+                    <h1 className="subpage-main-title">Acquisition & Pricing</h1>
+                    <p className="subpage-lead">
+                      Review our transparent commercial purchasing steps or use our real-time estimated payment estimator to plan your capital investment.
+                    </p>
+
+                    <div className="calculator-layout-split">
+                      {/* Calculator Panel */}
+                      <div className="financing-calc-box glass-panel themed-calc-panel">
+                        <h3>Estimated Finance Payment Estimator</h3>
+                        <div className="calc-sliders">
+                          <div className="slider-group">
+                            <label>Equipment / Package Cost: <strong>${costVal.toLocaleString()}</strong></label>
+                            <input 
+                              type="range" 
+                              min="15000" 
+                              max="60000" 
+                              step="2500" 
+                              value={costVal} 
+                              onChange={(e) => setCostVal(Number(e.target.value))}
+                            />
+                            <div className="slider-ticks">
+                              <span>$15k</span>
+                              <span>$30k</span>
+                              <span>$45k</span>
+                              <span>$60k</span>
+                            </div>
+                          </div>
+                          <div className="slider-group">
+                            <label>Term (Months): <strong>{termVal} Months</strong></label>
+                            <input 
+                              type="range" 
+                              min="24" 
+                              max="60" 
+                              step="12" 
+                              value={termVal} 
+                              onChange={(e) => setTermVal(Number(e.target.value))}
+                            />
+                            <div className="slider-ticks">
+                              <span>24m</span>
+                              <span>36m</span>
+                              <span>48m</span>
+                              <span>60m</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="calc-result-area">
+                          <span>Estimated Monthly Payment:</span>
+                          <span className="calc-result-price">${Math.round((costVal * 1.06) / termVal)}/mo</span>
+                          <p>*Estimates assume 6% commercial financing APR and approved business credit profile.</p>
+                        </div>
+                      </div>
+
+                      {/* Side Details */}
+                      <div className="buying-details-side glass-panel">
+                        <h3>Volume Fleet Ordering</h3>
+                        <p>
+                          KONSTRUCTZ offers bespoke package options and volume discounts for contractors requiring 3+ units. Get in touch with our commercial sales desk to draft a custom contract plan.
+                        </p>
+                        <div className="fleet-pricing-card">
+                          <h5>Fleet Discount Tiers:</h5>
+                          <ul>
+                            <li>3 - 5 Units: <strong>5% Package Discount</strong></li>
+                            <li>6 - 10 Units: <strong>10% Package Discount</strong></li>
+                            <li>11+ Units: <strong>Contact for custom pricing matrix</strong></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Steps Ribbon */}
+                    <div className="acquisition-flow-wrapper">
+                      <h3>Order Fulfillment Timeline</h3>
+                      <div className="buying-steps-flow">
+                        {[
+                          { num: '1', title: 'Cart Request', body: 'Select machinery/attachments and submit quote list.' },
+                          { num: '2', title: 'Formal Quote', body: 'Get a binding invoice detailing shipping & customs.' },
+                          { num: '3', title: 'Wire Payment', body: 'Finalize order via T/T bank wire or commercial L/C.' },
+                          { num: '4', title: 'Site Delivery', body: 'The machine is delivered to your active yard.' }
+                        ].map(step => (
+                          <div key={step.num} className="buying-step-card">
+                            <span className="step-circle">{step.num}</span>
+                            <h4>{step.title}</h4>
+                            <p>{step.body}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="topic-subpage-faq-section">
+                      <h3 className="topic-faq-category-title">{activeTopicCategory} FAQs</h3>
+                      {(topicFaqs[activeTopicCategory] || []).map(item => (
+                        <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
+                          <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
+                            <span>{item.question}</span>
+                            <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                          </button>
+                          <div className="topic-faq-answer">
+                            <p>{item.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* C. DELIVERY */}
+              {activeTopicCategory === 'Delivery' && (
+                <div className="topic-subpage-content delivery-subpage theme-navy-dashboard">
+                  <div className="section-content doc-narrow-wrap">
+                    <span className="delivery-kicker">GLOBAL SHIPPINGS & REAL-TIME DISPATCH</span>
+                    <h1 className="delivery-title">Global Freight & Dispatch Logistics</h1>
+                    <p className="delivery-subtitle">
+                      From shipping containers to local flatbed trucks, enter your dispatch code to track your machinery in real-time.
+                    </p>
+
+                    {/* Tracker Card */}
+                    <div className="shipment-tracker-box glass-panel tracking-console-panel">
+                      <h3>Machinery Delivery Status Tracker</h3>
+                      <p>Enter your 7-character booking reference (e.g. <strong>KON-9831</strong> or <strong>KON-8422</strong>) to retrieve live tracking data:</p>
+                      
+                      <form onSubmit={handleTrackShipment} className="tracker-form">
+                        <input 
+                          type="text" 
+                          placeholder="KON-XXXX" 
+                          value={trackingNum}
+                          onChange={(e) => setTrackingNum(e.target.value)}
+                          maxLength="8"
+                          className="tracker-input-box"
+                        />
+                        <button type="submit" className="cta-button tracker-btn">Track Order</button>
+                      </form>
+
+                      {trackingResult && trackingResult.error && (
+                        <div className="tracker-error-msg">{trackingResult.error}</div>
+                      )}
+
+                      {trackingResult && !trackingResult.error && (
+                        <div className="tracker-success-panel">
+                          <div className="tracker-meta-row">
+                            <span>Status: <strong className="status-highlight">{trackingResult.status}</strong></span>
+                            <span>Progress: <strong>{trackingResult.progress}%</strong></span>
+                          </div>
+                          <div className="tracker-bar-bg">
+                            <div className="tracker-bar-fill" style={{ width: `${trackingResult.progress}%` }}></div>
+                          </div>
+                          <div className="tracker-timeline-flow">
+                            {trackingResult.steps.map(step => (
+                              <div key={step.name} className={`tracker-timeline-point ${step.done ? 'done' : step.current ? 'current' : 'pending'}`}>
+                                <span className="point-dot"></span>
+                                <div className="point-info">
+                                  <h5>{step.name}</h5>
+                                  <p>{step.date}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Logistics Info cards */}
+                    <div className="logistics-grid">
+                      <div className="logistics-card glass-panel">
+                        <h4>Containerized Ocean Freight</h4>
+                        <p>Machines are double-wrapped, loaded into ocean containers, and locked down to prevent port movement.</p>
+                      </div>
+                      <div className="logistics-card glass-panel">
+                        <h4>RoRo Ports Dispatch</h4>
+                        <p>Larger fleet bundles are driven directly onto Roll-on/Roll-off vessels for simple coastal logistics.</p>
+                      </div>
+                    </div>
+
+                    <div className="topic-subpage-faq-section">
+                      <h3 className="topic-faq-category-title">{activeTopicCategory} FAQs</h3>
+                      {(topicFaqs[activeTopicCategory] || []).map(item => (
+                        <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
+                          <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
+                            <span>{item.question}</span>
+                            <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                          </button>
+                          <div className="topic-faq-answer">
+                            <p>{item.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* D. WARRANTY */}
+              {activeTopicCategory === 'Warranty' && (
+                <div className="topic-subpage-content warranty-subpage theme-certificate-gold">
+                  <div className="section-content doc-narrow-wrap">
+                    <span className="warranty-kicker">WARRANTY DEED & COVERAGE GUIDES</span>
+                    <h1 className="warranty-title">Warranty Coverage & Extended Protection</h1>
+                    <p className="warranty-lead">
+                      Every KONSTRUCTZ machine is backed by our robust manufacturing guarantee. Select a component category below to check specific warranty boundaries and claims terms.
+                    </p>
+
+                    {/* Official Certificate Layout */}
+                    <div className="warranty-certificate-mock-frame">
+                      <div className="mock-cert-border">
+                        <div className="cert-header">
+                          <h4>KONSTRUCTZ CORPORATE REGISTRY</h4>
+                          <h5>Official 12-Month Factory Warranty Certificate</h5>
+                        </div>
+                        <p className="cert-body">
+                          This certifies that all new machinery purchased from authorized distributors is covered under our 1-Year/1000-Hour limited parts warranty program from the date of register activation.
+                        </p>
+                        <div className="cert-signatures">
+                          <div className="sig-block">
+                            <span className="sig-line"></span>
+                            <span>QA Lead Officer</span>
+                          </div>
+                          <div className="sig-badge">
+                            <span className="badge-seal">★ SECURE ★</span>
+                          </div>
+                          <div className="sig-block">
+                            <span className="sig-line"></span>
+                            <span>Operations Director</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dynamic Component Warranty Selector */}
+                    <div className="warranty-checker-box glass-panel certificate-tabs-panel">
+                      <h3>Coverage Breakdown Inspector</h3>
+                      <div className="warranty-type-buttons">
+                        {['Engine', 'Hydraulics', 'Chassis', 'Wear Items'].map(comp => (
+                          <button 
+                            key={comp}
+                            className={`comp-btn ${activeWarrantyComponent === comp ? 'active' : ''}`}
+                            onClick={() => setActiveWarrantyComponent(comp)}
+                          >
+                            {comp}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="warranty-comp-detail-panel">
+                        {activeWarrantyComponent === 'Engine' && (
+                          <div className="comp-coverage-info">
+                            <span className="status-label covered">● Fully Covered Component (12 Months / 1000 Hrs)</span>
+                            <p>Covers structural engine blocks, pistons, intake valves, fuel pump injectors, alternator, oil pump assemblies, and radiator cores against material defects.</p>
+                          </div>
+                        )}
+                        {activeWarrantyComponent === 'Hydraulics' && (
+                          <div className="comp-coverage-info">
+                            <span className="status-label covered">● Fully Covered Component (12 Months / 1000 Hrs)</span>
+                            <p>Covers main hydraulic pump pistons, control valve manifolds, rotary swing manifold hubs, boom/arm cylinders, and gear motors.</p>
+                          </div>
+                        )}
+                        {activeWarrantyComponent === 'Chassis' && (
+                          <div className="comp-coverage-info">
+                            <span className="status-label covered">● Fully Covered Component (12 Months / 1000 Hrs)</span>
+                            <p>Covers welds on Boom arm, structural steel frame, crawler track mounting links, cabin canopy roll-bars, and stabilizer linkage points.</p>
+                          </div>
+                        )}
+                        {activeWarrantyComponent === 'Wear Items' && (
+                          <div className="comp-coverage-info">
+                            <span className="status-label excluded">✕ Excluded wear-and-tear items</span>
+                            <p>Normal wear-and-tear items like rubber tracks, teeth, cutting edges, oil filters, gaskets, rubber seals, batteries, spark plugs, and hydraulic fluid hoses are excluded unless a factory assembly defect is documented within the first 30 days.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="topic-subpage-faq-section">
+                      <h3 className="topic-faq-category-title">{activeTopicCategory} FAQs</h3>
+                      {(topicFaqs[activeTopicCategory] || []).map(item => (
+                        <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
+                          <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
+                            <span>{item.question}</span>
+                            <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                          </button>
+                          <div className="topic-faq-answer">
+                            <p>{item.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* E. SERVICE & PARTS */}
+              {activeTopicCategory === 'Service & parts' && (
+                <div className="topic-subpage-content service-subpage theme-workshop-slate">
+                  <div className="section-content doc-narrow-wrap">
+                    <span className="service-kicker">MAINTENANCE WORKSHOP LOG & PARTS</span>
+                    <h1 className="service-title">Service, Maintenance & Spare Parts</h1>
+                    <p className="service-lead">
+                      Proper maintenance ensures maximum machine life and prevents unexpected downtime. Toggle the service interval tracker below to view recommended checklists or check standard maintenance replacement packages.
+                    </p>
+
+                    {/* Clipboard Panel */}
+                    <div className="service-interval-box glass-panel clipboard-card-panel">
+                      <div className="clipboard-header">
+                        <h3>🔧 Maintenance Job-Card Log</h3>
+                      </div>
+                      <div className="service-type-tabs">
+                        {['50 Hours', '250 Hours', '500 Hours', '1000 Hours'].map(tab => (
+                          <button 
+                            key={tab}
+                            className={`service-tab-btn ${activeServiceInterval === tab ? 'active' : ''}`}
+                            onClick={() => setActiveServiceInterval(tab)}
+                          >
+                            {tab}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="service-checklist-details">
+                        {activeServiceInterval === '50 Hours' && (
+                          <ul>
+                            <li><input type="checkbox" defaultChecked readOnly /> Drain and replace break-in engine oil</li>
+                            <li><input type="checkbox" defaultChecked readOnly /> Replace spin-on engine oil filter</li>
+                            <li><input type="checkbox" readOnly /> Inspect pilot hydraulics valve line seals</li>
+                            <li><input type="checkbox" readOnly /> Verify crawler rubber track tension parameters</li>
+                          </ul>
+                        )}
+                        {activeServiceInterval === '250 Hours' && (
+                          <ul>
+                            <li><input type="checkbox" readOnly /> Inspect and clean primary engine air filter</li>
+                            <li><input type="checkbox" readOnly /> Grease all main boom arm pivot pin bushings</li>
+                            <li><input type="checkbox" readOnly /> Check transmission gear oil indicator levels</li>
+                            <li><input type="checkbox" readOnly /> Inspect fuel-water separator bowls</li>
+                          </ul>
+                        )}
+                        {activeServiceInterval === '500 Hours' && (
+                          <ul>
+                            <li><input type="checkbox" readOnly /> Replace fuel filter elements</li>
+                            <li><input type="checkbox" readOnly /> Change engine alternator drive belt</li>
+                            <li><input type="checkbox" readOnly /> Verify battery charge output & clean terminals</li>
+                            <li><input type="checkbox" readOnly /> Grease loader articulation steering hinges</li>
+                          </ul>
+                        )}
+                        {activeServiceInterval === '1000 Hours' && (
+                          <ul>
+                            <li><input type="checkbox" readOnly /> Flush and change hydraulic fluid reservoir</li>
+                            <li><input type="checkbox" readOnly /> Replace secondary heavy duty air intake filters</li>
+                            <li><input type="checkbox" readOnly /> Clean diesel radiator fins and flush coolant</li>
+                            <li><input type="checkbox" readOnly /> Adjust engine valve lash clearances</li>
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Spare Parts Grid */}
+                    <div className="spare-parts-section">
+                      <h3>OEM Replacement Packages</h3>
+                      <div className="spare-parts-grid">
+                        {[
+                          { name: 'Full Filter Kit', price: '$145', code: 'P-FLT-K2' },
+                          { name: 'Auxiliary Hydraulic Hose Kit', price: '$220', code: 'P-HSE-ATT' },
+                          { name: 'Excavator Bucket Tooth', price: '$35', code: 'P-TTH-STD' },
+                          { name: 'OEM Drive Belt', price: '$48', code: 'P-BLT-YAN' }
+                        ].map(part => (
+                          <div key={part.code} className="part-card glass-panel">
+                            <h5>{part.name}</h5>
+                            <span>Code: <strong>{part.code}</strong></span>
+                            <span className="part-price">{part.price}</span>
+                            <a href="?page=contact&inquiry=Order%20Spare%20Parts" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Order Spare Parts' }); }} className="part-quote-link">Request Parts Quote</a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="topic-subpage-faq-section">
+                      <h3 className="topic-faq-category-title">{activeTopicCategory} FAQs</h3>
+                      {(topicFaqs[activeTopicCategory] || []).map(item => (
+                        <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
+                          <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
+                            <span>{item.question}</span>
+                            <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                          </button>
+                          <div className="topic-faq-answer">
+                            <p>{item.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* F. FINANCING */}
+              {activeTopicCategory === 'Financing' && (
+                <div className="topic-subpage-content financing-subpage theme-finance-emerald">
+                  <div className="section-content doc-narrow-wrap">
+                    <span className="finance-kicker">EQUIPMENT FINANCING & LEASES</span>
+                    <h1 className="finance-title">Commercial Equipment Financing</h1>
+                    <p className="finance-lead">
+                      Grow your fleet while preserving cash flow. Compare options and check requirements for quick approval with our commercial lending partners.
+                    </p>
+
+                    {/* Comparison Matrix */}
+                    <div className="financing-matrix-grid">
+                      <div className="matrix-card glass-panel">
+                        <h4>Equipment Loan</h4>
+                        <ul>
+                          <li><strong>Ownership:</strong> Handover on final payment</li>
+                          <li><strong>Tax Benefit:</strong> Sect 179 depreciation eligible</li>
+                          <li><strong>Terms:</strong> Fixed rate 24-72 months</li>
+                          <li><strong>Best For:</strong> High utilization machines</li>
+                        </ul>
+                      </div>
+                      <div className="matrix-card glass-panel">
+                        <h4>Fair Market Value Lease</h4>
+                        <ul>
+                          <li><strong>Ownership:</strong> Buy, return, or upgrade</li>
+                          <li><strong>Tax Benefit:</strong> Off-balance sheet treatment</li>
+                          <li><strong>Terms:</strong> Lowest monthly costs</li>
+                          <li><strong>Best For:</strong> Regular fleet updates</li>
+                        </ul>
+                      </div>
+                      <div className="matrix-card glass-panel font-highlight highlighted-finance-card">
+                        <span className="best-value-badge">Popular Value</span>
+                        <h4>$1 Buyout Lease</h4>
+                        <ul>
+                          <li><strong>Ownership:</strong> Purchase for $1 at end</li>
+                          <li><strong>Tax Benefit:</strong> Write off lease payments</li>
+                          <li><strong>Terms:</strong> Fixed terms 36-60 months</li>
+                          <li><strong>Best For:</strong> Long term ownership</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Checklist */}
+                    <div className="finance-app-checklist">
+                      <h3>Approval Criteria & Requirements:</h3>
+                      <div className="checklist-flow">
+                        <div>✓ 2+ Years in business</div>
+                        <div>✓ Good business credit score</div>
+                        <div>✓ 3 Months bank logs</div>
+                        <div>✓ Completed credit form</div>
+                      </div>
+                      <div className="checklist-cta" style={{ textAlign: 'center', marginTop: '24px' }}>
+                        <a href="?page=contact&inquiry=Financing%20Application" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Financing Application' }); }} className="cta-button green-pill-btn">
+                          Apply For Finance Pre-Approval
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="topic-subpage-faq-section">
+                      <h3 className="topic-faq-category-title">{activeTopicCategory} FAQs</h3>
+                      {(topicFaqs[activeTopicCategory] || []).map(item => (
+                        <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
+                          <button onClick={() => setOpenFaqId(openFaqId === item.id ? null : item.id)}>
+                            <span>{item.question}</span>
+                            <span>{openFaqId === item.id ? '⌃' : '⌄'}</span>
+                          </button>
+                          <div className="topic-faq-answer">
+                            <p>{item.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* General Bottom Support Footer */}
+              <div className="section-content doc-narrow-wrap" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '40px', paddingBottom: '80px' }}>
+                <div className="topic-contact-box" style={{ margin: '0 auto', maxWidth: '600px', textAlign: 'center', background: '#f8fafc', padding: '30px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <strong style={{ fontSize: '18px', display: 'block', marginBottom: '8px' }}>Still have a question?</strong>
+                  <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>Our technical support and sales team are ready to help. Reach out and we will get back to you within 24 hours.</p>
+                  <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="cta-button accent-pill-btn" style={{ display: 'inline-block', padding: '10px 24px' }}>
+                    Contact Us ↗
+                  </a>
                 </div>
               </div>
             </div>
-          </section>
+          )}
         </main>
       ) : currentView === 'store-data' ? (
-        <main className="store-data-page">
-          <section className="store-data-hero dark-bg">
-            <div className="section-content store-data-hero-content">
-              <span className="black-pill-tag">Product Data</span>
-              <h1 className="store-data-title">Store Product CSV</h1>
-              <p className="store-data-subtitle">
-                Upload the product CSV file here to keep a browser-stored copy ready for review and catalog mapping.
-              </p>
-            </div>
-          </section>
-
-          <section className="store-data-panel white-bg">
-            <div className="section-content">
-              <div className="csv-store-layout">
-                <div className="csv-uploader-panel">
-                  <div>
-                    <h2 className="csv-panel-title text-black">CSV file</h2>
-                    <p className="csv-panel-copy">
-                      Choose a comma-separated product file. The app will save it locally in this browser and show the first 10 product rows.
-                    </p>
-                  </div>
-
-                  <label className="csv-dropzone" htmlFor="product-csv-file">
-                    <span className="csv-dropzone-title">Select product CSV</span>
-                    <span className="csv-dropzone-meta">Accepted format: .csv</span>
-                    <input
-                      id="product-csv-file"
-                      type="file"
-                      accept=".csv,text/csv"
-                      onChange={handleCsvUpload}
-                    />
-                  </label>
-
-                  <div className="csv-actions">
-                    <button className="cta-button black-pill-btn" onClick={handleDownloadCsv}>
-                      Download Stored CSV
-                    </button>
-                    <button className="cta-button white-pill-dark-border" onClick={handleClearCsv}>
-                      Clear Stored CSV
-                    </button>
-                  </div>
-
-                  {csvStatus && <p className="csv-status">{csvStatus}</p>}
-                </div>
-
-                <div className="csv-summary-panel">
-                  <h2 className="csv-panel-title text-black">Stored data</h2>
-                  <div className="csv-summary-grid">
-                    <div className="csv-summary-item">
-                      <span>File</span>
-                      <strong>{storedCsvName || 'No file stored'}</strong>
-                    </div>
-                    <div className="csv-summary-item">
-                      <span>Columns</span>
-                      <strong>{csvPreviewHeaders.length}</strong>
-                    </div>
-                    <div className="csv-summary-item">
-                      <span>Preview rows</span>
-                      <strong>{csvPreviewRows.length}</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="csv-preview-wrap">
-                <div className="csv-preview-header">
-                  <h2 className="csv-panel-title text-black">Preview</h2>
-                  <p>First 10 rows from the stored CSV.</p>
-                </div>
-
-                {csvPreviewHeaders.length > 0 ? (
-                  <div className="csv-table-scroll">
-                    <table className="csv-preview-table">
-                      <thead>
-                        <tr>
-                          {csvPreviewHeaders.map((header, index) => (
-                            <th key={`${header}-${index}`}>{header || `Column ${index + 1}`}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {csvPreviewRows.map((row, rowIndex) => (
-                          <tr key={`csv-row-${rowIndex}`}>
-                            {csvPreviewHeaders.map((_, colIndex) => (
-                              <td key={`csv-cell-${rowIndex}-${colIndex}`}>{row[colIndex] || ''}</td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="csv-empty-state">
-                    <h3>No CSV stored yet</h3>
-                    <p>Send or upload the product CSV file and it will appear here.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
+        <main className="store-data-page white-bg">
+          <div className="section-content" style={{ padding: '80px 24px', textAlign: 'center' }}>
+            <h2>Redirecting to Admin Console...</h2>
+            <p>Product inventory management has been integrated into the unified dashboard.</p>
+            <button className="cta-button accent-pill-btn" onClick={() => navigate('admin-blog', { tab: 'inventory' })} style={{ marginTop: '20px' }}>
+              Go to Inventory Console
+            </button>
+          </div>
         </main>
       ) : currentView === 'product-detail' && selectedProduct ? (
         <main className="detail-page">
@@ -3423,7 +5315,7 @@ export default function App() {
                   <h3>Online Customer Service</h3>
                   <p className="hours-text">Monday to Sunday: 8:00 AM – 5:00 PM EST</p>
                   <p className="phone-text">Phone: +1 (555) 234-9800</p>
-                  <p className="email-text">Email: support@konstructzmachinery.com</p>
+                  <p className="email-text">Email: support@konstructz.com</p>
                   <p className="address-text">Address: 1200 Industrial Parkway, Suite A, Detroit, MI 48201</p>
                   <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="contact-service-link">
                     Contact the customer service &gt;
@@ -3462,7 +5354,7 @@ export default function App() {
                   <div className="card-icon">✉️</div>
                   <div className="card-body">
                     <h4>Email us</h4>
-                    <p className="highlight-text">hello@konstructzmachinery.com</p>
+                    <p className="highlight-text">sales@konstructz.com</p>
                     <p className="subtext">We respond to all inquiries within 24 hours on business days.</p>
                   </div>
                 </div>
@@ -3480,7 +5372,7 @@ export default function App() {
                   <div className="card-icon">🛠️</div>
                   <div className="card-body">
                     <h4>24/7 support</h4>
-                    <p className="highlight-text">support@konstructzmachinery.com</p>
+                    <p className="highlight-text">support@konstructz.com</p>
                     <p className="subtext">For urgent technical issues and breakdowns – we never sleep.</p>
                   </div>
                 </div>
@@ -3636,7 +5528,7 @@ export default function App() {
                   <div className="dep-icon">🛒</div>
                   <div className="dep-info">
                     <h5>Sales</h5>
-                    <a href="mailto:sales@konstructzmachinery.com">sales@konstructzmachinery.com</a>
+                    <a href="mailto:sales@konstructz.com">sales@konstructz.com</a>
                   </div>
                 </div>
 
@@ -3644,7 +5536,7 @@ export default function App() {
                   <div className="dep-icon">⚙️</div>
                   <div className="dep-info">
                     <h5>Technical support</h5>
-                    <a href="mailto:support@konstructzmachinery.com">support@konstructzmachinery.com</a>
+                    <a href="mailto:support@konstructz.com">support@konstructz.com</a>
                   </div>
                 </div>
 
@@ -3652,7 +5544,7 @@ export default function App() {
                   <div className="dep-icon">📰</div>
                   <div className="dep-info">
                     <h5>Media & press</h5>
-                    <a href="mailto:media@konstructzmachinery.com">media@konstructzmachinery.com</a>
+                    <a href="mailto:media@konstructz.com">media@konstructz.com</a>
                   </div>
                 </div>
               </div>
@@ -3834,22 +5726,33 @@ export default function App() {
       )}
 
       {/* FOOTER */}
-      <footer className="main-footer-white">
+      <footer className="main-footer-dark">
         <div className="footer-top">
           <div className="footer-brand-col">
-            <a href="?page=home" className="logo text-black" onClick={(e) => { e.preventDefault(); navigate('home'); }}>
+            <a href="?page=home" className="logo" onClick={(e) => { e.preventDefault(); navigate('home'); }}>
               <img src={konstructzLogo} alt="KONSTRUCTZ" className="logo-img" />
             </a>
             <p className="footer-address">
               <span>2522 S Malt Ave.</span>
               <span>Commerce, CA 90040 United States</span>
             </p>
-            <p className="footer-phone">📞 +1 213-214-2203</p>
-            <p className="footer-email">✉️ sales@konstructzmachinery.com</p>
+            <p className="footer-phone">
+              <svg className="footer-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              +1 213-214-2203
+            </p>
+            <p className="footer-email">
+              <svg className="footer-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              sales@konstructz.com
+            </p>
           </div>
           
           <div className="footer-links-col">
-            <h4 className="text-black">Get in touch</h4>
+            <h4>Get in touch</h4>
             <a href="#inquiry">General Inquiry</a>
             <a href="#support">Business Support</a>
             <a href="#leases">Financing & Leases</a>
@@ -3857,7 +5760,7 @@ export default function App() {
           </div>
 
           <div className="footer-links-col">
-            <h4 className="text-black">Information</h4>
+            <h4>Information</h4>
             <a href="?page=about" onClick={(e) => { e.preventDefault(); navigate('about'); }}>About Us</a>
             <a href="?page=home#products" onClick={(e) => { e.preventDefault(); navigate('home'); window.location.hash = '#products'; }}>Products</a>
             <a href="?page=support" onClick={(e) => { e.preventDefault(); navigate('support'); }}>Support</a>
@@ -3865,12 +5768,36 @@ export default function App() {
           </div>
 
           <div className="footer-links-col">
-            <h4 className="text-black">Connect</h4>
+            <h4>Connect</h4>
             <div className="social-links-grid">
-              <a href="#fb">🌐 Facebook</a>
-              <a href="#tw">🐦 Twitter</a>
-              <a href="#ig">📸 Instagram</a>
-              <a href="#li">💼 LinkedIn</a>
+              <a href="#fb" className="social-link-item">
+                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+                Facebook
+              </a>
+              <a href="#tw" className="social-link-item">
+                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
+                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                </svg>
+                Twitter
+              </a>
+              <a href="#ig" className="social-link-item">
+                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+                Instagram
+              </a>
+              <a href="#li" className="social-link-item">
+                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect x="2" y="9" width="4" height="12" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+                LinkedIn
+              </a>
             </div>
           </div>
         </div>
