@@ -3784,7 +3784,7 @@ export default function App() {
         <>
           {/* HERO SECTION */}
           <section id="home" className="hero-section dark-bg">
-            <img src={heroLoader} alt="KONSTRUCTZ Heavy Wheel Loader" className="hero-background-image" />
+            <img src={heroLoader} alt="KONSTRUCTZ SKOOP II compact wheel loader" className="hero-background-image" />
             {!heroVideoError && (
               <video
                 className="hero-background-video"
@@ -3794,7 +3794,7 @@ export default function App() {
                 playsInline
                 preload="metadata"
                 poster={heroLoader}
-                aria-label="Konstructz heavy wheel loader in motion"
+                aria-label="KONSTRUCTZ SKOOP II compact wheel loader in motion"
                 onError={() => setHeroVideoError(true)}
               >
                 <source src={heroVideo} type="video/mp4" />
@@ -3803,10 +3803,10 @@ export default function App() {
             <div className="hero-overlay"></div>
             <div className="section-content hero-full-content">
               <div className="hero-copy">
-                <p className="hero-kicker">Compact Wheel Loader</p>
+                <p className="hero-kicker">KONSTRUCTZ Compact Wheel Loader</p>
                 <h1 className="hero-display-title">SKOOP II</h1>
                 <p className="hero-body">
-                  Future-ready machinery for construction, earthmoving, and industrial crews who need dependable power in a compact footprint.
+                  A compact wheel loader for construction crews, landscaping teams, farms, and material-handling jobs that need dependable power in a smaller footprint.
                 </p>
                 <div className="hero-actions-row">
                   <a href="#products" className="hero-action hero-action-outline">Learn More</a>
@@ -4199,7 +4199,7 @@ export default function App() {
             <div className="about-image-wrapper">
               <img 
                 src={aboutKonstructzMachinery} 
-                alt="Konstructz Skoop II Typhon wheel loader on a construction site" 
+                alt="KONSTRUCTZ SKOOP II compact wheel loader on a construction site" 
                 className="about-image"
               />
               <div className="image-border-glow"></div>
@@ -4208,7 +4208,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* FEATURED: STONE CRUSHER */}
+      {/* FEATURED: SKOOP II WHEEL LOADER */}
       <section id="featured" className="featured-section white-bg border-top">
         <div className="section-content">
           <div className="featured-grid">
@@ -4227,7 +4227,7 @@ export default function App() {
               </div>
 
               <div className="featured-buttons">
-                <a href="?page=product-detail&id=skoop-ii" onClick={(e) => { e.preventDefault(); navigate('product-detail', 'skoop-ii'); }} className="cta-button white-pill-dark-border">View SKOOP II</a>
+                <a href="?page=product-detail&id=featured-3" onClick={(e) => { e.preventDefault(); navigate('product-detail', { id: 'featured-3' }); }} className="cta-button white-pill-dark-border">View SKOOP II</a>
                  <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="cta-button white-pill-dark-border">Contact Sales</a>
               </div>
             </div>
