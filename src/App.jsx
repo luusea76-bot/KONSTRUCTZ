@@ -160,6 +160,28 @@ const machineComparisonFaqs = [
   }
 ];
 
+const aiAssistantQuickActions = [
+  'Compare Machines',
+  'Check Delivery Time',
+  'Request a Quote',
+  'Find My Machine',
+  'Support Service',
+  'Attachments'
+];
+
+const createAiMessage = (content, extra = {}) => ({
+  id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  sender: 'ai',
+  content,
+  ...extra
+});
+
+const createUserMessage = (content) => ({
+  id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  sender: 'user',
+  content
+});
+
 const defaultComments = [
   {
     id: 'c-1',
@@ -1081,6 +1103,13 @@ export default function App() {
     message: ''
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [aiChatInput, setAiChatInput] = useState('');
+  const [aiChatMessages, setAiChatMessages] = useState(() => [
+    createAiMessage("Hello! I'm your AI Machinery Assistant. How can I help you today?"),
+    createUserMessage('What is the price of KUVUO 2.7 Mini Excavator and how much is delivery to California?'),
+    createAiMessage('', { variant: 'kuvuo-card' })
+  ]);
 
   const carouselGridRef = useRef(null);
 
@@ -2636,6 +2665,71 @@ export default function App() {
       setActiveKonstructzSubcategory(additionalParams.subcategory);
     }
     window.scrollTo(0, 0);
+  };
+
+  const getAiAssistantReply = (question) => {
+    const normalized = question.toLowerCase();
+
+    if (normalized.includes('compare')) {
+      return 'I can compare machines by terrain, digging work, attachments, transport needs, and daily production. KUVUO 2.7 is best for compact construction and trenching, while Spider One is best for slopes, orchards, farms, and hard-to-reach ground.';
+    }
+
+    if (normalized.includes('delivery') || normalized.includes('california') || normalized.includes('logistics')) {
+      return 'Delivery is available to California and most U.S. locations. Typical delivery timing is 5-7 business days after order confirmation, with freight details confirmed in your written quote.';
+    }
+
+    if (normalized.includes('quote') || normalized.includes('price') || normalized.includes('pricing')) {
+      return 'Most machinery pricing is confirmed by quote because freight, attachments, and destination can change the final number. I can help prepare a quote request with your location, machine, and work requirements.';
+    }
+
+    if (normalized.includes('support') || normalized.includes('warranty') || normalized.includes('service') || normalized.includes('parts')) {
+      return 'Warranty, replacement parts, and after-sales service are available. Tell me your machine model, issue, and hours of use, and the support team can help with manuals, service steps, or parts quotes.';
+    }
+
+    if (normalized.includes('attachment')) {
+      return 'KONSTRUCTZ can help match buckets, augers, breakers, rakes, trenching tools, and other attachments to your machine and application. Attachment fitment depends on machine size, coupler, hydraulic flow, and job type.';
+    }
+
+    if (normalized.includes('stock') || normalized.includes('available') || normalized.includes('warehouse') || normalized.includes('location')) {
+      return 'Stock and warehouse availability can change quickly. The team can confirm current inventory, warehouse location, pickup options, and delivery timing for your exact machine request.';
+    }
+
+    return 'I can help with product recommendations, machine comparisons, price questions, delivery, warehouse location, stock, logistics, warranty, after-sales service, attachments, and quote requests. Tell me what machine or jobsite you are planning for.';
+  };
+
+  const handleAiAssistantSubmit = (messageText = aiChatInput) => {
+    const trimmedMessage = messageText.trim();
+    if (!trimmedMessage) return;
+
+    setAiChatMessages(prev => [
+      ...prev,
+      createUserMessage(trimmedMessage),
+      createAiMessage(getAiAssistantReply(trimmedMessage))
+    ]);
+    setAiChatInput('');
+  };
+
+  const handleAiQuickAction = (label) => {
+    if (label === 'Request a Quote') {
+      setAiChatMessages(prev => [
+        ...prev,
+        createUserMessage(label),
+        createAiMessage('I can open the quote form for you. Add your machine, location, delivery address, attachments, and any jobsite requirements so the sales team can prepare an accurate quote.', { cta: 'Open Quote Form' })
+      ]);
+      return;
+    }
+
+    handleAiAssistantSubmit(label);
+  };
+
+  const openAiQuoteForm = () => {
+    setFormValues(prev => ({
+      ...prev,
+      inquiryType: 'Get a quote',
+      message: prev.message || 'I would like a detailed machinery quote with delivery, stock availability, warranty, parts, and after-sales service information.'
+    }));
+    setAiChatOpen(false);
+    navigate('contact', { inquiry: 'Get a quote' });
   };
 
   // Sync state with URL query parameters on mount and back/forward browser buttons
@@ -7695,6 +7789,109 @@ export default function App() {
           </div>
         </div>
       )}
+
+      <div className={`ai-assistant-widget ${aiChatOpen ? 'is-open' : ''}`}>
+        {aiChatOpen && (
+          <section className="ai-chat-panel" aria-label="AI Machinery Assistant">
+            <div className="ai-chat-header">
+              <div className="ai-chat-identity">
+                <div className="ai-chat-avatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v3" />
+                    <path d="M7 4.5 8.5 7" />
+                    <path d="M17 4.5 15.5 7" />
+                    <rect x="4" y="7" width="16" height="12" rx="4" />
+                    <path d="M8 12h.01" />
+                    <path d="M16 12h.01" />
+                    <path d="M9 15h6" />
+                  </svg>
+                </div>
+                <div>
+                  <span>AI Machinery Assistant</span>
+                  <small>Online - product, quote, delivery, and support help</small>
+                </div>
+              </div>
+              <button className="ai-chat-close" onClick={() => setAiChatOpen(false)} aria-label="Close AI chat">
+                ×
+              </button>
+            </div>
+
+            <div className="ai-chat-body">
+              {aiChatMessages.map((message) => (
+                <div className={`ai-message-row ${message.sender === 'user' ? 'from-user' : 'from-ai'}`} key={message.id}>
+                  {message.sender === 'ai' && (
+                    <div className="ai-message-avatar" aria-hidden="true">AI</div>
+                  )}
+                  <div className={`ai-message ${message.variant === 'kuvuo-card' ? 'has-card' : ''}`}>
+                    {message.variant === 'kuvuo-card' ? (
+                      <div className="ai-reply-card">
+                        <span className="ai-card-kicker">Recommended answer</span>
+                        <h3>KUVUO 2.7 Mini Excavator</h3>
+                        <ul>
+                          <li><strong>Starting Price:</strong> Contact for quote</li>
+                          <li><strong>Delivery to California:</strong> Available</li>
+                          <li><strong>Estimated Delivery Time:</strong> 5-7 business days</li>
+                          <li><strong>Support:</strong> Warranty, parts, and after-sales service available</li>
+                        </ul>
+                        <p>Would you like a detailed quote based on your location and requirements?</p>
+                        <button onClick={openAiQuoteForm}>Request Detailed Quote</button>
+                      </div>
+                    ) : (
+                      <>
+                        <p>{message.content}</p>
+                        {message.cta && (
+                          <button className="ai-message-cta" onClick={openAiQuoteForm}>
+                            {message.cta}
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="ai-chat-quick-actions" aria-label="AI assistant quick actions">
+              {aiAssistantQuickActions.map((label) => (
+                <button key={label} onClick={() => handleAiQuickAction(label)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <form className="ai-chat-input-bar" onSubmit={(e) => {
+              e.preventDefault();
+              handleAiAssistantSubmit();
+            }}>
+              <input
+                value={aiChatInput}
+                onChange={(e) => setAiChatInput(e.target.value)}
+                placeholder="Type your question here..."
+                aria-label="Type your question here"
+              />
+              <button type="submit" aria-label="Send AI chat message">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="m22 2-7 20-4-9-9-4 20-7Z" />
+                  <path d="M22 2 11 13" />
+                </svg>
+              </button>
+            </form>
+          </section>
+        )}
+
+        <button className="ai-floating-button" onClick={() => setAiChatOpen(prev => !prev)} aria-expanded={aiChatOpen} aria-label="Open AI Machinery Assistant">
+          <span className="ai-floating-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3v3" />
+              <rect x="4" y="7" width="16" height="12" rx="4" />
+              <path d="M8 12h.01" />
+              <path d="M16 12h.01" />
+              <path d="M9 15h6" />
+            </svg>
+          </span>
+          <span>Click me</span>
+        </button>
+      </div>
 
       {/* FOOTER */}
       <footer className="main-footer-dark">
