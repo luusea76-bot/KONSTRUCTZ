@@ -179,7 +179,7 @@ const aiProductKnowledge = [
     bestFor: 'moving soil, gravel, mulch, pallets, materials, and jobsite supplies',
     terrain: 'construction yards, farms, landscape sites, warehouses, and compact material-handling areas',
     price: '$15,499.00',
-    delivery: 'Free shipping is listed on Typhon Machinery for the SKOOP II',
+    delivery: 'Free shipping is listed; confirm current delivery terms with sales',
     leadTime: 'call sales to confirm current stock and delivery schedule',
     support: '1-year warranty, manuals, parts, operator guidance, and after-sales service'
   },
@@ -207,15 +207,14 @@ const aiProductKnowledge = [
   }
 ];
 
-const typhonAssistantFacts = {
-  company: 'TYPHON Machinery',
-  site: 'https://typhonmachinery.com/',
+const konstructzAssistantFacts = {
+  company: 'KONSTRUCTZ',
+  site: 'https://konstructz.com/',
   phone: '+1 424-653-6764',
   whatsapp: '+1 323-532-5703',
-  messenger: 'https://m.me/typhonmachinery',
-  email: 'admin@typhonmachinery.com',
+  email: 'sales@konstructz.com',
   address: '7025 Slauson Ave, Commerce, CA 90040, United States',
-  productFocus: 'compact and mini excavator diggers, small machinery, skid steer loaders, wheel loaders, towable excavators, compact track loaders, trenchers, dumpers, stone crushers, and jobsite attachments',
+  productFocus: 'compact construction equipment including SKOOP II wheel loaders, mini excavators, skid steer and compact track loaders, towable and walking excavators, trenchers, dumpers, stone crushers, and jobsite attachments',
   quoteTip: 'For the most accurate quote, share the machine name, delivery city/state, attachments, timeline, and your phone or email.'
 };
 
@@ -2741,13 +2740,12 @@ export default function App() {
     if (asksContact) {
       return {
         content: [
-          `You can contact ${typhonAssistantFacts.company} here:`,
-          `Phone: ${typhonAssistantFacts.phone}`,
-          `WhatsApp: ${typhonAssistantFacts.whatsapp}`,
-          `Email: ${typhonAssistantFacts.email}`,
-          `Messenger: ${typhonAssistantFacts.messenger}`,
-          `Address: ${typhonAssistantFacts.address}`,
-          typhonAssistantFacts.quoteTip
+          `You can contact ${konstructzAssistantFacts.company} here:`,
+          `Phone: ${konstructzAssistantFacts.phone}`,
+          `WhatsApp: ${konstructzAssistantFacts.whatsapp}`,
+          `Email: ${konstructzAssistantFacts.email}`,
+          `Address: ${konstructzAssistantFacts.address}`,
+          konstructzAssistantFacts.quoteTip
         ].join('\n')
       };
     }
@@ -2755,8 +2753,8 @@ export default function App() {
     if (/\b(hi|hello|hey|good morning|good afternoon)\b/.test(normalized)) {
       return {
         content: [
-          `Hello. I can help with ${typhonAssistantFacts.company} product selection, quotes, shipping, warranty, parts, and support.`,
-          `Product focus: ${typhonAssistantFacts.productFocus}.`,
+          `Hello. I can help with ${konstructzAssistantFacts.company} product selection, quotes, shipping, warranty, parts, and support.`,
+          `Product focus: ${konstructzAssistantFacts.productFocus}.`,
           'Tell me the job, ground condition, delivery state, and machine size you prefer.'
         ].join('\n')
       };
@@ -2765,11 +2763,11 @@ export default function App() {
     if (asksCompany) {
       return {
         content: [
-          `${typhonAssistantFacts.company} supplies compact construction machinery and mini excavator diggers.`,
-          `Website: ${typhonAssistantFacts.site}`,
-          `Address: ${typhonAssistantFacts.address}`,
-          `Phone: ${typhonAssistantFacts.phone}`,
-          `Email: ${typhonAssistantFacts.email}`
+          `${konstructzAssistantFacts.company} helps customers choose compact construction equipment, request quotes, confirm delivery, and get warranty, parts, and after-sales support.`,
+          `Website: ${konstructzAssistantFacts.site}`,
+          `Address: ${konstructzAssistantFacts.address}`,
+          `Phone: ${konstructzAssistantFacts.phone}`,
+          `Email: ${konstructzAssistantFacts.email}`
         ].join('\n')
       };
     }
@@ -2777,7 +2775,7 @@ export default function App() {
     if (asksProducts) {
       return {
         content: [
-          `${typhonAssistantFacts.company} product areas include:`,
+          `${konstructzAssistantFacts.company} product areas include:`,
           'Mini excavators and compact excavator diggers',
           'Wheel loaders and compact loaders',
           'Skid steer / compact track loaders',
@@ -2792,9 +2790,9 @@ export default function App() {
       return {
         content: [
           'Payment and financing details should be confirmed with the sales team because terms can depend on machine, inventory, destination, and order size.',
-          `Phone: ${typhonAssistantFacts.phone}`,
-          `Email: ${typhonAssistantFacts.email}`,
-          typhonAssistantFacts.quoteTip
+          `Phone: ${konstructzAssistantFacts.phone}`,
+          `Email: ${konstructzAssistantFacts.email}`,
+          konstructzAssistantFacts.quoteTip
         ].join('\n'),
         cta: 'Request Quote'
       };
@@ -2803,9 +2801,9 @@ export default function App() {
     if (asksReturn) {
       return {
         content: [
-          'For returns, cancellations, exchanges, or refund questions, contact Typhon directly before shipping or modifying an order.',
-          `Phone: ${typhonAssistantFacts.phone}`,
-          `Email: ${typhonAssistantFacts.email}`,
+          'For returns, cancellations, exchanges, or refund questions, contact KONSTRUCTZ before shipping or modifying an order.',
+          `Phone: ${konstructzAssistantFacts.phone}`,
+          `Email: ${konstructzAssistantFacts.email}`,
           'Include your order number, machine name, purchase date, and reason for the request.'
         ].join('\n'),
         cta: 'Contact Support'
@@ -2886,9 +2884,9 @@ export default function App() {
       return {
         content: [
           'Shipping and delivery depend on the machine, live stock, freight route, and destination.',
-          'Some Typhon product pages list free shipping, but the sales team should confirm the current delivery schedule before purchase.',
-          `Warehouse/contact location: ${typhonAssistantFacts.address}`,
-          typhonAssistantFacts.quoteTip
+          'Some product listings may include free shipping, but the sales team should confirm the current delivery schedule before purchase.',
+          `Warehouse/contact location: ${konstructzAssistantFacts.address}`,
+          konstructzAssistantFacts.quoteTip
         ].join('\n'),
         cta: 'Request Quote'
       };
@@ -2909,8 +2907,8 @@ export default function App() {
       return {
         content: [
           'Support is available for warranty, parts, maintenance, service questions, manuals, and after-sales help.',
-          `Phone: ${typhonAssistantFacts.phone}`,
-          `Email: ${typhonAssistantFacts.email}`,
+          `Phone: ${konstructzAssistantFacts.phone}`,
+          `Email: ${konstructzAssistantFacts.email}`,
           'Please include the machine model, serial number if available, hours of use, photos/video, and a short description of the issue.'
         ].join('\n'),
         cta: 'Contact Support'
@@ -3086,7 +3084,7 @@ export default function App() {
     } else if (currentView === 'topic') {
       if (activeTopicCategory === 'Machines') {
         title = 'Mini Skid Steer Safety & Technical Performance | KONSTRUCTZ';
-        description = 'Technical specifications, engine options, maintenance schedule, and operational safety protocols for the TYPHON STOMP mini skid steer loader.';
+        description = 'Technical specifications, engine options, maintenance schedule, and operational safety protocols for compact jobsite loaders.';
         canonicalPath = '/?page=topic&topic-category=Machines';
       } else if (activeTopicCategory === 'Buying & pricing') {
         title = 'Commercial Machinery Purchase Guide & Cost Calculator | KONSTRUCTZ';
@@ -6362,7 +6360,7 @@ export default function App() {
                 <div className="topic-subpage-content machines-safety-subpage theme-white-doc">
                   <div className="section-content doc-narrow-wrap">
                     <span className="doc-kicker-tag">TECHNICAL DOCUMENTATION & SAFETY</span>
-                    <h1 className="doc-main-title">TYPHON STOMP Mini Skid Steer</h1>
+                    <h1 className="doc-main-title">Compact Mini Skid Steer</h1>
                     <p className="doc-subtitle">
                       A heavy-duty, track-sole mini loader engineered for compact construction and precision earth-moving.
                     </p>
@@ -7356,14 +7354,14 @@ export default function App() {
             <div className="section-content who-we-are-container">
               <div className="who-we-are-left">
                 <div className="factory-image-wrap">
-                  <img src={typhonFactoryEngineer} alt="TYPHON assembly plant and professional engineer" className="factory-img" />
+                  <img src={typhonFactoryEngineer} alt="KONSTRUCTZ machinery assembly plant and professional engineer" className="factory-img" />
                 </div>
               </div>
               <div className="who-we-are-right">
-                <span className="who-kicker">TYPHON PARTNERSHIP</span>
+                <span className="who-kicker">KONSTRUCTZ NETWORK</span>
                 <h2 className="who-title text-white">Who We Are</h2>
                 <p className="who-desc">
-                  We are a leading distributor of high-performance heavy machinery and compact attachments. Working closely with world-class manufacturers like TYPHON, we bring heavy-duty engineering to your local jobsite.
+                  We are a leading distributor of high-performance heavy machinery and compact attachments. Working closely with trusted manufacturing partners, we bring heavy-duty engineering to your local jobsite.
                 </p>
                 <p className="who-desc">
                   Our machinery is trusted by thousands of contractors, landscape architects, and agricultural operators across North America. From assembly plant to field operation, we ensure every machine is tested to the highest standards of power, efficiency, and reliability.
@@ -7435,7 +7433,7 @@ export default function App() {
                 <div className="testimonial-card glass-panel-dark">
                   <div className="testimonial-stars">⭐⭐⭐⭐⭐</div>
                   <p className="testimonial-text">
-                    "We've been running the TYPHON mini excavator for over 600 hours now without a single issue. The support team is fast, and getting attachments is simple and transparent."
+                    "We've been running our KONSTRUCTZ compact excavator for over 600 hours now without a single issue. The support team is fast, and getting attachments is simple and transparent."
                   </p>
                   <div className="testimonial-author">
                     <strong>Sarah Jenkins</strong>
@@ -8065,7 +8063,7 @@ export default function App() {
                         <h3>SKOOP II Wheel Loader</h3>
                         <ul>
                           <li><strong>Price:</strong> $15,499.00</li>
-                          <li><strong>Shipping:</strong> Free shipping listed by Typhon Machinery</li>
+                          <li><strong>Shipping:</strong> Free shipping listed; confirm current terms with sales</li>
                           <li><strong>Delivery to California:</strong> Available - call to confirm schedule</li>
                           <li><strong>Support:</strong> 1-year warranty, parts, manuals, and after-sales service</li>
                         </ul>
