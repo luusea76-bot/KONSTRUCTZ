@@ -207,6 +207,18 @@ const aiProductKnowledge = [
   }
 ];
 
+const typhonAssistantFacts = {
+  company: 'TYPHON Machinery',
+  site: 'https://typhonmachinery.com/',
+  phone: '+1 424-653-6764',
+  whatsapp: '+1 323-532-5703',
+  messenger: 'https://m.me/typhonmachinery',
+  email: 'admin@typhonmachinery.com',
+  address: '7025 Slauson Ave, Commerce, CA 90040, United States',
+  productFocus: 'compact and mini excavator diggers, small machinery, skid steer loaders, wheel loaders, towable excavators, compact track loaders, trenchers, dumpers, stone crushers, and jobsite attachments',
+  quoteTip: 'For the most accurate quote, share the machine name, delivery city/state, attachments, timeline, and your phone or email.'
+};
+
 const createAiMessage = (content, extra = {}) => ({
   id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   sender: 'ai',
@@ -2718,6 +2730,10 @@ export default function App() {
     const asksCompare = /\b(compare|versus| vs |difference|better|which one|choose)\b/.test(` ${normalized} `);
     const asksRecommendation = /\b(recommend|find|best machine|which machine|what machine|need machine|looking for)\b/.test(normalized);
     const asksContact = /\b(phone|number|call|contact|email|whatsapp|whats app|talk to sales|sales team)\b/.test(normalized);
+    const asksCompany = /\b(company|who are you|about|typhon|where are you|address|location)\b/.test(normalized);
+    const asksProducts = /\b(product|products|catalog|what do you sell|machines|equipment|range|list)\b/.test(normalized);
+    const asksPayment = /\b(payment|pay|financing|finance|lease|loan|credit card|bank|wire)\b/.test(normalized);
+    const asksReturn = /\b(return|refund|cancel|cancellation|exchange)\b/.test(normalized);
     const slopeUse = /\b(slope|hillside|hill|orchard|vineyard|wetland|riverbank|soft ground|forest|forestry)\b/.test(normalized);
     const loadingUse = /\b(load|loader|material|gravel|soil|mulch|pallet|warehouse|yard)\b/.test(normalized);
     const diggingUse = /\b(dig|digging|trench|trenching|drainage|foundation|excavat|utility)\b/.test(normalized);
@@ -2725,19 +2741,74 @@ export default function App() {
     if (asksContact) {
       return {
         content: [
-          'You can contact the Typhon Machinery team here:',
-          'Phone: +1 213-214-2203',
-          'Sales email: sales@typhonmachinery.com',
-          'Support email: support@typhonmachinery.com',
-          'Address: 2522 S Malt Ave, Commerce, CA 90040',
-          'For a faster quote, send the machine name, delivery city/state, and attachments you need.'
+          `You can contact ${typhonAssistantFacts.company} here:`,
+          `Phone: ${typhonAssistantFacts.phone}`,
+          `WhatsApp: ${typhonAssistantFacts.whatsapp}`,
+          `Email: ${typhonAssistantFacts.email}`,
+          `Messenger: ${typhonAssistantFacts.messenger}`,
+          `Address: ${typhonAssistantFacts.address}`,
+          typhonAssistantFacts.quoteTip
         ].join('\n')
       };
     }
 
     if (/\b(hi|hello|hey|good morning|good afternoon)\b/.test(normalized)) {
       return {
-        content: 'Hello. Tell me the job you need to do, the ground condition, and your delivery state. I can recommend a machine, compare options, explain delivery, and help prepare a quote.'
+        content: [
+          `Hello. I can help with ${typhonAssistantFacts.company} product selection, quotes, shipping, warranty, parts, and support.`,
+          `Product focus: ${typhonAssistantFacts.productFocus}.`,
+          'Tell me the job, ground condition, delivery state, and machine size you prefer.'
+        ].join('\n')
+      };
+    }
+
+    if (asksCompany) {
+      return {
+        content: [
+          `${typhonAssistantFacts.company} supplies compact construction machinery and mini excavator diggers.`,
+          `Website: ${typhonAssistantFacts.site}`,
+          `Address: ${typhonAssistantFacts.address}`,
+          `Phone: ${typhonAssistantFacts.phone}`,
+          `Email: ${typhonAssistantFacts.email}`
+        ].join('\n')
+      };
+    }
+
+    if (asksProducts) {
+      return {
+        content: [
+          `${typhonAssistantFacts.company} product areas include:`,
+          'Mini excavators and compact excavator diggers',
+          'Wheel loaders and compact loaders',
+          'Skid steer / compact track loaders',
+          'Towable and walking excavators',
+          'Trenchers, dumpers, stone crushers, and jobsite attachments',
+          'Tell me your job type and terrain, and I can suggest a machine.'
+        ].join('\n')
+      };
+    }
+
+    if (asksPayment) {
+      return {
+        content: [
+          'Payment and financing details should be confirmed with the sales team because terms can depend on machine, inventory, destination, and order size.',
+          `Phone: ${typhonAssistantFacts.phone}`,
+          `Email: ${typhonAssistantFacts.email}`,
+          typhonAssistantFacts.quoteTip
+        ].join('\n'),
+        cta: 'Request Quote'
+      };
+    }
+
+    if (asksReturn) {
+      return {
+        content: [
+          'For returns, cancellations, exchanges, or refund questions, contact Typhon directly before shipping or modifying an order.',
+          `Phone: ${typhonAssistantFacts.phone}`,
+          `Email: ${typhonAssistantFacts.email}`,
+          'Include your order number, machine name, purchase date, and reason for the request.'
+        ].join('\n'),
+        cta: 'Contact Support'
       };
     }
 
@@ -2813,21 +2884,35 @@ export default function App() {
 
     if (asksDelivery) {
       return {
-        content: 'Delivery is available to most U.S. locations. Lead time depends on machine, warehouse stock, freight route, and delivery address. California delivery is available, and many machine quotes use a 5-7 business day estimate after order confirmation.',
+        content: [
+          'Shipping and delivery depend on the machine, live stock, freight route, and destination.',
+          'Some Typhon product pages list free shipping, but the sales team should confirm the current delivery schedule before purchase.',
+          `Warehouse/contact location: ${typhonAssistantFacts.address}`,
+          typhonAssistantFacts.quoteTip
+        ].join('\n'),
         cta: 'Request Quote'
       };
     }
 
     if (asksPrice) {
       return {
-        content: 'Most machines are listed as contact-for-quote because final price depends on model, attachments, freight, destination, taxes/fees, and stock status. Send the machine name and delivery location for a more accurate quote request.',
+        content: [
+          'Prices can vary by model, attachment package, inventory, freight, and destination.',
+          'Example: SKOOP II Wheel Loader is listed at $15,499.00.',
+          'For other machines, send the model name and delivery location so the team can confirm current pricing.'
+        ].join('\n'),
         cta: 'Request Quote'
       };
     }
 
     if (asksSupport) {
       return {
-        content: 'Support is available for warranty, parts, maintenance, service questions, manuals, and after-sales help.\nPhone: +1 213-214-2203\nSupport email: support@typhonmachinery.com\nPlease include the machine model, serial number if available, hours of use, and a short description of the issue.',
+        content: [
+          'Support is available for warranty, parts, maintenance, service questions, manuals, and after-sales help.',
+          `Phone: ${typhonAssistantFacts.phone}`,
+          `Email: ${typhonAssistantFacts.email}`,
+          'Please include the machine model, serial number if available, hours of use, photos/video, and a short description of the issue.'
+        ].join('\n'),
         cta: 'Contact Support'
       };
     }
