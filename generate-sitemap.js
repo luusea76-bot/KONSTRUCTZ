@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const baseUrl = 'https://konstructzmachinery.com';
+const baseUrl = 'https://konstructz.com';
 const lastmod = '2026-06-19';
 
 // 1. Core pages
@@ -10,6 +10,12 @@ const pages = [
   { path: '/?page=attachments', priority: '0.9', changefreq: 'weekly' },
   { path: '/?page=blog', priority: '0.8', changefreq: 'weekly' },
   { path: '/?page=topic', priority: '0.8', changefreq: 'monthly' },
+  { path: '/?page=topic&topic-category=Machines', priority: '0.8', changefreq: 'monthly' },
+  { path: '/?page=topic&topic-category=Buying%20%26%20pricing', priority: '0.8', changefreq: 'monthly' },
+  { path: '/?page=topic&topic-category=Delivery', priority: '0.8', changefreq: 'monthly' },
+  { path: '/?page=topic&topic-category=Warranty', priority: '0.8', changefreq: 'monthly' },
+  { path: '/?page=topic&topic-category=Service%20%26%20parts', priority: '0.8', changefreq: 'monthly' },
+  { path: '/?page=topic&topic-category=Financing', priority: '0.8', changefreq: 'monthly' },
   { path: '/?page=about', priority: '0.7', changefreq: 'monthly' },
   { path: '/?page=contact', priority: '0.7', changefreq: 'monthly' },
   { path: '/?page=support', priority: '0.7', changefreq: 'monthly' },

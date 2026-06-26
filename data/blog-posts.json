@@ -1,0 +1,127 @@
+[
+  {
+    "slug": "test",
+    "title": "Test",
+    "seoTitle": "Test | KONSTRUCTZ Blog",
+    "seoDescription": "hu",
+    "category": "Guide",
+    "image": "",
+    "date": "June 26, 2026",
+    "publishedDate": "2026-06-26",
+    "updatedDate": "2026-06-26",
+    "desc": "hu",
+    "status": "Published",
+    "tags": [],
+    "sections": [
+      {
+        "h2": "asdc",
+        "body": "xsa"
+      },
+      {
+        "h2": "Hydraulics and attachments",
+        "body": "xas"
+      },
+      {
+        "h2": "as",
+        "body": "sx"
+      }
+    ]
+  },
+  {
+    "slug": "choosing-wheel-loaders-and-skid-steers",
+    "title": "Choosing the right loader: A guide to wheel loaders and skid steers.",
+    "seoTitle": "Choosing Wheel Loaders and Mini Skid Steers | KONSTRUCTZ Blog",
+    "seoDescription": "Compare wheel loaders and mini skid steers for loading, grading, material handling, landscaping, and tight jobsite work.",
+    "category": "Buyer Guide",
+    "date": "May 28, 2026",
+    "publishedDate": "2026-05-28",
+    "updatedDate": "2026-06-17",
+    "desc": "Compare loader styles, lift needs, maneuverability, and jobsite conditions before choosing your next machine.",
+    "status": "Published",
+    "tags": [
+      "loaders",
+      "buying"
+    ],
+    "sections": [
+      {
+        "h2": "Start with the jobsite",
+        "body": "Wheel loaders suit repeated loading, yard work, and material handling. Mini skid steers shine when access is tight and attachments need to change quickly."
+      },
+      {
+        "h2": "Think about lift and traction",
+        "body": "Match operating weight, rated capacity, tire or track style, and lift height to the material you move most often.",
+        "h3": "Attachment range matters",
+        "h3Body": "Buckets, forks, augers, tillers, grapples, and trenchers can turn one compact loader into a flexible daily machine."
+      },
+      {
+        "h2": "Plan for service and storage",
+        "body": "Choose a machine that fits your trailer, storage area, maintenance routine, and operator comfort needs."
+      }
+    ]
+  },
+  {
+    "slug": "heavy-machinery-jobsite-safety",
+    "title": "Safety on the job site: Tips for operating heavy machinery.",
+    "seoTitle": "Heavy Machinery Jobsite Safety Tips | KONSTRUCTZ Blog",
+    "seoDescription": "Jobsite safety tips for compact construction equipment operators, including checks, visibility, communication, and attachment handling.",
+    "category": "Safety",
+    "date": "May 15, 2026",
+    "publishedDate": "2026-05-15",
+    "updatedDate": "2026-06-17",
+    "desc": "Use simple operating habits to improve visibility, communication, and machine control around active work areas.",
+    "status": "Published",
+    "tags": [
+      "safety",
+      "loaders"
+    ],
+    "sections": [
+      {
+        "h2": "Make communication visible",
+        "body": "Use a spotter when sightlines are limited, agree on hand signals, and keep workers clear of swing radius, travel paths, and attachment movement."
+      },
+      {
+        "h2": "Respect terrain and load limits",
+        "body": "Avoid side loading, sudden turns on slopes, and carrying material higher than needed. Stable machine movement protects both operators and nearby crews.",
+        "h3": "Secure attachments first",
+        "h3Body": "Confirm pins, couplers, hydraulic lines, and safety locks before putting a tool under load."
+      },
+      {
+        "h2": "Shut down with intention",
+        "body": "Lower attachments, release hydraulic pressure, set the brake, and remove the key when leaving the operator station."
+      }
+    ]
+  },
+  {
+    "slug": "future-of-construction-technology",
+    "title": "Future of construction: How technology is changing the industry.",
+    "seoTitle": "Future of Construction Technology | KONSTRUCTZ Blog",
+    "seoDescription": "Explore how compact machinery, better controls, efficient engines, and attachment systems are changing construction workflows.",
+    "category": "Industry",
+    "date": "April 30, 2026",
+    "publishedDate": "2026-04-30",
+    "updatedDate": "2026-06-17",
+    "desc": "Compact machines, smarter attachments, and better controls are changing how small crews tackle serious work.",
+    "status": "Published",
+    "tags": [
+      "loaders",
+      "excavators",
+      "attachments"
+    ],
+    "sections": [
+      {
+        "h2": "Compact machines are doing bigger work",
+        "body": "Modern mini excavators, loaders, dumpers, and attachments help smaller crews complete tasks that once required larger fleets."
+      },
+      {
+        "h2": "Controls are becoming more operator-friendly",
+        "body": "Cleaner layouts, pilot controls, better visibility, and faster attachment changes make equipment easier to learn and more productive on repeat tasks.",
+        "h3": "Efficiency is a competitive edge",
+        "h3Body": "Fuel use, transport size, service access, and uptime all affect the real cost of ownership."
+      },
+      {
+        "h2": "Attachments expand the machine",
+        "body": "A strong attachment catalog gives contractors more ways to dig, load, grade, drill, break, sweep, and clear with the same base machine."
+      }
+    ]
+  }
+]

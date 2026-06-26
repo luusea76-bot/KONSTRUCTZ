@@ -8,26 +8,54 @@
     <meta name="keywords" content="heavy machinery, construction equipment, wheel loaders, mini excavators, stone crusher, attachments, Konstructz" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#0f110e" />
-    <link rel="canonical" href="https://konstructzmachinery.com/" />
+    <link rel="canonical" href="https://konstructz.com/" />
     <meta property="og:site_name" content="KONSTRUCTZ" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="KONSTRUCTZ | The Future of Construction" />
     <meta property="og:description" content="Premium construction equipment, mini excavators, wheel loaders, attachments, and jobsite machinery built for contractors." />
-    <meta property="og:url" content="https://konstructzmachinery.com/" />
-    <meta property="og:image" content="https://konstructzmachinery.com/favicon.svg" />
+    <meta property="og:url" content="https://konstructz.com/" />
+    <meta property="og:image" content="https://konstructz.com/favicon.svg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="KONSTRUCTZ | The Future of Construction" />
     <meta name="twitter:description" content="Premium construction equipment, mini excavators, wheel loaders, attachments, and jobsite machinery built for contractors." />
-    <meta name="twitter:image" content="https://konstructzmachinery.com/favicon.svg" />
+    <meta name="twitter:image" content="https://konstructz.com/favicon.svg" />
     <title>KONSTRUCTZ | The Future of Construction</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://d2j6dbq0eux0bg.cloudfront.net">
-    <link href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        function showAppError(message) {
+          var root = document.getElementById('root');
+          if (!root || root.children.length > 0) return;
+          root.innerHTML = '<main style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#111827;font-family:Inter,Arial,sans-serif;padding:24px;">' +
+            '<section style="max-width:720px;border:1px solid #dbe2ea;border-left:5px solid #607a4e;border-radius:10px;background:#fff;padding:28px;box-shadow:0 20px 60px rgba(15,23,42,.08);">' +
+            '<p style="margin:0 0 8px;color:#607a4e;font-size:12px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;">KONSTRUCTZ app did not start</p>' +
+            '<h1 style="margin:0 0 12px;font-size:28px;line-height:1.15;color:#111827;">The site hit a browser error.</h1>' +
+            '<p style="margin:0;color:#475569;font-size:15px;line-height:1.6;">' + message + '</p>' +
+            '<p style="margin:18px 0 0;color:#64748b;font-size:13px;">Try opening the active Vite URL shown in the terminal, then hard refresh. If this message stays, send this text back to Codex.</p>' +
+            '</section></main>';
+        }
+
+        window.addEventListener('error', function (event) {
+          showAppError(event.message || 'Unknown script error.');
+        });
+        window.addEventListener('unhandledrejection', function (event) {
+          showAppError((event.reason && (event.reason.message || event.reason.toString())) || 'Unknown promise error.');
+        });
+        window.setTimeout(function () {
+          var root = document.getElementById('root');
+          if (root && root.children.length === 0) {
+            showAppError('The React app did not mount. This usually means the browser is connected to a stale Vite port or a module failed to load.');
+          }
+        }, 3500);
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

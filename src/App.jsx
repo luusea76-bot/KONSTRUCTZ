@@ -5,9 +5,6 @@ import ProductCard from './components/ProductCard'
 import StoreEmbed from './components/StoreEmbed'
 import heroLoaderAsset from './assets/hero.png'
 import typhonFactoryEngineerAsset from './assets/typhon_factory_engineer.png'
-import loaderCarryingGravelAsset from './assets/loader_carrying_gravel.png'
-import trackLoaderFarmAsset from './assets/track_loader_farm.png'
-import dumperConstructionAsset from './assets/dumper_construction.png'
 import tigerWatermarkAsset from './assets/tiger_watermark.png'
 import tigerLogoAsset from './assets/tiger_logo.png'
 import konstructzLogoAsset from './assets/konstructz_logo.png'
@@ -34,17 +31,24 @@ const heroLoader = heroLoaderAsset;
 const heroVideo = '/media/hero-wheel-loader.mp4';
 const aboutKonstructzMachinery = '/about-skoop-typhon-banner.png';
 const stoneCrusher = stoneCrusherAsset;
-const constructionBg = trackLoaderFarmAsset;
+const constructionBg = stoneCrusherAsset;
 const loaderAction = '/src/assets/loader_action.png';
 const typhonFactoryEngineer = typhonFactoryEngineerAsset;
-const loaderCarryingGravel = loaderCarryingGravelAsset;
-const trackLoaderFarm = trackLoaderFarmAsset;
-const dumperConstruction = dumperConstructionAsset;
+const loaderCarryingGravel = '/about-skoop-construction-main.png';
+const trackLoaderFarm = '/about-skoop-park.png';
+const dumperConstruction = '/about-skoop-construction-side.png';
 const tigerWatermark = tigerWatermarkAsset;
 const tigerLogo = tigerLogoAsset;
 const konstructzLogo = konstructzLogoAsset;
 const supportHero = supportHeroAsset;
 const supportCallCenter = supportCallCenterAsset;
+
+const fallbackBlogImagesBySlug = {
+  'excavator-maintenance-tips': '/about-skoop-park.png',
+  'choosing-wheel-loaders-and-skid-steers': '/about-skoop-construction-main.png',
+  'heavy-machinery-jobsite-safety': '/about-skoop-construction-side.png',
+  'future-of-construction-technology': stoneCrusher
+};
 
 const systemAttachmentSlides = [
   {
@@ -210,6 +214,8 @@ const defaultBlogPosts = [
     publishedDate: '2026-06-12',
     updatedDate: '2026-06-17',
     desc: 'Learn our top maintenance habits for keeping compact excavators reliable without slowing down the workday.',
+    status: 'Published',
+    tags: ['maintenance', 'excavators'],
     sections: [
       {
         h2: 'Daily checks before startup',
@@ -237,6 +243,8 @@ const defaultBlogPosts = [
     publishedDate: '2026-05-28',
     updatedDate: '2026-06-17',
     desc: 'Compare loader styles, lift needs, maneuverability, and jobsite conditions before choosing your next machine.',
+    status: 'Published',
+    tags: ['loaders', 'buying'],
     sections: [
       {
         h2: 'Start with the jobsite',
@@ -264,6 +272,8 @@ const defaultBlogPosts = [
     publishedDate: '2026-05-15',
     updatedDate: '2026-06-17',
     desc: 'Use simple operating habits to improve visibility, communication, and machine control around active work areas.',
+    status: 'Published',
+    tags: ['safety', 'loaders'],
     sections: [
       {
         h2: 'Make communication visible',
@@ -291,6 +301,8 @@ const defaultBlogPosts = [
     publishedDate: '2026-04-30',
     updatedDate: '2026-06-17',
     desc: 'Compact machines, smarter attachments, and better controls are changing how small crews tackle serious work.',
+    status: 'Published',
+    tags: ['loaders', 'excavators', 'attachments'],
     sections: [
       {
         h2: 'Compact machines are doing bigger work',
@@ -321,6 +333,8 @@ const emptyBlogForm = {
   publishedDate: '',
   updatedDate: '',
   desc: '',
+  status: 'Published',
+  tags: '',
   sectionOneTitle: '',
   sectionOneBody: '',
   sectionTwoTitle: '',
@@ -347,17 +361,231 @@ const createSlug = (value) => (
     .replace(/^-+|-+$/g, '')
 );
 
+const normalizeBlogCategory = (value) => (
+  value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase())
+);
+
+const BLOG_SYNC_HASH_KEY = 'blogPosts';
+const BLOG_SYNC_HASH_LIMIT = 120000;
+const BLOG_SYNC_PORTS = ['5173', '5174', '5175', '5176', '5177', '5178', '5179'];
+const BLOG_POSTS_STORAGE_KEY = 'konstructzBlogPosts';
+const BLOG_POSTS_UPDATED_STORAGE_KEY = 'konstructzBlogPostsUpdatedAt';
+const BLOG_DEFAULT_POSTS_MIGRATION_KEY = 'konstructzDefaultBlogPostsMerged';
+const BLOG_USER_HAS_MANAGED_POSTS_KEY = 'konstructzUserHasManagedBlogPosts';
+const BLOG_POSTS_API_PATH = '/api/blog-posts';
+const BLOG_PREVIEW_ORIGIN_STORAGE_KEY = 'konstructzBlogPreviewOrigin';
+const BLOG_COMMENTS_STORAGE_KEY = 'konstructzComments';
+const KONSTRUCTZ_DB_NAME = 'konstructzLocalContent';
+const KONSTRUCTZ_DB_STORE = 'content';
+const BLOG_DEFAULT_POSTS_VERSION = defaultBlogPosts.map(post => post.slug).join('|');
+
+const isLocalhostName = (hostname) => hostname === 'localhost' || hostname === '127.0.0.1';
+
+const isAllowedLocalBlogSyncOrigin = (origin) => {
+  try {
+    const url = new URL(origin);
+    return isLocalhostName(url.hostname) && BLOG_SYNC_PORTS.includes(url.port);
+  } catch {
+    return false;
+  }
+};
+
+const openKonstructzDb = () => new Promise((resolve, reject) => {
+  if (typeof indexedDB === 'undefined') {
+    reject(new Error('IndexedDB is not available.'));
+    return;
+  }
+
+  const request = indexedDB.open(KONSTRUCTZ_DB_NAME, 1);
+  request.onupgradeneeded = () => {
+    request.result.createObjectStore(KONSTRUCTZ_DB_STORE);
+  };
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error);
+});
+
+const readPersistentContent = async (key) => {
+  const db = await openKonstructzDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(KONSTRUCTZ_DB_STORE, 'readonly');
+    const request = transaction.objectStore(KONSTRUCTZ_DB_STORE).get(key);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+    transaction.oncomplete = () => db.close();
+    transaction.onerror = () => db.close();
+  });
+};
+
+const writePersistentContent = async (key, value) => {
+  const db = await openKonstructzDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(KONSTRUCTZ_DB_STORE, 'readwrite');
+    const request = transaction.objectStore(KONSTRUCTZ_DB_STORE).put(value, key);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+    transaction.oncomplete = () => db.close();
+    transaction.onerror = () => db.close();
+  });
+};
+
+const saveJsonBackup = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    console.warn(`Could not save ${key} to localStorage. IndexedDB backup will be used.`, err);
+  }
+};
+
+const mergeMissingDefaultBlogPosts = (posts) => {
+  if (!Array.isArray(posts)) {
+    return { posts: defaultBlogPosts, changed: true };
+  }
+
+  try {
+    if (localStorage.getItem(BLOG_USER_HAS_MANAGED_POSTS_KEY) === 'true') {
+      return { posts, changed: false };
+    }
+    if (localStorage.getItem(BLOG_DEFAULT_POSTS_MIGRATION_KEY) === BLOG_DEFAULT_POSTS_VERSION) {
+      return { posts, changed: false };
+    }
+  } catch {
+    return { posts, changed: false };
+  }
+
+  const existingSlugs = new Set(posts.map(post => post?.slug).filter(Boolean));
+  const missingDefaults = defaultBlogPosts.filter(post => !existingSlugs.has(post.slug));
+
+  if (missingDefaults.length === 0) {
+    try {
+      localStorage.setItem(BLOG_DEFAULT_POSTS_MIGRATION_KEY, BLOG_DEFAULT_POSTS_VERSION);
+    } catch {}
+    return { posts, changed: false };
+  }
+
+  try {
+    localStorage.setItem(BLOG_DEFAULT_POSTS_MIGRATION_KEY, BLOG_DEFAULT_POSTS_VERSION);
+  } catch {}
+
+  return {
+    posts: [...posts, ...missingDefaults],
+    changed: true
+  };
+};
+
+const getSavedBlogPostsWithDefaults = (savedPosts) => {
+  if (!savedPosts) {
+    return { posts: defaultBlogPosts, changed: false };
+  }
+  const parsedPosts = JSON.parse(savedPosts);
+  return mergeMissingDefaultBlogPosts(parsedPosts);
+};
+
+const readBlogPostsFromApi = async () => {
+  const response = await fetch(BLOG_POSTS_API_PATH, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+    cache: 'no-store'
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error(`Blog API read failed with ${response.status}`);
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload.posts) ? payload.posts : null;
+};
+
+const writeBlogPostsToApi = async (posts) => {
+  const response = await fetch(BLOG_POSTS_API_PATH, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ posts })
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || `Blog API save failed with ${response.status}`);
+  }
+};
+
+const encodeBlogPostsForUrl = (posts) => {
+  try {
+    const payload = JSON.stringify(posts);
+    const bytes = new TextEncoder().encode(payload);
+    let binary = '';
+    bytes.forEach(byte => {
+      binary += String.fromCharCode(byte);
+    });
+    return btoa(binary);
+  } catch (err) {
+    console.error('Failed to encode blog posts for preview:', err);
+    return '';
+  }
+};
+
+const decodeBlogPostsFromUrl = (value) => {
+  try {
+    const binary = atob(value);
+    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch (err) {
+    console.error('Failed to import blog posts from preview URL:', err);
+    return null;
+  }
+};
+
+const getLocalBlogPreviewUrl = (posts = null) => {
+  if (typeof window === 'undefined') return '/?page=blog';
+  const url = new URL(window.location.href);
+  url.search = '?page=blog';
+  url.hash = '';
+
+  if (isLocalhostName(url.hostname) && url.port === '5173') {
+    try {
+      const savedPreviewOrigin = localStorage.getItem(BLOG_PREVIEW_ORIGIN_STORAGE_KEY);
+      if (savedPreviewOrigin && isAllowedLocalBlogSyncOrigin(savedPreviewOrigin)) {
+        const previewOrigin = new URL(savedPreviewOrigin);
+        url.protocol = previewOrigin.protocol;
+        url.hostname = previewOrigin.hostname;
+        url.port = previewOrigin.port;
+      } else {
+        url.port = '5175';
+      }
+    } catch {
+      url.port = '5175';
+    }
+  }
+
+  if (posts) {
+    const encodedPosts = encodeBlogPostsForUrl(posts);
+    if (encodedPosts && encodedPosts.length <= BLOG_SYNC_HASH_LIMIT) {
+      url.hash = `${BLOG_SYNC_HASH_KEY}=${encodedPosts}`;
+    }
+  }
+
+  return url.toString();
+};
+
 const postToForm = (post) => ({
   slug: post.slug,
   title: post.title,
-  seoTitle: post.seoTitle,
-  seoDescription: post.seoDescription,
+  seoTitle: post.seoTitle || '',
+  seoDescription: post.seoDescription || '',
   category: post.category,
   image: post.image || '',
   date: post.date,
   publishedDate: post.publishedDate,
   updatedDate: post.updatedDate,
   desc: post.desc,
+  status: post.status || 'Published',
+  tags: Array.isArray(post.tags) ? post.tags.join(', ') : (post.tags || ''),
   sectionOneTitle: post.sections?.[0]?.h2 || '',
   sectionOneBody: post.sections?.[0]?.body || '',
   sectionTwoTitle: post.sections?.[1]?.h2 || '',
@@ -408,6 +636,23 @@ const ExcavatorSvg = () => (
     <path d="M 10 32 L 6 40 L 18 38 Z" fill="var(--accent)"/>
   </svg>
 );
+
+const BlogImage = ({ src, alt, className, fallbackSvg }) => {
+  const [hasError, setHasError] = useState(false);
+  
+  if (hasError || !src) {
+    return fallbackSvg || <WheelLoaderSvg />;
+  }
+  
+  return (
+    <img 
+      src={src} 
+      alt={alt} 
+      className={className} 
+      onError={() => setHasError(true)} 
+    />
+  );
+};
 
 const topicFaqs = {
   'Machines': [
@@ -543,6 +788,165 @@ const topicFaqs = {
     }
   ]
 };
+const parseTextareaMedia = (text) => {
+  if (!text) return [];
+  const lines = text.split('\n');
+  const mediaItems = [];
+  
+  const imageUrlRegex = /^(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))$/i;
+  const videoUrlRegex = /^(https?:\/\/[^\s]+(?:\.mp4|\.webm|\.ogg|\.mov))$/i;
+  const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?$/;
+  
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    
+    if (trimmed.startsWith('data:image/') || imageUrlRegex.test(trimmed)) {
+      mediaItems.push({
+        type: 'image',
+        src: trimmed,
+        rawLine: line
+      });
+    }
+    else if (trimmed.startsWith('data:video/') || videoUrlRegex.test(trimmed)) {
+      mediaItems.push({
+        type: 'video',
+        src: trimmed,
+        rawLine: line
+      });
+    }
+    else if (youtubeRegex.test(trimmed)) {
+      const match = trimmed.match(youtubeRegex);
+      mediaItems.push({
+        type: 'youtube',
+        src: `https://www.youtube.com/embed/${match[1]}`,
+        rawLine: line
+      });
+    }
+    else if (trimmed.startsWith('<iframe') && trimmed.endsWith('</iframe>')) {
+      const srcMatch = trimmed.match(/src=["']([^"']+)["']/);
+      if (srcMatch) {
+        mediaItems.push({
+          type: 'embed',
+          src: srcMatch[1],
+          rawLine: line
+        });
+      }
+    }
+  });
+  
+  return mediaItems;
+};
+
+const getVisibleBlogPosts = (posts) => {
+  const today = new Date().toISOString().split('T')[0];
+  return posts.filter(post => {
+    const status = post.status || 'Published';
+    if (status === 'Draft') return false;
+    if (status === 'Scheduled') {
+      return post.publishedDate && post.publishedDate <= today;
+    }
+    return true;
+  });
+};
+
+const getBlogDisplayData = (post) => {
+  let displayImage = post?.image || '';
+  let displayDesc = post?.desc || '';
+  const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
+
+  if (displayDesc) {
+    const match = displayDesc.match(urlRegex);
+    if (match) {
+      if (!displayImage) {
+        displayImage = match[0];
+      }
+      displayDesc = displayDesc.replace(urlRegex, '').trim();
+    }
+  }
+
+  if (!displayImage && post?.slug) {
+    displayImage = fallbackBlogImagesBySlug[post.slug] || heroLoader;
+  }
+
+  return {
+    displayImage: displayImage || heroLoader,
+    displayDesc
+  };
+};
+
+const renderParagraphWithMedia = (text) => {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return lines.map((line, lineIdx) => {
+    const trimmed = line.trim();
+    if (!trimmed) return <br key={lineIdx} />;
+    
+    const isBase64Image = trimmed.startsWith('data:image/');
+    const imageUrlRegex = /^(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))$/i;
+    const isImageUrl = imageUrlRegex.test(trimmed);
+    
+    if (isBase64Image || isImageUrl) {
+      return (
+        <div key={lineIdx} className="blog-body-media-wrapper blog-body-image">
+          <img src={trimmed} alt="Article media" className="blog-body-inserted-image" />
+        </div>
+      );
+    }
+    
+    const isBase64Video = trimmed.startsWith('data:video/');
+    const videoUrlRegex = /^(https?:\/\/[^\s]+(?:\.mp4|\.webm|\.ogg|\.mov))$/i;
+    const isVideoUrl = videoUrlRegex.test(trimmed) || isBase64Video;
+    if (isVideoUrl) {
+      return (
+        <div key={lineIdx} className="blog-body-media-wrapper blog-body-video">
+          <video src={trimmed} controls className="blog-body-inserted-video" />
+        </div>
+      );
+    }
+    
+    const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?$/;
+    const ytMatch = trimmed.match(youtubeRegex);
+    if (ytMatch) {
+      const videoId = ytMatch[1];
+      return (
+        <div key={lineIdx} className="blog-body-media-wrapper blog-body-youtube">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="blog-body-inserted-youtube"
+          ></iframe>
+        </div>
+      );
+    }
+    
+    if (trimmed.startsWith('<iframe') && trimmed.endsWith('</iframe>')) {
+      const srcMatch = trimmed.match(/src=["']([^"']+)["']/);
+      if (srcMatch) {
+        return (
+          <div key={lineIdx} className="blog-body-media-wrapper blog-body-iframe">
+            <iframe
+              src={srcMatch[1]}
+              title="Embedded media"
+              frameBorder="0"
+              allowFullScreen
+              className="blog-body-inserted-iframe"
+            ></iframe>
+          </div>
+        );
+      }
+    }
+    
+    return (
+      <p key={lineIdx} className="blog-body-text-line">
+        {line}
+      </p>
+    );
+  });
+};
 
 export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -573,22 +977,31 @@ export default function App() {
   const [checkoutItem, setCheckoutItem] = useState(null);
   const [blogPosts, setBlogPosts] = useState(() => {
     try {
-      const savedPosts = localStorage.getItem('konstructzBlogPosts');
-      return savedPosts ? JSON.parse(savedPosts) : defaultBlogPosts;
+      const savedPosts = localStorage.getItem(BLOG_POSTS_STORAGE_KEY);
+      const { posts, changed } = getSavedBlogPostsWithDefaults(savedPosts);
+      if (changed) {
+        saveJsonBackup(BLOG_POSTS_STORAGE_KEY, posts);
+        writePersistentContent(BLOG_POSTS_STORAGE_KEY, posts).catch(err => {
+          console.error('Failed to save restored blog posts to IndexedDB:', err);
+        });
+      }
+      return posts;
     } catch {
       return defaultBlogPosts;
     }
   });
+  const blogPostsRef = useRef(blogPosts);
   const [blogAdminForm, setBlogAdminForm] = useState(emptyBlogForm);
 
   const [comments, setComments] = useState(() => {
     try {
-      const savedComments = localStorage.getItem('konstructzComments');
+      const savedComments = localStorage.getItem(BLOG_COMMENTS_STORAGE_KEY);
       return savedComments ? JSON.parse(savedComments) : defaultComments;
     } catch {
       return defaultComments;
     }
   });
+  const commentsRef = useRef(comments);
 
   const [inquiries, setInquiries] = useState(() => {
     try {
@@ -608,9 +1021,21 @@ export default function App() {
     }
   });
 
+  const [blogPostViews, setBlogPostViews] = useState(() => {
+    try {
+      const savedViews = localStorage.getItem('konstructzBlogPostViews');
+      return savedViews ? JSON.parse(savedViews) : {};
+    } catch {
+      return {};
+    }
+  });
+
   const [dashboardTab, setDashboardTab] = useState('overview');
   const [inquirySearch, setInquirySearch] = useState('');
   const [inquiryStatusFilter, setInquiryStatusFilter] = useState('All');
+  const [adminPostSearch, setAdminPostSearch] = useState('');
+  const [adminPostStatusFilter, setAdminPostStatusFilter] = useState('All');
+  const [adminCommentStatusFilter, setAdminCommentStatusFilter] = useState('All');
   
   const [commentForm, setCommentForm] = useState({
     authorName: '',
@@ -618,7 +1043,11 @@ export default function App() {
     content: ''
   });
   const [editingBlogSlug, setEditingBlogSlug] = useState(null);
+  const [isBlogEditing, setIsBlogEditing] = useState(false);
   const [blogAdminStatus, setBlogAdminStatus] = useState('');
+  const [blogSearchQuery, setBlogSearchQuery] = useState('');
+  const [activeBlogCategory, setActiveBlogCategory] = useState('All');
+  const [activeBlogTag, setActiveBlogTag] = useState('All');
 
   const [formValues, setFormValues] = useState({
     firstName: '',
@@ -631,6 +1060,114 @@ export default function App() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const carouselGridRef = useRef(null);
+
+  useEffect(() => {
+    blogPostsRef.current = blogPosts;
+  }, [blogPosts]);
+
+  useEffect(() => {
+    commentsRef.current = comments;
+  }, [comments]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadSavedContent = async () => {
+      try {
+        const [apiPosts, savedPosts, savedComments] = await Promise.all([
+          readBlogPostsFromApi().catch(() => null),
+          readPersistentContent(BLOG_POSTS_STORAGE_KEY).catch(() => null),
+          readPersistentContent(BLOG_COMMENTS_STORAGE_KEY).catch(() => null)
+        ]);
+
+        if (cancelled) return;
+
+        if (Array.isArray(apiPosts)) {
+          setBlogPosts(apiPosts);
+          saveJsonBackup(BLOG_POSTS_STORAGE_KEY, apiPosts);
+          writePersistentContent(BLOG_POSTS_STORAGE_KEY, apiPosts).catch(err => {
+            console.error('Failed to cache API blog posts to IndexedDB:', err);
+          });
+        } else if (Array.isArray(savedPosts)) {
+          const { posts: restoredPosts, changed } = mergeMissingDefaultBlogPosts(savedPosts);
+          const currentPosts = blogPostsRef.current;
+          const isOlderBackup = restoredPosts.length < currentPosts.length;
+          if (!isOlderBackup && JSON.stringify(restoredPosts) !== JSON.stringify(currentPosts)) {
+            setBlogPosts(restoredPosts);
+            saveJsonBackup(BLOG_POSTS_STORAGE_KEY, restoredPosts);
+          }
+          if (changed) {
+            writePersistentContent(BLOG_POSTS_STORAGE_KEY, restoredPosts).catch(err => {
+              console.error('Failed to save restored blog posts to IndexedDB:', err);
+            });
+          }
+        }
+
+        if (Array.isArray(savedComments)) {
+          setComments(savedComments);
+          saveJsonBackup(BLOG_COMMENTS_STORAGE_KEY, savedComments);
+        }
+      } catch (err) {
+        console.error('Failed to load saved blog content:', err);
+      }
+    };
+
+    loadSavedContent();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === BLOG_POSTS_STORAGE_KEY) {
+        try {
+          const { posts: nextPosts } = getSavedBlogPostsWithDefaults(e.newValue);
+          setBlogPosts(nextPosts);
+        } catch (err) {
+          console.error('Failed to parse blog posts from storage event:', err);
+        }
+      }
+      if (e.key === BLOG_COMMENTS_STORAGE_KEY) {
+        try {
+          const nextComments = e.newValue ? JSON.parse(e.newValue) : defaultComments;
+          setComments(nextComments);
+        } catch (err) {
+          console.error('Failed to parse comments from storage event:', err);
+        }
+      }
+      if (e.key === 'konstructzInquiries') {
+        try {
+          const nextInquiries = e.newValue ? JSON.parse(e.newValue) : defaultInquiries;
+          setInquiries(nextInquiries);
+        } catch (err) {
+          console.error('Failed to parse inquiries from storage event:', err);
+        }
+      }
+      if (e.key === 'konstructzProductViews') {
+        try {
+          const nextViews = e.newValue ? JSON.parse(e.newValue) : {};
+          setProductViews(nextViews);
+        } catch (err) {
+          console.error('Failed to parse product views from storage event:', err);
+        }
+      }
+      if (e.key === 'konstructzBlogPostViews') {
+        try {
+          const nextViews = e.newValue ? JSON.parse(e.newValue) : {};
+          setBlogPostViews(nextViews);
+        } catch (err) {
+          console.error('Failed to parse blog post views from storage event:', err);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const scrollCarousel = (direction) => {
     if (carouselGridRef.current) {
@@ -673,10 +1210,289 @@ export default function App() {
     }
   };
 
-  const saveBlogPosts = (nextPosts) => {
-    setBlogPosts(nextPosts);
-    localStorage.setItem('konstructzBlogPosts', JSON.stringify(nextPosts));
+  const syncFramesRef = useRef([]);
+
+  const broadcastToAllPorts = (data) => {
+    if (typeof window === 'undefined') return;
+    if (!isLocalhostName(window.location.hostname) || !BLOG_SYNC_PORTS.includes(window.location.port)) {
+      return;
+    }
+    
+    let currentInquiries = [];
+    try {
+      const savedInquiries = localStorage.getItem('konstructzInquiries');
+      currentInquiries = savedInquiries ? JSON.parse(savedInquiries) : inquiries;
+    } catch {}
+
+    let currentProductViews = {};
+    try {
+      const savedProductViews = localStorage.getItem('konstructzProductViews');
+      currentProductViews = savedProductViews ? JSON.parse(savedProductViews) : productViews;
+    } catch {}
+
+    let currentBlogPostViews = {};
+    try {
+      const savedBlogPostViews = localStorage.getItem('konstructzBlogPostViews');
+      currentBlogPostViews = savedBlogPostViews ? JSON.parse(savedBlogPostViews) : blogPostViews;
+    } catch {}
+
+    const payload = {
+      type: 'konstructz:sync-all-data',
+      posts: data.posts || blogPosts,
+      comments: data.comments || comments,
+      inquiries: data.inquiries || currentInquiries,
+      productViews: data.productViews || currentProductViews,
+      blogPostViews: data.blogPostViews || currentBlogPostViews,
+      savedAt: Date.now()
+    };
+
+    syncFramesRef.current.forEach(frame => {
+      try {
+        const port = frame.dataset.port;
+        if (!port) return;
+        const targetOrigin = `${window.location.protocol}//${window.location.hostname}:${port}`;
+        frame.contentWindow?.postMessage(payload, targetOrigin);
+      } catch (err) {
+        console.warn('Failed to postMessage to frame:', err);
+      }
+    });
   };
+
+  const saveBlogPosts = (nextPosts) => {
+    try {
+      localStorage.setItem(BLOG_USER_HAS_MANAGED_POSTS_KEY, 'true');
+    } catch {
+      // This flag only prevents default demo content from being re-added after admin edits.
+    }
+    setBlogPosts(nextPosts);
+    saveJsonBackup(BLOG_POSTS_STORAGE_KEY, nextPosts);
+    try {
+      localStorage.setItem(BLOG_POSTS_UPDATED_STORAGE_KEY, String(Date.now()));
+    } catch {
+      // Timestamp is helpful but not required when IndexedDB is available.
+    }
+    writePersistentContent(BLOG_POSTS_STORAGE_KEY, nextPosts).catch(err => {
+      console.error('Failed to save blog posts to IndexedDB:', err);
+      setBlogAdminStatus('Post saved for this session, but browser storage failed. Try removing large pasted images.');
+    });
+    writeBlogPostsToApi(nextPosts)
+      .then(() => {
+        setBlogAdminStatus('Blog changes saved to the site.');
+      })
+      .catch(err => {
+        console.error('Failed to save blog posts to API:', err);
+        setBlogAdminStatus('Saved in this browser, but not to the site file. Restart the dev server if /api/blog-posts is not available.');
+      });
+    broadcastToAllPorts({ posts: nextPosts });
+  };
+
+  const saveComments = (nextComments) => {
+    setComments(nextComments);
+    saveJsonBackup(BLOG_COMMENTS_STORAGE_KEY, nextComments);
+    writePersistentContent(BLOG_COMMENTS_STORAGE_KEY, nextComments).catch(err => {
+      console.error('Failed to save comments to IndexedDB:', err);
+    });
+    broadcastToAllPorts({ comments: nextComments });
+  };
+
+  const syncBlogPostsToPreview = (nextPosts) => {
+    if (typeof window === 'undefined') return false;
+
+    const previewUrl = getLocalBlogPreviewUrl(nextPosts);
+    const previewOrigin = new URL(previewUrl).origin;
+    const previewWindow = window.open(previewUrl, '_blank');
+
+    if (!previewWindow) {
+      return false;
+    }
+
+    const payload = {
+      type: 'konstructz:sync-blog-posts',
+      posts: nextPosts,
+      savedAt: Date.now()
+    };
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      previewWindow.postMessage(payload, previewOrigin);
+      attempts += 1;
+      if (attempts >= 16) {
+        window.clearInterval(timer);
+      }
+    }, 250);
+
+    return true;
+  };
+
+  useEffect(() => {
+    const getCurrentBlogPostsUpdatedAt = () => Number(localStorage.getItem(BLOG_POSTS_UPDATED_STORAGE_KEY) || 0);
+    const getCurrentBlogPosts = () => {
+      try {
+        const savedPosts = localStorage.getItem(BLOG_POSTS_STORAGE_KEY);
+        return savedPosts ? getSavedBlogPostsWithDefaults(savedPosts).posts : blogPostsRef.current;
+      } catch {
+        return blogPostsRef.current;
+      }
+    };
+    const shouldImportBlogPosts = (incomingPosts, incomingSavedAt = 0) => {
+      const currentPosts = getCurrentBlogPosts();
+      const currentSavedAt = getCurrentBlogPostsUpdatedAt();
+      return (
+        incomingSavedAt > currentSavedAt ||
+        incomingPosts.length > currentPosts.length ||
+        JSON.stringify(currentPosts) === JSON.stringify(defaultBlogPosts)
+      );
+    };
+    const saveSyncedBlogPosts = (posts, status = 'Blog preview synced.', savedAt = Date.now()) => {
+      try {
+        localStorage.setItem(BLOG_USER_HAS_MANAGED_POSTS_KEY, 'true');
+      } catch {}
+      saveJsonBackup(BLOG_POSTS_STORAGE_KEY, posts);
+      try {
+        localStorage.setItem(BLOG_POSTS_UPDATED_STORAGE_KEY, String(savedAt || Date.now()));
+      } catch {
+        // Timestamp is optional when the content itself is persisted elsewhere.
+      }
+      writePersistentContent(BLOG_POSTS_STORAGE_KEY, posts).catch(err => {
+        console.error('Failed to save synced blog posts to IndexedDB:', err);
+      });
+      setBlogPosts(posts);
+      setBlogAdminStatus(status);
+    };
+
+    const importBlogPostsFromHash = () => {
+      const hashValue = window.location.hash.startsWith('#')
+        ? window.location.hash.slice(1)
+        : window.location.hash;
+      const hashParams = new URLSearchParams(hashValue);
+      const encodedPosts = hashParams.get(BLOG_SYNC_HASH_KEY);
+
+      if (!encodedPosts) {
+        return;
+      }
+
+      const importedPosts = decodeBlogPostsFromUrl(encodedPosts);
+      if (!Array.isArray(importedPosts)) {
+        return;
+      }
+
+      try {
+        saveSyncedBlogPosts(importedPosts, 'Blog preview imported.');
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      } catch (err) {
+        console.error('Failed to save imported blog posts:', err);
+      }
+    };
+
+    const handleBlogSyncMessage = (event) => {
+      if (!isAllowedLocalBlogSyncOrigin(event.origin)) {
+        return;
+      }
+
+      if (event.data?.type === 'konstructz:request-blog-posts') {
+        try {
+          localStorage.setItem(BLOG_PREVIEW_ORIGIN_STORAGE_KEY, event.origin);
+          event.source?.postMessage(
+            {
+              type: 'konstructz:blog-posts-response',
+              posts: getCurrentBlogPosts(),
+              savedAt: getCurrentBlogPostsUpdatedAt()
+            },
+            event.origin
+          );
+        } catch (err) {
+          console.error('Failed to answer blog sync request:', err);
+        }
+        return;
+      }
+
+      if (
+        !['konstructz:sync-blog-posts', 'konstructz:blog-posts-response', 'konstructz:sync-all-data'].includes(event.data?.type) ||
+        (!Array.isArray(event.data.posts) && !Array.isArray(event.data.comments) && !Array.isArray(event.data.inquiries))
+      ) {
+        return;
+      }
+
+      try {
+        if (
+          Array.isArray(event.data.posts) &&
+          (event.data.type === 'konstructz:sync-blog-posts' || shouldImportBlogPosts(event.data.posts, event.data.savedAt))
+        ) {
+          saveSyncedBlogPosts(event.data.posts, 'Blog preview synced.', event.data.savedAt);
+        }
+        if (Array.isArray(event.data.comments)) {
+          setComments(event.data.comments);
+          saveJsonBackup(BLOG_COMMENTS_STORAGE_KEY, event.data.comments);
+          writePersistentContent(BLOG_COMMENTS_STORAGE_KEY, event.data.comments).catch(err => {
+            console.error('Failed to save synced comments to IndexedDB:', err);
+          });
+        }
+        if (Array.isArray(event.data.inquiries)) {
+          setInquiries(event.data.inquiries);
+          saveJsonBackup('konstructzInquiries', event.data.inquiries);
+        }
+        if (event.data.productViews) {
+          setProductViews(event.data.productViews);
+          saveJsonBackup('konstructzProductViews', event.data.productViews);
+        }
+        if (event.data.blogPostViews) {
+          setBlogPostViews(event.data.blogPostViews);
+          saveJsonBackup('konstructzBlogPostViews', event.data.blogPostViews);
+        }
+      } catch (err) {
+        console.error('Failed to sync blog posts:', err);
+      }
+    };
+
+    const setupLocalSyncFrames = () => {
+      if (!isLocalhostName(window.location.hostname) || !BLOG_SYNC_PORTS.includes(window.location.port)) {
+        return undefined;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const page = params.get('page') || 'home';
+      if (page === 'blog-sync-source') {
+        return undefined;
+      }
+
+      const frames = BLOG_SYNC_PORTS
+        .filter(port => port !== window.location.port)
+        .map((port) => {
+          const sourceOrigin = `${window.location.protocol}//${window.location.hostname}:${port}`;
+          const frame = document.createElement('iframe');
+          frame.src = `${sourceOrigin}/?page=blog-sync-source`;
+          frame.title = `Blog sync source ${port}`;
+          frame.dataset.port = port;
+          frame.style.display = 'none';
+          frame.addEventListener('load', () => {
+            let attempts = 0;
+            const requestTimer = window.setInterval(() => {
+              frame.contentWindow?.postMessage({ type: 'konstructz:request-blog-posts' }, sourceOrigin);
+              attempts += 1;
+              if (attempts >= 8) {
+                window.clearInterval(requestTimer);
+              }
+            }, 250);
+          });
+          document.body.appendChild(frame);
+          return frame;
+        });
+
+      syncFramesRef.current = frames;
+
+      return () => {
+        syncFramesRef.current = [];
+        frames.forEach(frame => frame.remove());
+      };
+    };
+
+    importBlogPostsFromHash();
+    window.addEventListener('message', handleBlogSyncMessage);
+    const cleanupLocalSyncFrames = setupLocalSyncFrames();
+    return () => {
+      cleanupLocalSyncFrames?.();
+      window.removeEventListener('message', handleBlogSyncMessage);
+    };
+  }, []);
 
   const handleBlogAdminInput = (e) => {
     const { name, value } = e.target;
@@ -685,6 +1501,229 @@ export default function App() {
       [name]: value,
       ...(name === 'title' && !editingBlogSlug ? { slug: createSlug(value) } : {})
     }));
+  };
+
+  const handleBodyPaste = (e, fieldName) => {
+    const files = e.clipboardData?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        e.preventDefault();
+        if (file.size > 1.5 * 1024 * 1024) {
+          setBlogAdminStatus('Pasted image exceeds 1.5MB. Please paste a smaller image or use an image URL to conserve storage.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64Url = reader.result;
+          const textarea = e.target;
+          const startPos = textarea.selectionStart;
+          const endPos = textarea.selectionEnd;
+          const text = textarea.value;
+          const newText = text.substring(0, startPos) + `\n${base64Url}\n` + text.substring(endPos);
+          
+          setBlogAdminForm(prev => ({
+            ...prev,
+            [fieldName]: newText
+          }));
+        };
+        reader.readAsDataURL(file);
+      } else if (file.type.startsWith('video/')) {
+        e.preventDefault();
+        if (file.size > 3.0 * 1024 * 1024) {
+          setBlogAdminStatus('Pasted video exceeds 3.0MB. Please use a video URL or compress the file to avoid browser storage limits.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64Url = reader.result;
+          const textarea = e.target;
+          const startPos = textarea.selectionStart;
+          const endPos = textarea.selectionEnd;
+          const text = textarea.value;
+          const newText = text.substring(0, startPos) + `\n${base64Url}\n` + text.substring(endPos);
+          
+          setBlogAdminForm(prev => ({
+            ...prev,
+            [fieldName]: newText
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const insertMediaIntoTextarea = (fieldName, base64Url) => {
+    const textarea = document.querySelector(`textarea[name="${fieldName}"]`);
+    if (textarea) {
+      const startPos = textarea.selectionStart;
+      const endPos = textarea.selectionEnd;
+      const text = textarea.value;
+      const newText = text.substring(0, startPos) + `\n${base64Url}\n` + text.substring(endPos);
+      
+      setBlogAdminForm(prev => ({
+        ...prev,
+        [fieldName]: newText
+      }));
+      
+      setTimeout(() => {
+        textarea.focus();
+        const newCursorPos = startPos + base64Url.length + 2;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+      }, 50);
+    } else {
+      setBlogAdminForm(prev => ({
+        ...prev,
+        [fieldName]: (prev[fieldName] || '') + `\n${base64Url}\n`
+      }));
+    }
+  };
+
+  const handleMediaFileSelect = (e, fieldName, type) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (type === 'image') {
+      if (!file.type.startsWith('image/')) {
+        setBlogAdminStatus('Selected file is not an image.');
+        return;
+      }
+      if (file.size > 1.5 * 1024 * 1024) {
+        setBlogAdminStatus('Selected image exceeds 1.5MB. Please choose a smaller image.');
+        return;
+      }
+    } else if (type === 'video') {
+      if (!file.type.startsWith('video/')) {
+        setBlogAdminStatus('Selected file is not a video.');
+        return;
+      }
+      if (file.size > 3.0 * 1024 * 1024) {
+        setBlogAdminStatus('Selected video exceeds 3.0MB. Please use a compressed file.');
+        return;
+      }
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Url = reader.result;
+      insertMediaIntoTextarea(fieldName, base64Url);
+      setBlogAdminStatus(`${type === 'image' ? 'Image' : 'Video'} inserted into block.`);
+      e.target.value = '';
+    };
+    reader.onerror = () => {
+      setBlogAdminStatus('Failed to read file.');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveMedia = (fieldName, rawLine) => {
+    setBlogAdminForm(prev => {
+      const text = prev[fieldName] || '';
+      const lines = text.split('\n');
+      const filteredLines = lines.filter(line => line.trim() !== rawLine.trim());
+      
+      const cleaned = [];
+      let lastWasEmpty = false;
+      filteredLines.forEach(line => {
+        const isCurrentEmpty = !line.trim();
+        if (isCurrentEmpty) {
+          if (!lastWasEmpty) {
+            cleaned.push(line);
+          }
+          lastWasEmpty = true;
+        } else {
+          cleaned.push(line);
+          lastWasEmpty = false;
+        }
+      });
+      
+      return {
+        ...prev,
+        [fieldName]: cleaned.join('\n').trim()
+      };
+    });
+    setBlogAdminStatus('Media element removed from block content.');
+  };
+
+  const renderTextareaMediaTools = (fieldName) => {
+    const mediaItems = parseTextareaMedia(blogAdminForm[fieldName] || '');
+    
+    return (
+      <div className="gutenberg-media-tools-wrapper">
+        <div className="gutenberg-textarea-toolbar">
+          <button 
+            type="button" 
+            className="gutenberg-toolbar-btn"
+            onClick={() => document.getElementById(`media-file-input-${fieldName}-image`).click()}
+          >
+            🖼️ Insert Image File
+          </button>
+          <button 
+            type="button" 
+            className="gutenberg-toolbar-btn"
+            onClick={() => document.getElementById(`media-file-input-${fieldName}-video`).click()}
+          >
+            🎥 Insert Video File
+          </button>
+          
+          <input 
+            type="file" 
+            id={`media-file-input-${fieldName}-image`} 
+            accept="image/*" 
+            style={{ display: 'none' }} 
+            onChange={(e) => handleMediaFileSelect(e, fieldName, 'image')} 
+          />
+          <input 
+            type="file" 
+            id={`media-file-input-${fieldName}-video`} 
+            accept="video/*" 
+            style={{ display: 'none' }} 
+            onChange={(e) => handleMediaFileSelect(e, fieldName, 'video')} 
+          />
+        </div>
+
+        {mediaItems.length > 0 && (
+          <div className="gutenberg-media-preview-list">
+            {mediaItems.map((item, idx) => (
+              <div key={idx} className="gutenberg-media-preview-card">
+                <div className="gutenberg-preview-media-container">
+                  {item.type === 'image' && (
+                    <img src={item.src} alt="Preview" className="gutenberg-preview-thumb" />
+                  )}
+                  {item.type === 'video' && (
+                    <video src={item.src} className="gutenberg-preview-thumb" muted playsInline />
+                  )}
+                  {(item.type === 'youtube' || item.type === 'embed') && (
+                    <div className="gutenberg-preview-thumb embed-thumb">
+                      <span className="embed-icon">🌐</span>
+                    </div>
+                  )}
+                </div>
+                <div className="gutenberg-preview-details">
+                  <span className={`gutenberg-preview-badge ${item.type}`}>
+                    {item.type.toUpperCase()}
+                  </span>
+                  <span className="gutenberg-preview-filename" title={item.src}>
+                    {item.src.startsWith('data:') 
+                      ? `${item.type === 'image' ? 'Image File' : 'Video File'} (${Math.round(item.src.length / 1024)} KB)`
+                      : item.src.length > 30 ? item.src.substring(0, 30) + '...' : item.src
+                    }
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="gutenberg-media-remove-btn"
+                  onClick={() => handleRemoveMedia(fieldName, item.rawLine)}
+                  title="Remove this media from content"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const handleBlogImageUpload = (e) => {
@@ -713,16 +1752,22 @@ export default function App() {
   const resetBlogAdminForm = () => {
     setBlogAdminForm(emptyBlogForm);
     setEditingBlogSlug(null);
+    setIsBlogEditing(false);
   };
 
   const handleEditBlogPost = (post) => {
     setBlogAdminForm(postToForm(post));
     setEditingBlogSlug(post.slug);
+    setIsBlogEditing(true);
     setBlogAdminStatus(`Editing "${post.title}"`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDeleteBlogPost = (slug) => {
+    const post = blogPosts.find(item => item.slug === slug);
+    if (!window.confirm(`Delete "${post?.title || slug}"? This removes it from the public blog in this browser.`)) {
+      return;
+    }
     const nextPosts = blogPosts.filter(post => post.slug !== slug);
     saveBlogPosts(nextPosts);
     if (editingBlogSlug === slug) {
@@ -732,15 +1777,69 @@ export default function App() {
   };
 
   const handleResetBlogPosts = () => {
+    if (!window.confirm('Reset blog posts to the default demo articles? This will replace current blog content in this browser.')) {
+      return;
+    }
     saveBlogPosts(defaultBlogPosts);
     resetBlogAdminForm();
     setBlogAdminStatus('Blog posts reset to default content.');
   };
 
+  const handleExportBlogData = () => {
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      posts: blogPosts,
+      comments
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `konstructz-blog-data-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setBlogAdminStatus('Blog data exported. Import this file into the build/preview site to match content.');
+  };
+
+  const handleImportBlogData = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        const importedPosts = Array.isArray(data.posts) ? data.posts : null;
+        const importedComments = Array.isArray(data.comments) ? data.comments : [];
+
+        if (!importedPosts) {
+          setBlogAdminStatus('Import failed. Please choose a KONSTRUCTZ blog data JSON file.');
+          return;
+        }
+
+        saveBlogPosts(importedPosts);
+        saveComments(importedComments);
+        setBlogAdminStatus(`Imported ${importedPosts.length} posts and ${importedComments.length} comments.`);
+      } catch (err) {
+        console.error('Failed to import blog data:', err);
+        setBlogAdminStatus('Import failed. The selected file is not valid JSON.');
+      } finally {
+        e.target.value = '';
+      }
+    };
+    reader.onerror = () => {
+      setBlogAdminStatus('Import failed. Could not read the selected file.');
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  };
+
   const handleDeleteComment = (commentId) => {
     const nextComments = comments.filter(c => c.id !== commentId);
-    setComments(nextComments);
-    localStorage.setItem('konstructzComments', JSON.stringify(nextComments));
+    saveComments(nextComments);
   };
 
   const handleToggleCommentStatus = (commentId) => {
@@ -751,8 +1850,15 @@ export default function App() {
       }
       return c;
     });
-    setComments(nextComments);
-    localStorage.setItem('konstructzComments', JSON.stringify(nextComments));
+    saveComments(nextComments);
+  };
+
+  const handleApprovePendingComments = () => {
+    const nextComments = comments.map(c => (
+      c.status === 'Approved' ? c : { ...c, status: 'Approved' }
+    ));
+    saveComments(nextComments);
+    setBlogAdminStatus('All pending comments approved.');
   };
 
   const handleDeleteInquiry = (inquiryId) => {
@@ -788,8 +1894,7 @@ export default function App() {
     };
     
     const nextComments = [newComment, ...comments];
-    setComments(nextComments);
-    localStorage.setItem('konstructzComments', JSON.stringify(nextComments));
+    saveComments(nextComments);
     setCommentForm({ authorName: '', authorEmail: '', content: '' });
   };
 
@@ -799,6 +1904,9 @@ export default function App() {
     const slug = createSlug(blogAdminForm.slug || blogAdminForm.title);
     const publishedDate = blogAdminForm.publishedDate || today;
     const updatedDate = blogAdminForm.updatedDate || today;
+    const submitterStatus = e.nativeEvent?.submitter?.value;
+    const submitStatus = submitterStatus || blogAdminForm.status || 'Published';
+    const category = normalizeBlogCategory(blogAdminForm.category || 'Guide');
     const sections = [
       { h2: blogAdminForm.sectionOneTitle, body: blogAdminForm.sectionOneBody },
       { h2: blogAdminForm.sectionTwoTitle, body: blogAdminForm.sectionTwoBody },
@@ -810,17 +1918,23 @@ export default function App() {
       return;
     }
 
+    const tagsArray = blogAdminForm.tags
+      ? blogAdminForm.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+      : [];
+
     const nextPost = {
       slug,
       title: blogAdminForm.title,
       seoTitle: blogAdminForm.seoTitle || `${blogAdminForm.title} | KONSTRUCTZ Blog`,
       seoDescription: blogAdminForm.seoDescription || blogAdminForm.desc,
-      category: blogAdminForm.category || 'Guide',
+      category,
       image: blogAdminForm.image,
       date: blogAdminForm.date || formatDisplayDate(publishedDate),
       publishedDate,
       updatedDate,
       desc: blogAdminForm.desc,
+      status: submitStatus,
+      tags: tagsArray,
       sections
     };
 
@@ -831,12 +1945,21 @@ export default function App() {
 
     saveBlogPosts(nextPosts);
     resetBlogAdminForm();
-    setBlogAdminStatus(existingPost ? 'Blog post updated.' : 'Blog post published.');
+    const actionLabel = submitStatus === 'Draft'
+      ? 'saved as draft'
+      : submitStatus === 'Scheduled'
+        ? 'scheduled'
+        : existingPost
+          ? 'updated and published'
+          : 'published';
+    setBlogAdminStatus(
+      `Blog post ${actionLabel}. Public blog updates automatically in this browser.`
+    );
   };
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (!e.target.closest('.nav-item-dropdown')) {
+      if (!e.target.closest('.nav-item-dropdown') && !e.target.closest('.mobile-menu-drawer')) {
         setDropdownOpen(false);
         setAttachmentsDropdownOpen(false);
         setTopicDropdownOpen(false);
@@ -860,6 +1983,21 @@ export default function App() {
       }
     }
   }, [currentView, selectedProduct]);
+
+  useEffect(() => {
+    if (currentView === 'blog-post' && selectedBlogPost) {
+      try {
+        const savedViews = localStorage.getItem('konstructzBlogPostViews');
+        const views = savedViews ? JSON.parse(savedViews) : {};
+        const slug = selectedBlogPost.slug;
+        views[slug] = (views[slug] || 0) + 1;
+        setBlogPostViews(views);
+        localStorage.setItem('konstructzBlogPostViews', JSON.stringify(views));
+      } catch (err) {
+        console.error('Failed to update blog post views:', err);
+      }
+    }
+  }, [currentView, selectedBlogPost]);
 
   useEffect(() => {
     if (window.location.hash && currentView === 'home') {
@@ -1267,8 +2405,161 @@ export default function App() {
       sortWeight: parseFloat(a.weight) / 1000 || 0 
     }))
   ], [products, attachments]);
+  const productSearchResults = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (query.length < 2) return [];
+
+    const terms = query.split(/\s+/).filter(Boolean);
+    return allInventory
+      .filter((item) => {
+        const searchableText = [
+          item.name,
+          item.category,
+          categoryLabels[item.category],
+          item.subcategory,
+          item.fitmentCategory,
+          item.engine,
+          item.cap,
+          item.weight,
+          item.type
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        return terms.every(term => searchableText.includes(term));
+      })
+      .slice(0, 8);
+  }, [allInventory, categoryLabels, searchQuery]);
+  const getProductSearchMeta = (item) => (
+    [
+      item.type === 'Attachment' ? 'Attachment' : 'Equipment',
+      item.subcategory || item.fitmentCategory || categoryLabels[item.category] || item.category
+    ].filter(Boolean).join(', ')
+  );
+  const handleProductSearchSubmit = () => {
+    const query = searchQuery.trim();
+    if (!query) return;
+    setInventorySearchQuery(query);
+    setActiveCategory('All');
+    setActiveKonstructzSubcategory('All');
+    navigate('all-products', { search: query });
+    setSearchOpen(false);
+    setMobileMenuOpen(false);
+  };
+  const handleProductSearchSelect = (item) => {
+    handleProductDetail(item);
+    setSearchOpen(false);
+    setMobileMenuOpen(false);
+    setSearchQuery('');
+  };
+  const renderProductSearchResults = (variant = 'desktop') => {
+    const query = searchQuery.trim();
+    if (query.length < 2) return null;
+
+    return (
+      <div className={`product-search-results ${variant === 'mobile' ? 'mobile' : ''}`}>
+        {productSearchResults.length > 0 ? (
+          productSearchResults.map(item => (
+            <button
+              type="button"
+              key={`${item.type}-${item.id}`}
+              className="product-search-result"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => handleProductSearchSelect(item)}
+            >
+              <span className="product-search-thumb">
+                {item.image ? (
+                  <BlogImage src={item.image} alt={item.name} />
+                ) : (
+                  <span className="product-search-thumb-fallback">{(item.category || item.type || 'P').slice(0, 1)}</span>
+                )}
+              </span>
+              <span className="product-search-copy">
+                <span className="product-search-meta">{getProductSearchMeta(item)}</span>
+                <strong>{item.name}</strong>
+              </span>
+            </button>
+          ))
+        ) : (
+          <div className="product-search-empty">
+            <strong>No matching products</strong>
+            <span>Press Enter to search the full inventory for “{query}”.</span>
+          </div>
+        )}
+        <button type="button" className="product-search-view-all" onMouseDown={(e) => e.preventDefault()} onClick={handleProductSearchSubmit}>
+          Search all products for “{query}”
+        </button>
+      </div>
+    );
+  };
 
   const carouselProducts = homeProducts;
+  const visibleBlogPosts = useMemo(() => getVisibleBlogPosts(blogPosts), [blogPosts]);
+  const blogCategories = useMemo(() => (
+    ['All', ...Array.from(new Set(visibleBlogPosts.map(post => post.category).filter(Boolean)))]
+  ), [visibleBlogPosts]);
+  const blogTags = useMemo(() => {
+    const tags = visibleBlogPosts.flatMap(post => Array.isArray(post.tags) ? post.tags : []);
+    return ['All', ...Array.from(new Set(tags.filter(Boolean)))];
+  }, [visibleBlogPosts]);
+  const filteredBlogPosts = useMemo(() => {
+    const query = blogSearchQuery.trim().toLowerCase();
+
+    return visibleBlogPosts.filter((post) => {
+      const matchesCategory = activeBlogCategory === 'All' || post.category === activeBlogCategory;
+      const postTags = Array.isArray(post.tags) ? post.tags : [];
+      const matchesTag = activeBlogTag === 'All' || postTags.includes(activeBlogTag);
+      const searchableText = [
+        post.title,
+        post.desc,
+        post.category,
+        ...(Array.isArray(post.tags) ? post.tags : []),
+        ...(Array.isArray(post.sections) ? post.sections.flatMap(section => [section.h2, section.body]) : [])
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      return matchesCategory && matchesTag && (!query || searchableText.includes(query));
+    });
+  }, [activeBlogCategory, activeBlogTag, blogSearchQuery, visibleBlogPosts]);
+  const adminPostCategories = useMemo(() => (
+    ['All', ...Array.from(new Set(blogPosts.map(post => post.category).filter(Boolean)))]
+  ), [blogPosts]);
+  const adminPostCounts = useMemo(() => ({
+    published: blogPosts.filter(post => (post.status || 'Published') === 'Published').length,
+    draft: blogPosts.filter(post => post.status === 'Draft').length,
+    scheduled: blogPosts.filter(post => post.status === 'Scheduled').length
+  }), [blogPosts]);
+  const filteredAdminBlogPosts = useMemo(() => {
+    const query = adminPostSearch.trim().toLowerCase();
+
+    return blogPosts.filter((post) => {
+      const postStatus = post.status || 'Published';
+      const matchesStatus = adminPostStatusFilter === 'All' || postStatus === adminPostStatusFilter;
+      const searchableText = [
+        post.title,
+        post.desc,
+        post.slug,
+        post.category,
+        postStatus,
+        ...(Array.isArray(post.tags) ? post.tags : [])
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      return matchesStatus && (!query || searchableText.includes(query));
+    });
+  }, [adminPostSearch, adminPostStatusFilter, blogPosts]);
+  const commentCounts = useMemo(() => ({
+    approved: comments.filter(comment => comment.status === 'Approved').length,
+    pending: comments.filter(comment => (comment.status || 'Pending') !== 'Approved').length
+  }), [comments]);
+  const filteredAdminComments = useMemo(() => (
+    comments.filter(comment => (
+      adminCommentStatusFilter === 'All' ||
+      (adminCommentStatusFilter === 'Approved' && comment.status === 'Approved') ||
+      (adminCommentStatusFilter === 'Pending' && (comment.status || 'Pending') !== 'Approved')
+    ))
+  ), [adminCommentStatusFilter, comments]);
+  const resetBlogFilters = () => {
+    setBlogSearchQuery('');
+    setActiveBlogCategory('All');
+    setActiveBlogTag('All');
+  };
 
   // Helper to change view and update the URL query parameters (for crawlability)
   const navigate = (view, additionalParams = {}) => {
@@ -2032,7 +3323,7 @@ export default function App() {
                 className={currentView === 'about' ? 'active' : ''} 
                 onClick={(e) => { e.preventDefault(); navigate('about'); }}
               >
-                About Us
+                About
               </a>
               <a 
                 href="?page=contact" 
@@ -2052,20 +3343,25 @@ export default function App() {
                   </svg>
                 </button>
                 {searchOpen && (
-                  <input 
-                    type="text" 
-                    placeholder="Search..." 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        setInventorySearchQuery(searchQuery);
-                        navigate('all-products');
-                        setSearchOpen(false);
-                      }
-                    }}
-                    className="search-input"
-                  />
+                  <>
+                    <input 
+                      type="text" 
+                      placeholder="Search products..." 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleProductSearchSubmit();
+                        }
+                        if (e.key === 'Escape') {
+                          setSearchOpen(false);
+                        }
+                      }}
+                      className="search-input"
+                      autoFocus
+                    />
+                    {renderProductSearchResults('desktop')}
+                  </>
                 )}
               </div>
               <div
@@ -2109,14 +3405,18 @@ export default function App() {
           {/* Equipment Accordion */}
           <div className="mobile-accordion">
             <button 
+              type="button"
               className={`mobile-accordion-trigger ${currentView === 'all-products' || currentView === 'product-detail' ? 'active' : ''}`} 
-              onClick={() => {
-                setDropdownOpen(!dropdownOpen);
+              aria-expanded={dropdownOpen}
+              onClick={(e) => {
+                e.stopPropagation();
+                setDropdownOpen(prev => !prev);
                 setAttachmentsDropdownOpen(false);
+                setTopicDropdownOpen(false);
               }}
             >
               <span>Equipment</span>
-              <span className="arrow">▾</span>
+              <span className={`arrow ${dropdownOpen ? 'open' : ''}`}>▾</span>
             </button>
             <div className={`mobile-accordion-content ${dropdownOpen ? 'show' : ''}`}>
               <a
@@ -2164,14 +3464,18 @@ export default function App() {
           {/* Attachments Accordion */}
           <div className="mobile-accordion">
             <button 
+              type="button"
               className={`mobile-accordion-trigger ${currentView === 'attachments' ? 'active' : ''}`} 
-              onClick={() => {
-                setAttachmentsDropdownOpen(!attachmentsDropdownOpen);
+              aria-expanded={attachmentsDropdownOpen}
+              onClick={(e) => {
+                e.stopPropagation();
+                setAttachmentsDropdownOpen(prev => !prev);
                 setDropdownOpen(false);
+                setTopicDropdownOpen(false);
               }}
             >
               <span>Attachments</span>
-              <span className="arrow">▾</span>
+              <span className={`arrow ${attachmentsDropdownOpen ? 'open' : ''}`}>▾</span>
             </button>
             <div className={`mobile-accordion-content ${attachmentsDropdownOpen ? 'show' : ''}`}>
               <a 
@@ -2217,15 +3521,18 @@ export default function App() {
           {/* Topic Accordion */}
           <div className="mobile-accordion">
             <button 
+              type="button"
               className={`mobile-accordion-trigger ${currentView === 'topic' ? 'active' : ''}`} 
-              onClick={() => {
-                setTopicDropdownOpen(!topicDropdownOpen);
+              aria-expanded={topicDropdownOpen}
+              onClick={(e) => {
+                e.stopPropagation();
+                setTopicDropdownOpen(prev => !prev);
                 setDropdownOpen(false);
                 setAttachmentsDropdownOpen(false);
               }}
             >
               <span>Topic</span>
-              <span className="arrow">▾</span>
+              <span className={`arrow ${topicDropdownOpen ? 'open' : ''}`}>▾</span>
             </button>
             <div className={`mobile-accordion-content ${topicDropdownOpen ? 'show' : ''}`}>
               <a 
@@ -2274,7 +3581,7 @@ export default function App() {
             className={currentView === 'about' ? 'active' : ''} 
             onClick={(e) => { e.preventDefault(); navigate('about'); setMobileMenuOpen(false); }}
           >
-            About Us
+            About
           </a>
           <a 
             href="?page=contact" 
@@ -2296,12 +3603,11 @@ export default function App() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    setInventorySearchQuery(searchQuery);
-                    navigate('all-products');
-                    setMobileMenuOpen(false);
+                    handleProductSearchSubmit();
                   }
                 }}
               />
+              {renderProductSearchResults('mobile')}
             </div>
             {/* Cart Link on Mobile */}
             <button 
@@ -2811,35 +4117,17 @@ export default function App() {
           </div>
 
           <div className="blog-grid">
-            {blogPosts.map((post) => {
-              // Extract image URL from description if post.image is missing
-              let displayImage = post.image;
-              let displayDesc = post.desc || '';
-              
-              if (displayDesc) {
-                const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
-                const match = displayDesc.match(urlRegex);
-                if (match) {
-                  if (!displayImage) {
-                    displayImage = match[0];
-                  }
-                  displayDesc = displayDesc.replace(urlRegex, '').trim();
-                }
-              }
+            {getVisibleBlogPosts(blogPosts).map((post) => {
+              const { displayImage, displayDesc } = getBlogDisplayData(post);
 
               return (
                 <article key={post.slug} className="blog-card-white">
                   <div className="blog-img-placeholder">
-                    {!heroImageError ? (
-                      <img 
-                        src={displayImage || heroLoader} 
-                        alt={post.title} 
-                        className="blog-card-img"
-                        onError={() => setHeroImageError(true)}
-                      />
-                    ) : (
-                      <WheelLoaderSvg />
-                    )}
+                    <BlogImage 
+                      src={displayImage} 
+                      alt={post.title} 
+                      className="blog-card-img"
+                    />
                   </div>
                   <div className="blog-card-info">
                     <span className="blog-card-cat">{post.category}</span>
@@ -2868,7 +4156,7 @@ export default function App() {
       {/* TESTIMONIALS */}
       <section className="testimonials-section white-bg">
         <div className="section-content">
-          <div className="section-header">
+          <div className="section-header testimonials-home-header">
             <span className="light-green-tag">Customer Feedback</span>
             <h2 className="section-title text-black">Trusted by those who build every day</h2>
           </div>
@@ -2944,6 +4232,12 @@ export default function App() {
                 >
                   <span className="nav-icon">📂</span> Inventory CSV
                 </button>
+                <button 
+                  className={`sidebar-nav-btn ${dashboardTab === 'tools' ? 'active' : ''}`}
+                  onClick={() => setDashboardTab('tools')}
+                >
+                  <span className="nav-icon">🧰</span> Admin Tools
+                </button>
               </nav>
               <div className="sidebar-footer">
                 <button className="sidebar-nav-btn back-home-btn" onClick={() => navigate('home')}>
@@ -2998,6 +4292,33 @@ export default function App() {
                     </div>
                   </div>
 
+                  <div className="admin-quick-actions">
+                    <button type="button" className="admin-quick-card" onClick={() => {
+                      resetBlogAdminForm();
+                      setDashboardTab('blog');
+                      setIsBlogEditing(true);
+                    }}>
+                      <span>Write</span>
+                      <strong>Post a new blog</strong>
+                      <small>Create articles with image, category, tags, SEO, and sections.</small>
+                    </button>
+                    <button type="button" className="admin-quick-card" onClick={() => setDashboardTab('comments')}>
+                      <span>Moderate</span>
+                      <strong>{commentCounts.pending} pending comments</strong>
+                      <small>Approve useful comments or remove spam from blog posts.</small>
+                    </button>
+                    <button type="button" className="admin-quick-card" onClick={() => setDashboardTab('inquiries')}>
+                      <span>Sales</span>
+                      <strong>{inquiries.length} customer inquiries</strong>
+                      <small>Track quote requests and update lead status.</small>
+                    </button>
+                    <button type="button" className="admin-quick-card" onClick={() => setDashboardTab('tools')}>
+                      <span>Backup</span>
+                      <strong>Export or import data</strong>
+                      <small>Move posts and comments between dev, preview, and live builds.</small>
+                    </button>
+                  </div>
+
                   {/* Charts & Breakdown Grid */}
                   <div className="charts-grid-container">
                     {/* Top Viewed Products (pure HTML/CSS chart) */}
@@ -3024,6 +4345,42 @@ export default function App() {
                             </div>
                           );
                         })}
+                      </div>
+                    </div>
+
+                    {/* Top Viewed Blog Posts (pure HTML/CSS chart) */}
+                    <div className="analytics-card">
+                      <h3>Top Viewed Blog Posts (Analytics)</h3>
+                      <p className="card-subtitle">Page views count per article</p>
+                      
+                      <div className="analytics-bar-chart">
+                        {(() => {
+                          const sortedBlogPosts = [...blogPosts].sort((a, b) => {
+                            const viewsA = blogPostViews[a.slug] || 0;
+                            const viewsB = blogPostViews[b.slug] || 0;
+                            return viewsB - viewsA;
+                          }).slice(0, 5);
+                          
+                          const maxBlogViews = Math.max(...blogPosts.map(p => blogPostViews[p.slug] || 0), 1);
+                          
+                          return sortedBlogPosts.map(post => {
+                            const viewsCount = blogPostViews[post.slug] || 0;
+                            const percentage = Math.min((viewsCount / maxBlogViews) * 100, 100);
+                            
+                            return (
+                              <div className="blog-chart-bar-row" key={post.slug}>
+                                <span className="chart-item-label" title={post.title}>{post.title}</span>
+                                <div className="chart-bar-outer">
+                                  <div 
+                                    className="chart-bar-fill" 
+                                    style={{ width: `${viewsCount > 0 ? percentage : 5}%` }}
+                                  ></div>
+                                </div>
+                                <span className="chart-item-value">{viewsCount} views</span>
+                              </div>
+                            );
+                          });
+                        })()}
                       </div>
                     </div>
 
@@ -3125,146 +4482,374 @@ export default function App() {
 
               {dashboardTab === 'blog' && (
                 <div className="dashboard-blog-tab">
-                  <div className="tab-title-block">
-                    <span className="admin-eyebrow">Content Management</span>
-                    <h2>Blog Articles Manager</h2>
-                    <p>Create new articles or edit existing published posts on the site.</p>
-                  </div>
-
-                  <div className="admin-blog-grid">
-                    <form className="admin-blog-form" onSubmit={handleBlogAdminSubmit}>
-                      <div className="admin-blog-form-header">
+                  {!isBlogEditing ? (
+                    <div className="admin-blog-list-view">
+                      <div className="admin-blog-list-view-header">
                         <div>
-                          <span className="admin-eyebrow">{editingBlogSlug ? 'Edit Post' : 'New Post'}</span>
-                          <h2>{editingBlogSlug ? 'Update Article' : 'Write a Blog Post'}</h2>
+                          <span className="admin-eyebrow">Content list</span>
+                          <h2>{blogPosts.length} Articles</h2>
+                          <p className="admin-list-summary">
+                            {adminPostCounts.published} published · {adminPostCounts.draft} drafts · {adminPostCounts.scheduled} scheduled
+                          </p>
                         </div>
-                        {editingBlogSlug && (
-                          <button type="button" className="admin-ghost-btn" onClick={resetBlogAdminForm}>Cancel</button>
-                        )}
+                        <div className="admin-blog-header-actions">
+                          <button 
+                            type="button" 
+                            className="admin-primary-btn green-pill-btn"
+                            onClick={() => {
+                              resetBlogAdminForm();
+                              setIsBlogEditing(true);
+                            }}
+                          >
+                            + Write New Article
+                          </button>
+                          <button type="button" className="admin-ghost-btn" onClick={handleResetBlogPosts} style={{ marginLeft: '12px' }}>
+                            Reset Default Posts
+                          </button>
+                          <button type="button" className="admin-ghost-btn" onClick={handleExportBlogData}>
+                            Export Blog Data
+                          </button>
+                          <label className="admin-ghost-btn admin-import-btn">
+                            Import Blog Data
+                            <input type="file" accept="application/json,.json" onChange={handleImportBlogData} />
+                          </label>
+                        </div>
                       </div>
 
-                      <label>
-                        Title *
-                        <input name="title" value={blogAdminForm.title} onChange={handleBlogAdminInput} placeholder="Blog post title" />
-                      </label>
-
-                      <div className="admin-form-row">
-                        <label>
-                          Slug
-                          <input name="slug" value={blogAdminForm.slug} onChange={handleBlogAdminInput} placeholder="my-blog-post" />
-                        </label>
-                        <label>
-                          Category
-                          <input name="category" value={blogAdminForm.category} onChange={handleBlogAdminInput} placeholder="Buyer Guide" />
-                        </label>
+                      <div className="admin-filter-rail">
+                        <div className="admin-filter-search">
+                          <input
+                            type="text"
+                            value={adminPostSearch}
+                            onChange={(e) => setAdminPostSearch(e.target.value)}
+                            placeholder="Search title, slug, category, or tag..."
+                          />
+                        </div>
+                        <div className="filter-tabs">
+                          {['All', 'Published', 'Draft', 'Scheduled'].map(status => (
+                            <button
+                              type="button"
+                              key={status}
+                              className={`filter-tab-btn ${adminPostStatusFilter === status ? 'active' : ''}`}
+                              onClick={() => setAdminPostStatusFilter(status)}
+                            >
+                              {status}
+                            </button>
+                          ))}
+                        </div>
                       </div>
 
-                      <label>
-                        Short Description *
-                        <textarea name="desc" value={blogAdminForm.desc} onChange={handleBlogAdminInput} rows="3" placeholder="Short summary shown on blog cards" />
-                      </label>
-
-                      <div className="image-field-container">
-                        <label style={{ display: 'block' }}>
-                          Featured Image
-                          <div className="image-uploader-wrapper">
-                            <input 
-                              type="file" 
-                              accept="image/*" 
-                              id="blog-image-upload" 
-                              onChange={handleBlogImageUpload} 
-                              style={{ display: 'none' }}
-                            />
-                            <label htmlFor="blog-image-upload" className="image-upload-dropzone">
-                              {blogAdminForm.image ? (
-                                <div className="image-preview-stage">
-                                  <img src={blogAdminForm.image} alt="Preview" />
-                                  <span className="change-img-badge">Change Image</span>
-                                </div>
-                              ) : (
-                                <div className="upload-placeholder">
-                                  <span className="upload-icon">📷</span>
-                                  <span>Click to select image file</span>
-                                  <span className="upload-meta">Formats: PNG, JPG, WEBP</span>
-                                </div>
-                              )}
-                            </label>
-                            
-                            <div className="image-url-alternative">
-                              <span>or paste image URL:</span>
-                              <input 
-                                name="image" 
-                                value={blogAdminForm.image} 
-                                onChange={handleBlogAdminInput} 
-                                placeholder="https://example.com/blog-image.jpg" 
-                              />
+                      <div className="admin-post-grid-cards">
+                        {filteredAdminBlogPosts.length === 0 ? (
+                          <div className="admin-empty-state">
+                            <strong>No articles found</strong>
+                            <span>Try a different search term or status filter.</span>
+                          </div>
+                        ) : filteredAdminBlogPosts.map((post) => (
+                          <article className="admin-post-list-item-card" key={post.slug}>
+                            <div className="admin-post-list-item-media">
+                              <BlogImage src={getBlogDisplayData(post).displayImage} alt={post.title} className="admin-post-list-item-img" />
                             </div>
-                          </div>
-                        </label>
-                      </div>
-
-                      <label>
-                        SEO Description
-                        <textarea name="seoDescription" value={blogAdminForm.seoDescription} onChange={handleBlogAdminInput} rows="3" placeholder="Meta description and article overview" />
-                      </label>
-
-                      <div className="admin-form-row">
-                        <label>
-                          Published Date
-                          <input type="date" name="publishedDate" value={blogAdminForm.publishedDate} onChange={handleBlogAdminInput} />
-                        </label>
-                        <label>
-                          Updated Date
-                          <input type="date" name="updatedDate" value={blogAdminForm.updatedDate} onChange={handleBlogAdminInput} />
-                        </label>
-                      </div>
-
-                      <div className="admin-section-editor">
-                        <h3>Article Sections</h3>
-                        {[
-                          ['sectionOneTitle', 'sectionOneBody', 'Section 1'],
-                          ['sectionTwoTitle', 'sectionTwoBody', 'Section 2'],
-                          ['sectionThreeTitle', 'sectionThreeBody', 'Section 3']
-                        ].map(([titleName, bodyName, label]) => (
-                          <div className="admin-section-group" key={titleName}>
-                            <input name={titleName} value={blogAdminForm[titleName]} onChange={handleBlogAdminInput} placeholder={`${label} heading`} />
-                            <textarea name={bodyName} value={blogAdminForm[bodyName]} onChange={handleBlogAdminInput} rows="4" placeholder={`${label} content`} />
-                          </div>
-                        ))}
-                      </div>
-
-                      {blogAdminStatus && <p className="admin-status">{blogAdminStatus}</p>}
-
-                      <div className="admin-form-actions">
-                        <button type="submit" className="admin-primary-btn">{editingBlogSlug ? 'Update Post' : 'Publish Post'}</button>
-                        <button type="button" className="admin-ghost-btn" onClick={handleResetBlogPosts}>Reset Default Posts</button>
-                      </div>
-                    </form>
-
-                    <aside className="admin-blog-list">
-                      <div className="admin-blog-list-header">
-                        <span className="admin-eyebrow">Published</span>
-                        <h2>{blogPosts.length} articles</h2>
-                      </div>
-
-                      <div className="admin-post-stack">
-                        {blogPosts.map((post) => (
-                          <article className="admin-post-card" key={post.slug}>
-                            <div>
-                              <span>{post.category}</span>
+                            <div className="admin-post-list-item-content">
+                              <div className="admin-post-list-item-meta">
+                                <span className="admin-post-list-item-cat">{post.category}</span>
+                                <span className={`status-badge ${(post.status || 'Published').toLowerCase()}`}>{post.status || 'Published'}</span>
+                              </div>
                               <h3>{post.title}</h3>
                               <p>{post.desc}</p>
-                              <small>{post.slug} · Updated {post.updatedDate}</small>
+                              <div className="admin-post-list-item-footer">
+                                <small>Slug: <code>{post.slug}</code> · Updated: {post.updatedDate || post.publishedDate}</small>
+                                {post.tags && post.tags.length > 0 && (
+                                  <div className="admin-post-tags">
+                                    {post.tags.map(tag => (
+                                      <span key={tag} className="admin-tag-pill">#{tag}</span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div className="admin-post-actions">
-                              <button type="button" onClick={() => handleEditBlogPost(post)}>Edit</button>
-                              <button type="button" onClick={() => handleDeleteBlogPost(post.slug)}>Delete</button>
+                            <div className="admin-post-list-item-actions">
+                              <button type="button" className="edit-btn" onClick={() => handleEditBlogPost(post)}>Edit</button>
+                              <button type="button" className="delete-btn" onClick={() => handleDeleteBlogPost(post.slug)}>Delete</button>
                             </div>
                           </article>
                         ))}
                       </div>
-                    </aside>
-                  </div>
+                    </div>
+                  ) : (
+                    <form className="gutenberg-editor-form" onSubmit={handleBlogAdminSubmit}>
+                      {/* Editor Header */}
+                      <div className="gutenberg-header">
+                        <div className="gutenberg-header-left">
+                          <span className="gutenberg-breadcrumb" onClick={resetBlogAdminForm} style={{ cursor: 'pointer' }}>
+                            ← Back to Articles
+                          </span>
+                          <span className="gutenberg-post-title-badge">{blogAdminForm.title || 'Untitled Post'}</span>
+                        </div>
+                        <div className="gutenberg-header-actions">
+                          <button 
+                            type="submit" 
+                            className="gutenberg-action-link" 
+                            name="submitStatus"
+                            value="Draft"
+                          >
+                            Save draft
+                          </button>
+                          <button type="submit" className="gutenberg-publish-btn" name="submitStatus" value="Published">
+                            {editingBlogSlug ? 'Update' : 'Publish'}
+                          </button>
+                          <button type="button" className="gutenberg-cancel-btn" onClick={resetBlogAdminForm}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="gutenberg-main-layout">
+                        {/* Canvas Area (Left) */}
+                        <div className="gutenberg-canvas">
+                          <div className="gutenberg-title-wrap">
+                            <input
+                              name="title"
+                              value={blogAdminForm.title}
+                              onChange={handleBlogAdminInput}
+                              placeholder="Add title"
+                              className="gutenberg-title-input"
+                            />
+                          </div>
+
+                          <div className="gutenberg-desc-wrap">
+                            <textarea
+                              name="desc"
+                              value={blogAdminForm.desc}
+                              onChange={handleBlogAdminInput}
+                              onPaste={(e) => handleBodyPaste(e, 'desc')}
+                              placeholder="Type short summary of the article..."
+                              className="gutenberg-desc-input"
+                              rows="2"
+                            />
+                            {renderTextareaMediaTools('desc')}
+                          </div>
+
+                          <div className="gutenberg-blocks-container">
+                            {[
+                              ['sectionOneTitle', 'sectionOneBody', 'Section 1'],
+                              ['sectionTwoTitle', 'sectionTwoBody', 'Section 2'],
+                              ['sectionThreeTitle', 'sectionThreeBody', 'Section 3']
+                            ].map(([titleName, bodyName, label], index) => (
+                              <div className="gutenberg-block-card" key={titleName}>
+                                <div className="gutenberg-block-header">
+                                  <span className="gutenberg-block-badge">Block {index + 1} ({label})</span>
+                                </div>
+                                <input
+                                  name={titleName}
+                                  value={blogAdminForm[titleName]}
+                                  onChange={handleBlogAdminInput}
+                                  placeholder="Block heading..."
+                                  className="gutenberg-block-heading-input"
+                                />
+                                <textarea
+                                  name={bodyName}
+                                  value={blogAdminForm[bodyName]}
+                                  onChange={handleBlogAdminInput}
+                                  onPaste={(e) => handleBodyPaste(e, bodyName)}
+                                  placeholder="Type section paragraph content. Copy and paste images or video links directly here..."
+                                  className="gutenberg-block-body-input"
+                                  rows="6"
+                                />
+                                {renderTextareaMediaTools(bodyName)}
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {blogAdminStatus && <p className="gutenberg-status-msg">{blogAdminStatus}</p>}
+                        </div>
+
+                        {/* Sidebar Area (Right) */}
+                        <aside className="gutenberg-sidebar">
+                          <div className="gutenberg-sidebar-tabs">
+                            <button type="button" className="gutenberg-sidebar-tab active">Post</button>
+                            <button type="button" className="gutenberg-sidebar-tab">Block</button>
+                          </div>
+
+                          <div className="gutenberg-sidebar-content">
+                            {/* Featured Image Block */}
+                            <div className="gutenberg-sidebar-section">
+                              <h4>Featured Image</h4>
+                              <div className="gutenberg-image-uploader">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  id="gutenberg-image-upload"
+                                  onChange={handleBlogImageUpload}
+                                  style={{ display: 'none' }}
+                                />
+                                <label htmlFor="gutenberg-image-upload" className="gutenberg-image-dropzone">
+                                  {blogAdminForm.image ? (
+                                    <div className="gutenberg-image-preview">
+                                      <img src={blogAdminForm.image} alt="Preview" />
+                                      <span className="gutenberg-change-img-badge">Replace Image</span>
+                                    </div>
+                                  ) : (
+                                    <div className="gutenberg-upload-placeholder">
+                                      <span className="gutenberg-upload-icon">🖼️</span>
+                                      <span>Set featured image</span>
+                                    </div>
+                                  )}
+                                </label>
+                                <div className="gutenberg-image-url-row" style={{ marginTop: '10px' }}>
+                                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600' }}>Or paste image URL:</span>
+                                  <input
+                                    name="image"
+                                    value={blogAdminForm.image}
+                                    onChange={handleBlogAdminInput}
+                                    placeholder="https://example.com/image.jpg"
+                                    className="gutenberg-sidebar-input"
+                                    style={{ marginTop: '4px' }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Post Settings Block */}
+                            <div className="gutenberg-sidebar-section">
+                              <h4>Summary</h4>
+                              <div className="gutenberg-settings-list">
+                                <div className="gutenberg-setting-row">
+                                  <span className="gutenberg-setting-label">Status</span>
+                                  <select name="status" value={blogAdminForm.status} onChange={handleBlogAdminInput} className="gutenberg-select">
+                                    <option value="Published">Published</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Scheduled">Scheduled</option>
+                                  </select>
+                                </div>
+                                
+                                <div className="gutenberg-setting-row">
+                                  <span className="gutenberg-setting-label">Slug</span>
+                                  <input
+                                    name="slug"
+                                    value={blogAdminForm.slug}
+                                    onChange={handleBlogAdminInput}
+                                    placeholder="slug-url"
+                                    className="gutenberg-sidebar-input"
+                                  />
+                                </div>
+
+                                <div className="gutenberg-setting-row">
+                                  <span className="gutenberg-setting-label">Publish Date</span>
+                                  <input
+                                    type="date"
+                                    name="publishedDate"
+                                    value={blogAdminForm.publishedDate}
+                                    onChange={handleBlogAdminInput}
+                                    className="gutenberg-sidebar-input"
+                                  />
+                                </div>
+
+                                <div className="gutenberg-setting-row">
+                                  <span className="gutenberg-setting-label">Update Date</span>
+                                  <input
+                                    type="date"
+                                    name="updatedDate"
+                                    value={blogAdminForm.updatedDate}
+                                    onChange={handleBlogAdminInput}
+                                    className="gutenberg-sidebar-input"
+                                  />
+                                </div>
+
+                                <div className="gutenberg-setting-row">
+                                  <span className="gutenberg-setting-label">Author</span>
+                                  <span className="gutenberg-setting-value" style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b' }}>
+                                    KONSTRUCTZ Team
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Categories Block */}
+                            <div className="gutenberg-sidebar-section">
+                              <h4>Category</h4>
+                              <input
+                                name="category"
+                                value={blogAdminForm.category}
+                                onChange={handleBlogAdminInput}
+                                placeholder="e.g. Buyer Guide"
+                                className="gutenberg-sidebar-input"
+                                list="blog-category-options"
+                              />
+                              <datalist id="blog-category-options">
+                                {blogCategories.filter(category => category !== 'All').map(category => (
+                                  <option key={category} value={category} />
+                                ))}
+                              </datalist>
+                              <div className="gutenberg-category-pills">
+                                {blogCategories.filter(category => category !== 'All').map(category => (
+                                  <button
+                                    type="button"
+                                    key={category}
+                                    className={normalizeBlogCategory(blogAdminForm.category || '') === category ? 'active' : ''}
+                                    onClick={() => setBlogAdminForm(prev => ({ ...prev, category }))}
+                                  >
+                                    {category}
+                                  </button>
+                                ))}
+                                {blogAdminForm.category && !blogCategories.includes(normalizeBlogCategory(blogAdminForm.category)) && (
+                                  <span className="gutenberg-new-category-note">
+                                    New category: {normalizeBlogCategory(blogAdminForm.category)}
+                                  </span>
+                                )}
+                              </div>
+                              <small className="gutenberg-sidebar-help" style={{ display: 'block', marginTop: '8px', fontSize: '10px', color: '#64748b' }}>
+                                Type a new category name, then publish to create it.
+                              </small>
+                            </div>
+
+                            {/* Tags Block */}
+                            <div className="gutenberg-sidebar-section">
+                              <h4>Tags</h4>
+                              <input
+                                name="tags"
+                                value={blogAdminForm.tags}
+                                onChange={handleBlogAdminInput}
+                                placeholder="e.g. safety, maintenance"
+                                className="gutenberg-sidebar-input"
+                              />
+                              <small className="gutenberg-sidebar-help" style={{ display: 'block', marginTop: '4px', fontSize: '10px', color: '#64748b' }}>
+                                Separate with commas
+                              </small>
+                            </div>
+
+                            {/* SEO Metadata Block */}
+                            <div className="gutenberg-sidebar-section">
+                              <h4>SEO Optimization</h4>
+                              <div className="gutenberg-settings-list" style={{ gap: '12px' }}>
+                                <div className="gutenberg-setting-row-vertical" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  <span className="gutenberg-setting-label" style={{ fontSize: '11px', color: '#64748b' }}>SEO Title</span>
+                                  <input
+                                    name="seoTitle"
+                                    value={blogAdminForm.seoTitle}
+                                    onChange={handleBlogAdminInput}
+                                    placeholder="Custom browser title..."
+                                    className="gutenberg-sidebar-input"
+                                  />
+                                </div>
+                                <div className="gutenberg-setting-row-vertical" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                  <span className="gutenberg-setting-label" style={{ fontSize: '11px', color: '#64748b' }}>SEO Description</span>
+                                  <textarea
+                                    name="seoDescription"
+                                    value={blogAdminForm.seoDescription}
+                                    onChange={handleBlogAdminInput}
+                                    placeholder="Meta description for search engines..."
+                                    className="gutenberg-sidebar-textarea"
+                                    rows="3"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </aside>
+                      </div>
+                    </form>
+                  )}
                 </div>
               )}
 
@@ -3387,6 +4972,37 @@ export default function App() {
                     <p>Review, approve, reject, or delete visitor comments left on blog posts.</p>
                   </div>
 
+                  <div className="admin-moderation-strip">
+                    <div className="admin-mini-stat">
+                      <span>Pending</span>
+                      <strong>{commentCounts.pending}</strong>
+                    </div>
+                    <div className="admin-mini-stat">
+                      <span>Approved</span>
+                      <strong>{commentCounts.approved}</strong>
+                    </div>
+                    <div className="filter-tabs">
+                      {['All', 'Pending', 'Approved'].map(status => (
+                        <button
+                          type="button"
+                          key={status}
+                          className={`filter-tab-btn ${adminCommentStatusFilter === status ? 'active' : ''}`}
+                          onClick={() => setAdminCommentStatusFilter(status)}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="admin-primary-btn"
+                      onClick={handleApprovePendingComments}
+                      disabled={commentCounts.pending === 0}
+                    >
+                      Approve Pending
+                    </button>
+                  </div>
+
                   <div className="dashboard-table-wrapper">
                     <table className="dashboard-table">
                       <thead>
@@ -3400,12 +5016,12 @@ export default function App() {
                         </tr>
                       </thead>
                       <tbody>
-                        {comments.length === 0 ? (
+                        {filteredAdminComments.length === 0 ? (
                           <tr>
-                            <td colSpan="6" className="empty-table-cell">No comments submitted yet.</td>
+                            <td colSpan="6" className="empty-table-cell">No matching comments found.</td>
                           </tr>
                         ) : (
-                          comments.map(c => {
+                          filteredAdminComments.map(c => {
                             const post = blogPosts.find(p => p.slug === c.blogSlug);
                             return (
                               <tr key={c.id}>
@@ -3452,6 +5068,69 @@ export default function App() {
                       </tbody>
                     </table>
                   </div>
+                </div>
+              )}
+
+              {dashboardTab === 'tools' && (
+                <div className="dashboard-tools-tab">
+                  <div className="tab-title-block">
+                    <span className="admin-eyebrow">Site Operations</span>
+                    <h2>Admin Tools & Content Backup</h2>
+                    <p>Keep blog posts, comments, and catalog data organized across local preview, build preview, and deployment.</p>
+                  </div>
+
+                  <div className="admin-tools-grid">
+                    <div className="admin-tool-card">
+                      <span className="admin-tool-label">Blog Data</span>
+                      <h3>Posts & comments backup</h3>
+                      <p>Export a JSON backup from one browser/port, then import it into another preview or deployed build.</p>
+                      <div className="admin-tool-actions">
+                        <button type="button" className="admin-primary-btn" onClick={handleExportBlogData}>
+                          Export Blog Data
+                        </button>
+                        <label className="admin-ghost-btn admin-import-btn">
+                          Import Blog Data
+                          <input type="file" accept="application/json,.json" onChange={handleImportBlogData} />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="admin-tool-card">
+                      <span className="admin-tool-label">Publishing</span>
+                      <h3>Content health</h3>
+                      <div className="admin-health-list">
+                        <span><strong>{blogPosts.length}</strong> total blog posts</span>
+                        <span><strong>{adminPostCategories.length - 1}</strong> categories</span>
+                        <span><strong>{commentCounts.pending}</strong> comments need review</span>
+                        <span><strong>{inquiries.length}</strong> sales inquiries stored</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-tool-card">
+                      <span className="admin-tool-label">Shortcuts</span>
+                      <h3>Common admin work</h3>
+                      <div className="admin-tool-actions vertical">
+                        <button type="button" className="admin-ghost-btn" onClick={() => {
+                          resetBlogAdminForm();
+                          setDashboardTab('blog');
+                          setIsBlogEditing(true);
+                        }}>
+                          Write New Blog Post
+                        </button>
+                        <button type="button" className="admin-ghost-btn" onClick={() => setDashboardTab('comments')}>
+                          Review Comments
+                        </button>
+                        <button type="button" className="admin-ghost-btn" onClick={() => setDashboardTab('inquiries')}>
+                          Check Quote Requests
+                        </button>
+                        <button type="button" className="admin-ghost-btn" onClick={() => setDashboardTab('inventory')}>
+                          Upload Inventory CSV
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {blogAdminStatus && <p className="admin-status">{blogAdminStatus}</p>}
                 </div>
               )}
 
@@ -3555,7 +5234,7 @@ export default function App() {
         </main>
       ) : currentView === 'blog' ? (
         <main className="blog-page">
-          <section className="blog-page-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.5)), url(${constructionBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <section className="blog-page-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.5)), url(${stoneCrusher})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             <div className="blog-page-hero-overlay"></div>
             <div className="section-content blog-page-hero-content">
               <h1>KONSTRUCTZ Blog</h1>
@@ -3566,23 +5245,24 @@ export default function App() {
           <section className="blog-page-list white-bg">
             <div className="section-content blog-page-layout">
               <div className="blog-page-main">
-                <h2 className="blog-page-kicker text-black">Choose the categories you like</h2>
+                <div className="blog-page-heading-row">
+                  <div>
+                    <span className="blog-page-eyebrow">Field Notes</span>
+                    <h2 className="blog-page-kicker text-black">Choose the categories you like</h2>
+                  </div>
+                  <span className="blog-page-count">{filteredBlogPosts.length} of {visibleBlogPosts.length} posts</span>
+                </div>
+                {(activeBlogCategory !== 'All' || activeBlogTag !== 'All' || blogSearchQuery) && (
+                  <div className="blog-page-active-filters">
+                    {activeBlogCategory !== 'All' && <span>Category: {activeBlogCategory}</span>}
+                    {activeBlogTag !== 'All' && <span>Tag: {activeBlogTag}</span>}
+                    {blogSearchQuery && <span>Search: {blogSearchQuery}</span>}
+                    <button type="button" onClick={resetBlogFilters}>Clear filters</button>
+                  </div>
+                )}
                 <div className="blog-page-grid">
-                  {blogPosts.map((post) => {
-                    // Extract image URL from description if post.image is missing
-                    let displayImage = post.image;
-                    let displayDesc = post.desc || '';
-                    
-                    if (displayDesc) {
-                      const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
-                      const match = displayDesc.match(urlRegex);
-                      if (match) {
-                        if (!displayImage) {
-                          displayImage = match[0];
-                        }
-                        displayDesc = displayDesc.replace(urlRegex, '').trim();
-                      }
-                    }
+                  {filteredBlogPosts.map((post) => {
+                    const { displayImage, displayDesc } = getBlogDisplayData(post);
 
                     return (
                       <article key={post.slug} className="blog-page-card">
@@ -3595,21 +5275,57 @@ export default function App() {
                             navigate('blog-post', { id: post.slug });
                           }}
                         >
-                          <img
-                            src={displayImage || heroLoader}
+                          <BlogImage
+                            src={displayImage}
                             alt={post.title}
                             className={displayImage ? 'blog-page-custom-image' : 'blog-page-fallback-image'}
                           />
-                          <span>{post.category}</span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            className="blog-page-card-category"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setActiveBlogCategory(post.category || 'All');
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setActiveBlogCategory(post.category || 'All');
+                              }
+                            }}
+                          >
+                            {post.category}
+                          </span>
                         </a>
                         <div className="blog-page-card-body">
                           <div className="blog-page-card-meta">
-                            <span>{post.category}</span>
+                            <button
+                              type="button"
+                              onClick={() => setActiveBlogCategory(post.category || 'All')}
+                            >
+                              {post.category}
+                            </button>
                             <time dateTime={post.updatedDate}>{post.updatedDate}</time>
                             <span>KONSTRUCTZ</span>
                           </div>
                           <h3>{post.title}</h3>
                           <p>{displayDesc}</p>
+                          {Array.isArray(post.tags) && post.tags.length > 0 && (
+                            <div className="blog-page-card-tags">
+                              {post.tags.slice(0, 4).map(tag => (
+                                <button
+                                  type="button"
+                                  key={`${post.slug}-${tag}`}
+                                  onClick={() => setActiveBlogTag(tag)}
+                                >
+                                  #{tag}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         <a
                           href={`?page=blog-post&id=${post.slug}`}
                           className="blog-page-read"
@@ -3625,30 +5341,55 @@ export default function App() {
                     </article>
                   );
                 })}
+                  {filteredBlogPosts.length === 0 && (
+                    <div className="blog-page-empty">
+                      <h3>No posts match those filters.</h3>
+                      <p>Try another category, tag, or search word.</p>
+                      <button type="button" onClick={resetBlogFilters}>Show all posts</button>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <aside className="blog-page-sidebar">
                 <div className="blog-page-search">
-                  <input type="search" placeholder="search..." aria-label="Search blog posts" />
+                  <input
+                    type="search"
+                    placeholder="search..."
+                    aria-label="Search blog posts"
+                    value={blogSearchQuery}
+                    onChange={(e) => setBlogSearchQuery(e.target.value)}
+                  />
                   <span>⌕</span>
                 </div>
 
                 <div className="blog-page-filter">
                   <h3>Popular Categories</h3>
-                  {['All', 'Guide', 'Industry news', 'Machine reviews', 'Tips & maintenance', 'Case Studies'].map(category => (
-                    <label key={category} className="blog-page-checkbox">
-                      <input type="checkbox" />
+                  {blogCategories.map(category => (
+                    <button
+                      key={category}
+                      type="button"
+                      className={`blog-page-filter-btn ${activeBlogCategory === category ? 'active' : ''}`}
+                      onClick={() => setActiveBlogCategory(category)}
+                    >
+                      <span className="blog-page-filter-box"></span>
                       <span>{category}</span>
-                    </label>
+                    </button>
                   ))}
                 </div>
 
                 <div className="blog-page-filter">
                   <h3>Tags</h3>
                   <div className="blog-page-tags">
-                    {['excavators', 'loaders', 'attachments', 'maintenance', 'safety'].map(tag => (
-                      <span key={tag}>{tag}</span>
+                    {blogTags.map(tag => (
+                      <button
+                        type="button"
+                        key={tag}
+                        className={activeBlogTag === tag ? 'active' : ''}
+                        onClick={() => setActiveBlogTag(tag)}
+                      >
+                        {tag === 'All' ? 'all tags' : tag}
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -3661,12 +5402,11 @@ export default function App() {
           <section className="blog-post-hero dark-bg">
             <div className="section-content blog-post-hero-content">
               <a
-                href="?page=home#blog"
+                href="?page=blog"
                 className="blog-post-back-link"
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate('home');
-                  window.location.hash = '#blog';
+                  navigate('blog');
                 }}
               >
                 Back to Blog
@@ -3685,23 +5425,13 @@ export default function App() {
             <div className="section-content blog-post-content">
               <div className="blog-post-featured-image">
                 {(() => {
-                  let displayImage = selectedBlogPost.image;
-                  if (!displayImage && selectedBlogPost.desc) {
-                    const urlRegex = /(https?:\/\/[^\s]+(?:\.webp|\.png|\.jpg|\.jpeg|\.gif))/i;
-                    const match = selectedBlogPost.desc.match(urlRegex);
-                    if (match) {
-                      displayImage = match[0];
-                    }
-                  }
-                  return !heroImageError ? (
-                    <img
-                      src={displayImage || heroLoader}
+                  const { displayImage } = getBlogDisplayData(selectedBlogPost);
+                  return (
+                    <BlogImage
+                      src={displayImage}
                       alt={selectedBlogPost.title}
                       className={displayImage ? 'blog-post-custom-image' : 'blog-post-fallback-image'}
-                      onError={() => setHeroImageError(true)}
                     />
-                  ) : (
-                    <WheelLoaderSvg />
                   );
                 })()}
               </div>
@@ -3723,11 +5453,15 @@ export default function App() {
                       <section key={section.h2} id={`article-section-${index + 1}`}>
                         <span className="blog-post-section-label">Step {String(index + 1).padStart(2, '0')}</span>
                         <h2>{section.h2}</h2>
-                        <p>{section.body}</p>
+                        <div className="blog-section-body-text">
+                          {renderParagraphWithMedia(section.body)}
+                        </div>
                         {section.h3 && (
                           <>
                             <h3>{section.h3}</h3>
-                            <p>{section.h3Body}</p>
+                            <div className="blog-section-body-text">
+                              {renderParagraphWithMedia(section.h3Body)}
+                            </div>
                           </>
                         )}
                       </section>
@@ -3775,6 +5509,16 @@ export default function App() {
                       ))}
                     </nav>
                   </div>
+
+                  <div className="blog-post-side-card newsletter-signup-card">
+                    <span className="blog-post-side-kicker">Newsletter</span>
+                    <h4>Get Field Reports</h4>
+                    <p>Subscribe to receive official machine guides, operator training logs, and factory updates.</p>
+                    <form className="sidebar-newsletter-form" onSubmit={(e) => { e.preventDefault(); alert("Subscription saved successfully!"); e.target.reset(); }}>
+                      <input type="email" placeholder="Your email address" required />
+                      <button type="submit" className="sidebar-submit-btn">Subscribe</button>
+                    </form>
+                  </div>
                 </aside>
               </div>
 
@@ -3784,7 +5528,7 @@ export default function App() {
                   <h2>More KONSTRUCTZ guides</h2>
                 </div>
                 <div className="blog-related-grid">
-                  {blogPosts
+                  {getVisibleBlogPosts(blogPosts)
                     .filter((post) => post.slug !== selectedBlogPost.slug)
                     .slice(0, 3)
                     .map((post) => (
@@ -4682,10 +6426,10 @@ export default function App() {
               )}
 
               {/* General Bottom Support Footer */}
-              <div className="section-content doc-narrow-wrap" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '40px', paddingBottom: '80px' }}>
-                <div className="topic-contact-box" style={{ margin: '0 auto', maxWidth: '600px', textAlign: 'center', background: '#f8fafc', padding: '30px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                  <strong style={{ fontSize: '18px', display: 'block', marginBottom: '8px' }}>Still have a question?</strong>
-                  <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>Our technical support and sales team are ready to help. Reach out and we will get back to you within 24 hours.</p>
+              <div className="section-content doc-narrow-wrap" style={{ marginTop: '40px', borderTop: '1px solid var(--border-light-bg)', paddingTop: '40px', paddingBottom: '80px' }}>
+                <div className="topic-contact-box" style={{ margin: '0 auto', maxWidth: '600px', textAlign: 'center', background: '#f4f6f4', padding: '30px', borderRadius: '12px', border: '1px solid var(--border-light-bg)' }}>
+                  <strong style={{ fontSize: '18px', display: 'block', marginBottom: '8px', color: 'var(--text-light-bg)' }}>Still have a question?</strong>
+                  <p style={{ color: 'var(--text-light-bg-secondary)', fontSize: '14px', marginBottom: '20px' }}>Our technical support and sales team are ready to help. Reach out and we will get back to you within 24 hours.</p>
                   <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="cta-button accent-pill-btn" style={{ display: 'inline-block', padding: '10px 24px' }}>
                     Contact Us ↗
                   </a>
@@ -5008,7 +6752,7 @@ export default function App() {
               <div className="about-hero-logo-wrap">
                 <img src={konstructzLogo} alt="KONSTRUCTZ Brand Logo" className="about-hero-logo" />
               </div>
-              <h1 className="about-hero-title">ABOUT US</h1>
+              <h1 className="about-hero-title">ABOUT</h1>
             </div>
           </section>
 
@@ -5767,7 +7511,7 @@ export default function App() {
 
           <div className="footer-links-col">
             <h4>Information</h4>
-            <a href="?page=about" onClick={(e) => { e.preventDefault(); navigate('about'); }}>About Us</a>
+            <a href="?page=about" onClick={(e) => { e.preventDefault(); navigate('about'); }}>About</a>
             <a href="?page=home#products" onClick={(e) => { e.preventDefault(); navigate('home'); window.location.hash = '#products'; }}>Products</a>
             <a href="?page=support" onClick={(e) => { e.preventDefault(); navigate('support'); }}>Support</a>
             <a href="?page=home#faq" onClick={(e) => { e.preventDefault(); navigate('home'); window.location.hash = '#faq'; }}>FAQ</a>
@@ -5782,11 +7526,12 @@ export default function App() {
                 </svg>
                 Facebook
               </a>
-              <a href="#tw" className="social-link-item">
+              <a href="#pin" className="social-link-item">
                 <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                  <line x1="12" y1="8" x2="12" y2="22" />
+                  <path d="M12 2a10 10 0 0 0-3 19.5c0-1.7 0-3.9.4-5.6l1-4.2c-.3-.6-.6-1.5-.6-2.5 0-2.3 1.3-4 3-4 1.4 0 2.1 1.1 2.1 2.4 0 1.4-.9 3.5-1.4 5.5-.4 1.7.9 3.1 2.6 3.1 3.1 0 5.2-4 5.2-8.7 0-3.6-2.4-6.3-6.9-6.3-5 0-8 3.7-8 7.8 0 1.5.4 2.6 1 3.4.1.2.2.3.1.6l-.3 1.1c-.1.3-.3.4-.6.3-1.8-.7-2.6-2.7-2.6-4.9 0-5.7 4.8-12.5 13.6-12.5 7.3 0 12.1 5.3 12.1 11 0 7.6-4.2 13-10.4 13-2 0-4-1.1-4.7-2.3L12 18.5" />
                 </svg>
-                Twitter
+                Pinterest
               </a>
               <a href="#ig" className="social-link-item">
                 <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
@@ -5796,13 +7541,12 @@ export default function App() {
                 </svg>
                 Instagram
               </a>
-              <a href="#li" className="social-link-item">
+              <a href="#yt" className="social-link-item">
                 <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                  <rect x="2" y="9" width="4" height="12" />
-                  <circle cx="4" cy="4" r="2" />
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.41 19c1.71.46 8.59.46 8.59.46s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96 29 29 0 0 0 .46-5.29 29 29 0 0 0-.46-5.33z" />
+                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
                 </svg>
-                LinkedIn
+                YouTube
               </a>
             </div>
           </div>

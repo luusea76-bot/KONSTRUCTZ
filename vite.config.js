@@ -3,6 +3,73 @@ import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
 
+const blogDataDir = path.resolve(process.cwd(), 'data')
+const blogPostsFile = path.join(blogDataDir, 'blog-posts.json')
+
+const sendJson = (res, statusCode, payload) => {
+  res.statusCode = statusCode
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
+  res.setHeader('Cache-Control', 'no-store')
+  res.end(JSON.stringify(payload))
+}
+
+const readJsonBody = (req) => new Promise((resolve, reject) => {
+  let body = ''
+  req.on('data', (chunk) => {
+    body += chunk
+    if (body.length > 10_000_000) {
+      reject(new Error('Request body too large'))
+      req.destroy()
+    }
+  })
+  req.on('end', () => {
+    try {
+      resolve(body ? JSON.parse(body) : null)
+    } catch (error) {
+      reject(error)
+    }
+  })
+  req.on('error', reject)
+})
+
+const blogPostsApiPlugin = () => ({
+  name: 'konstructz-blog-posts-api',
+  configureServer(server) {
+    server.middlewares.use('/api/blog-posts', async (req, res) => {
+      if (req.method === 'GET') {
+        try {
+          const data = fs.readFileSync(blogPostsFile, 'utf8')
+          sendJson(res, 200, { posts: JSON.parse(data) })
+        } catch (error) {
+          sendJson(res, error.code === 'ENOENT' ? 404 : 500, {
+            error: error.code === 'ENOENT' ? 'Blog posts have not been saved yet.' : 'Could not read blog posts.'
+          })
+        }
+        return
+      }
+
+      if (req.method === 'PUT') {
+        try {
+          const payload = await readJsonBody(req)
+          if (!payload || !Array.isArray(payload.posts)) {
+            sendJson(res, 400, { error: 'Expected { posts: [...] }.' })
+            return
+          }
+
+          fs.mkdirSync(blogDataDir, { recursive: true })
+          fs.writeFileSync(blogPostsFile, `${JSON.stringify(payload.posts, null, 2)}\n`, 'utf8')
+          sendJson(res, 200, { ok: true, posts: payload.posts })
+        } catch (error) {
+          sendJson(res, 500, { error: error.message || 'Could not save blog posts.' })
+        }
+        return
+      }
+
+      sendJson(res, 405, { error: 'Method not allowed.' })
+    })
+  }
+})
+
 // Copy the catalog JSON file and About Us image files using host permissions
 try {
   const sourcePath = '/Users/bosreylin/Wheel-Loader/public/equipment-products.json'
@@ -51,13 +118,6 @@ try {
     fs.copyFileSync(logoSrc, path.join(destAssetsDir, 'konstructz_logo.png'))
     fs.copyFileSync(logoSrc, path.join(destAssetsDir, 'wolf_logo.png'))
     console.log('Successfully copied active logo to src/assets')
-    try {
-      const { execSync } = require('child_process')
-      execSync('python3 make_logo_transparent.py')
-      console.log('Successfully ran logo transparency script!')
-    } catch (err) {
-      console.error('Error running make_logo_transparent.py:', err.message)
-    }
   }
 } catch (e) {
   console.error('Failed to copy assets in vite.config.js:', e)
@@ -65,5 +125,15 @@ try {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [blogPostsApiPlugin(), react()],
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: false
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 4173,
+    strictPort: false
+  }
 })

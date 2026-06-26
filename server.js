@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distDir = path.join(__dirname, 'dist')
+const dataDir = path.join(__dirname, 'data')
+const blogPostsFile = path.join(dataDir, 'blog-posts.json')
 const port = Number(process.env.PORT || 3000)
 
 const contentTypes = {
@@ -38,9 +40,80 @@ function sendFile(res, filePath) {
   })
 }
 
+function sendJson(res, statusCode, payload) {
+  res.writeHead(statusCode, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store'
+  })
+  res.end(JSON.stringify(payload))
+}
+
+function readRequestJson(req) {
+  return new Promise((resolve, reject) => {
+    let body = ''
+    req.on('data', (chunk) => {
+      body += chunk
+      if (body.length > 10_000_000) {
+        req.destroy()
+        reject(new Error('Request body too large'))
+      }
+    })
+    req.on('end', () => {
+      try {
+        resolve(body ? JSON.parse(body) : null)
+      } catch (error) {
+        reject(error)
+      }
+    })
+    req.on('error', reject)
+  })
+}
+
 http
-  .createServer((req, res) => {
-    const requestedPath = decodeURIComponent(new URL(req.url || '/', `http://${req.headers.host}`).pathname)
+  .createServer(async (req, res) => {
+    const url = new URL(req.url || '/', `http://${req.headers.host}`)
+    const requestedPath = decodeURIComponent(url.pathname)
+
+    if (requestedPath === '/api/blog-posts') {
+      if (req.method === 'GET') {
+        fs.readFile(blogPostsFile, 'utf8', (error, data) => {
+          if (error) {
+            sendJson(res, error.code === 'ENOENT' ? 404 : 500, {
+              error: error.code === 'ENOENT' ? 'Blog posts have not been saved yet.' : 'Could not read blog posts.'
+            })
+            return
+          }
+
+          try {
+            sendJson(res, 200, { posts: JSON.parse(data) })
+          } catch {
+            sendJson(res, 500, { error: 'Saved blog post data is invalid.' })
+          }
+        })
+        return
+      }
+
+      if (req.method === 'PUT') {
+        try {
+          const payload = await readRequestJson(req)
+          if (!payload || !Array.isArray(payload.posts)) {
+            sendJson(res, 400, { error: 'Expected { posts: [...] }.' })
+            return
+          }
+
+          fs.mkdirSync(dataDir, { recursive: true })
+          fs.writeFileSync(blogPostsFile, `${JSON.stringify(payload.posts, null, 2)}\n`, 'utf8')
+          sendJson(res, 200, { ok: true, posts: payload.posts })
+        } catch (error) {
+          sendJson(res, 500, { error: error.message || 'Could not save blog posts.' })
+        }
+        return
+      }
+
+      sendJson(res, 405, { error: 'Method not allowed.' })
+      return
+    }
+
     const normalizedPath = path.normalize(requestedPath).replace(/^(\.\.[/\\])+/, '')
     const staticPath = path.join(distDir, normalizedPath)
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://konstructzmachinery.com/sitemap.xml
+Sitemap: https://konstructz.com/sitemap.xml
