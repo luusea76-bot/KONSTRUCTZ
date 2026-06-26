@@ -10,6 +10,8 @@ import tigerLogoAsset from './assets/tiger_logo.png'
 import konstructzLogoAsset from './assets/konstructz_logo.png'
 import supportHeroAsset from './assets/support_hero.png'
 import supportCallCenterAsset from './assets/support_call_center.png'
+import kuvuoProductAsset from './assets/products/kuvuo.png'
+import spiderOneProductAsset from './assets/products/spider-one.png'
 import stoneCrusherAsset from './assets/products/skoop-ii-jobsite-loader.png'
 import stonekrusherLogoAsset from './assets/machine-logos/stonekrusher.png'
 import stonekrusherReflectionAsset from './assets/machine-logos/stonekrusher-reflection.png'
@@ -42,6 +44,8 @@ const tigerLogo = tigerLogoAsset;
 const konstructzLogo = konstructzLogoAsset;
 const supportHero = supportHeroAsset;
 const supportCallCenter = supportCallCenterAsset;
+const kuvuoProduct = kuvuoProductAsset;
+const spiderOneProduct = spiderOneProductAsset;
 
 const fallbackBlogImagesBySlug = {
   'excavator-maintenance-tips': '/about-skoop-park.png',
@@ -135,6 +139,25 @@ const engineLogos = [
   { name: 'B & S Engine', src: briggsStrattonLogoAsset },
   { name: 'Lithium Battery', src: batteryExpressLogoAsset },
   { name: 'Lead Acid Battery', src: recycleBatteryLogoAsset }
+];
+
+const machineComparisonFaqs = [
+  {
+    question: 'Which excavator is better for slopes and orchards?',
+    answer: 'Spider One is the better choice for steep slopes, orchards, vineyards, wetland edges, riverbanks, and soft ground because its walking excavator design reaches areas conventional tracked excavators cannot.'
+  },
+  {
+    question: 'Which machine is better for construction, landscaping, and trenching?',
+    answer: 'KUVUO 2.7 is built for everyday compact excavation, trenching, landscaping, utility work, residential construction, and jobsites where strong digging performance matters on flat or prepared ground.'
+  },
+  {
+    question: 'What is the main difference between a mini excavator and a walking excavator?',
+    answer: 'A mini excavator focuses on productive digging, lifting, and grading in compact spaces. A walking excavator focuses on terrain access, flexible positioning, and low-impact work in places standard machines struggle to enter.'
+  },
+  {
+    question: 'Can KONSTRUCTZ help choose between KUVUO 2.7 and Spider One?',
+    answer: 'Yes. KONSTRUCTZ can help match the right excavator to the terrain, attachments, transport needs, and daily work you expect from the machine.'
+  }
 ];
 
 const defaultComments = [
@@ -2710,7 +2733,12 @@ export default function App() {
     let robotsContent = 'index, follow, max-image-preview:large';
     let image = defaultImage;
     
-    if (currentView === 'all-products') {
+    if (currentView === 'home') {
+      title = 'KONSTRUCTZ | Mini Excavators, Walking Excavators & Compact Machinery';
+      description = 'Compare KUVUO 2.7 mini excavators, Spider One walking excavators, compact loaders, attachments, and construction equipment built for contractors, farms, landscaping, trenching, slopes, and tough jobsites.';
+      canonicalPath = '/';
+      image = `${siteUrl}${kuvuoProduct}`;
+    } else if (currentView === 'all-products') {
       title = 'Heavy Machinery Inventory | KONSTRUCTZ';
       description = 'Browse our complete inventory of heavy construction machinery. Premium mini excavators, loaders, rollers, and stone crushers available for sale.';
       canonicalPath = activeCategory && activeCategory !== 'All'
@@ -3000,6 +3028,61 @@ export default function App() {
         'itemListElement': breadcrumbItems
       }
     ];
+
+    if (currentView === 'home') {
+      baseSchemaGraph.push(
+        {
+          '@type': 'ItemList',
+          '@id': `${siteUrl}/#kuvuo-spider-comparison`,
+          'name': 'KUVUO 2.7 Mini Excavator vs Spider One Walking Excavator',
+          'description': 'A practical comparison of compact mini excavator performance and walking excavator terrain access for construction, landscaping, farms, orchards, slopes, and hard-to-reach jobsites.',
+          'itemListElement': [
+            {
+              '@type': 'ListItem',
+              'position': 1,
+              'item': {
+                '@type': 'Product',
+                'name': 'KUVUO 2.7 Mini Excavator',
+                'image': `${siteUrl}${kuvuoProduct}`,
+                'description': 'Compact mini excavator for construction, landscaping, trenching, utility work, residential projects, and everyday digging performance.',
+                'brand': {
+                  '@type': 'Brand',
+                  'name': 'KONSTRUCTZ'
+                },
+                'category': 'Mini Excavator'
+              }
+            },
+            {
+              '@type': 'ListItem',
+              'position': 2,
+              'item': {
+                '@type': 'Product',
+                'name': 'Spider One Walking Excavator',
+                'image': `${siteUrl}${spiderOneProduct}`,
+                'description': 'Walking excavator for slopes, orchards, vineyards, forestry, farms, wetland edges, soft ground, and hard-to-reach terrain.',
+                'brand': {
+                  '@type': 'Brand',
+                  'name': 'KONSTRUCTZ'
+                },
+                'category': 'Walking Excavator'
+              }
+            }
+          ]
+        },
+        {
+          '@type': 'FAQPage',
+          '@id': `${siteUrl}/#machine-comparison-faq`,
+          'mainEntity': machineComparisonFaqs.map((faq) => ({
+            '@type': 'Question',
+            'name': faq.question,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': faq.answer
+            }
+          }))
+        }
+      );
+    }
 
     schemaData = {
       '@context': 'https://schema.org',
@@ -3864,6 +3947,144 @@ export default function App() {
         </div>
       </section>
 
+      {/* MACHINE COMPARISON SECTION */}
+      <section id="kuvuo-vs-spider-one" className="machine-comparison-section white-bg">
+        <div className="section-content machine-comparison-content">
+          <div className="machine-comparison-heading">
+            <h2>
+              <span>KUVUO 2.7 Mini Excavator</span>
+              <strong>VS</strong>
+              <span>Spider One Walking Excavator</span>
+            </h2>
+            <p>
+              Compare compact excavation power with slope-ready walking excavator access for construction,
+              landscaping, farms, orchards, trenching, and hard-to-reach jobsites.
+            </p>
+          </div>
+
+          <div className="machine-comparison-panel">
+            <div className="machine-comparison-visuals">
+              <div className="machine-comparison-machine">
+                <img
+                  src={kuvuoProduct}
+                  alt="KUVUO 2.7 mini excavator for compact construction, landscaping, and trenching"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div className="machine-comparison-vs">VS</div>
+              <div className="machine-comparison-machine">
+                <img
+                  src={spiderOneProduct}
+                  alt="Spider One walking excavator for slopes, orchards, farms, and soft ground"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+
+            <div className="machine-comparison-table">
+              {[
+                {
+                  label: 'Best For',
+                  left: 'General construction, landscaping, trenching, and residential projects.',
+                  right: 'Hillsides, orchards, wetland areas, and hard-to-reach terrain.'
+                },
+                {
+                  label: 'Terrain',
+                  left: 'Flat ground, construction sites, and urban environments.',
+                  right: 'Steep slopes, forests, farms, riverbanks, and soft ground.'
+                },
+                {
+                  label: 'Performance',
+                  left: 'Higher digging force, greater lifting capacity, and continuous heavy-duty operation.',
+                  right: 'Exceptional accessibility, flexible positioning, and operation where tracked excavators cannot reach.'
+                },
+                {
+                  label: 'Selling Points',
+                  left: ['Powerful hydraulic performance', 'Zero-tail swing design', 'Comfortable operator station', 'High productivity in tight spaces', 'Compact size with strong output'],
+                  right: ['Unique walking excavator design', 'Accesses confined and remote locations', 'Lightweight and highly portable', 'Low ground pressure with minimal impact', 'Ideal for specialty applications']
+                },
+                {
+                  label: 'Applications',
+                  left: ['Construction', 'Landscaping', 'Trenching', 'Utility work'],
+                  right: ['Orchards', 'Vineyards', 'Forestry', 'Municipal work']
+                },
+                {
+                  label: 'Ideal Customer',
+                  left: ['Contractors', 'Rental companies', 'Landscapers', 'Utility installers'],
+                  right: ['Farmers', 'Vineyard owners', 'Orchard operators', 'Forestry and maintenance crews']
+                }
+              ].map((row) => (
+                <div className="machine-comparison-row" key={row.label}>
+                  <div className="machine-comparison-label">
+                    <span>{row.label}</span>
+                  </div>
+                  <div className="machine-comparison-cell">
+                    {Array.isArray(row.left) ? (
+                      <ul>
+                        {row.left.map(item => <li key={item}>{item}</li>)}
+                      </ul>
+                    ) : (
+                      <p>{row.left}</p>
+                    )}
+                  </div>
+                  <div className="machine-comparison-cell">
+                    {Array.isArray(row.right) ? (
+                      <ul>
+                        {row.right.map(item => <li key={item}>{item}</li>)}
+                      </ul>
+                    ) : (
+                      <p>{row.right}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="machine-comparison-choice-grid">
+            <div className="machine-comparison-choice">
+              <span>Choose KUVUO 2.7</span>
+              <p>When you need a versatile mini excavator for everyday construction work with maximum power and efficiency.</p>
+            </div>
+            <div className="machine-comparison-choice featured">
+              <span>Choose the right machine</span>
+              <p>Match your machine to your terrain, application, and daily production goals.</p>
+            </div>
+            <div className="machine-comparison-choice">
+              <span>Choose Spider One</span>
+              <p>When you need an excavator that can reach places conventional machines simply cannot.</p>
+            </div>
+          </div>
+
+          <div className="machine-comparison-seo">
+            <div>
+              <span className="machine-comparison-kicker">Excavator buying guide</span>
+              <h3>Mini excavator vs walking excavator: choose by terrain first.</h3>
+              <p>
+                For flat ground, prepared construction sites, residential trenching, drainage work, and landscaping,
+                KUVUO 2.7 gives operators compact size with productive digging power. For hillsides, orchard rows,
+                vineyard maintenance, forestry edges, wet soil, and uneven farm terrain, Spider One is designed to
+                reach and position where a standard tracked excavator may not be practical.
+              </p>
+            </div>
+            <button className="machine-comparison-quote" onClick={() => navigate('contact', { inquiry: 'Quote Request' })}>
+              Request Machine Match
+            </button>
+          </div>
+
+          <div className="machine-comparison-faq-grid" aria-label="Mini excavator and walking excavator questions">
+            {machineComparisonFaqs.map((faq) => (
+              <article className="machine-comparison-faq" key={faq.question}>
+                <h3>{faq.question}</h3>
+                <p>{faq.answer}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ENGINE BRANDS SECTION */}
       <section className="engine-brands-section white-bg border-top">
         <div className="section-content">
@@ -4117,7 +4338,7 @@ export default function App() {
           </div>
 
           <div className="blog-grid">
-            {getVisibleBlogPosts(blogPosts).map((post) => {
+            {getVisibleBlogPosts(blogPosts).slice(0, 3).map((post) => {
               const { displayImage, displayDesc } = getBlogDisplayData(post);
 
               return (
