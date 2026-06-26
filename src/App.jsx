@@ -160,15 +160,6 @@ const machineComparisonFaqs = [
   }
 ];
 
-const aiAssistantQuickActions = [
-  'Compare Machines',
-  'Check Delivery Time',
-  'Request a Quote',
-  'Find My Machine',
-  'Support Service',
-  'Attachments'
-];
-
 const createAiMessage = (content, extra = {}) => ({
   id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   sender: 'ai',
@@ -2708,19 +2699,6 @@ export default function App() {
       createAiMessage(getAiAssistantReply(trimmedMessage))
     ]);
     setAiChatInput('');
-  };
-
-  const handleAiQuickAction = (label) => {
-    if (label === 'Request a Quote') {
-      setAiChatMessages(prev => [
-        ...prev,
-        createUserMessage(label),
-        createAiMessage('I can open the quote form for you. Add your machine, location, delivery address, attachments, and any jobsite requirements so the sales team can prepare an accurate quote.', { cta: 'Open Quote Form' })
-      ]);
-      return;
-    }
-
-    handleAiAssistantSubmit(label);
   };
 
   const openAiQuoteForm = () => {
@@ -7850,14 +7828,6 @@ export default function App() {
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
-
-            <div className="ai-chat-quick-actions" aria-label="AI assistant quick actions">
-              {aiAssistantQuickActions.map((label) => (
-                <button key={label} onClick={() => handleAiQuickAction(label)}>
-                  {label}
-                </button>
               ))}
             </div>
 
