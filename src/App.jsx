@@ -1145,8 +1145,8 @@ export default function App() {
   const [aiChatInput, setAiChatInput] = useState('');
   const [aiChatMessages, setAiChatMessages] = useState(() => [
     createAiMessage("Hello! I'm your AI Machinery Assistant. How can I help you today?"),
-    createUserMessage('What is the price of KUVUO 2.7 Mini Excavator and how much is delivery to California?'),
-    createAiMessage('', { variant: 'kuvuo-card' })
+    createUserMessage('What is the price of SKOOP II Wheel Loader and how much is delivery to California?'),
+    createAiMessage('', { variant: 'skoop-card' })
   ]);
 
   const carouselGridRef = useRef(null);
@@ -7959,18 +7959,18 @@ export default function App() {
                   {message.sender === 'ai' && (
                     <div className="ai-message-avatar" aria-hidden="true">AI</div>
                   )}
-                  <div className={`ai-message ${message.variant === 'kuvuo-card' ? 'has-card' : ''}`}>
-                    {message.variant === 'kuvuo-card' ? (
+                  <div className={`ai-message ${message.variant === 'skoop-card' ? 'has-card' : ''}`}>
+                    {message.variant === 'skoop-card' ? (
                       <div className="ai-reply-card">
                         <span className="ai-card-kicker">Recommended answer</span>
-                        <h3>KUVUO 2.7 Mini Excavator</h3>
+                        <h3>SKOOP II Wheel Loader</h3>
                         <ul>
                           <li><strong>Starting Price:</strong> Contact for quote</li>
                           <li><strong>Delivery to California:</strong> Available</li>
                           <li><strong>Estimated Delivery Time:</strong> 5-7 business days</li>
                           <li><strong>Support:</strong> Warranty, parts, and after-sales service available</li>
                         </ul>
-                        <p>Would you like a detailed quote based on your location and requirements?</p>
+                        <p>Would you like a detailed SKOOP II quote based on your delivery location and material-handling needs?</p>
                         <button onClick={openAiQuoteForm}>Request Detailed Quote</button>
                       </div>
                     ) : (
