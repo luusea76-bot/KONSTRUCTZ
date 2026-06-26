@@ -160,6 +160,53 @@ const machineComparisonFaqs = [
   }
 ];
 
+const aiProductKnowledge = [
+  {
+    name: 'KUVUO 2.7 Mini Excavator',
+    aliases: ['kuvuo', 'kuvuo 2.7', 'mini excavator', 'excavator'],
+    type: 'Mini excavator',
+    bestFor: 'trenching, drainage, residential construction, landscaping, small foundations, and utility work',
+    terrain: 'flat ground, prepared jobsites, residential lots, and compact work areas',
+    price: 'Contact for quote',
+    delivery: 'Available to most U.S. locations, including California',
+    leadTime: 'typically 5-7 business days after order confirmation',
+    support: 'warranty, parts, manuals, and after-sales service'
+  },
+  {
+    name: 'SKOOP II Wheel Loader',
+    aliases: ['skoop', 'skoop ii', 'wheel loader', 'loader'],
+    type: 'Compact wheel loader',
+    bestFor: 'moving soil, gravel, mulch, pallets, materials, and jobsite supplies',
+    terrain: 'construction yards, farms, landscape sites, warehouses, and compact material-handling areas',
+    price: 'Contact for quote',
+    delivery: 'Available by freight with delivery confirmed by destination',
+    leadTime: 'confirmed with stock and freight schedule',
+    support: 'warranty, parts, operator guidance, and after-sales service'
+  },
+  {
+    name: 'Spider One Walking Excavator',
+    aliases: ['spider', 'spider one', 'walking excavator', 'towable excavator'],
+    type: 'Walking excavator',
+    bestFor: 'slopes, orchards, vineyards, farms, wetland edges, riverbanks, and hard-to-reach terrain',
+    terrain: 'steep, soft, uneven, remote, and sensitive ground',
+    price: 'Contact for quote',
+    delivery: 'Available by freight with destination-based logistics',
+    leadTime: 'confirmed after stock and delivery address review',
+    support: 'warranty, parts, setup guidance, and after-sales service'
+  },
+  {
+    name: 'Stomp V950 Track Loader',
+    aliases: ['stomp', 'stomp v950', 'track loader', 'skid steer'],
+    type: 'Compact track loader',
+    bestFor: 'tight-access loading, grading, clearing, property work, and attachment-driven jobs',
+    terrain: 'dirt, gravel, landscaping sites, compact jobsites, and uneven ground',
+    price: 'Contact for quote',
+    delivery: 'Available by freight with lead time confirmed by location',
+    leadTime: 'confirmed with inventory and destination',
+    support: 'warranty, attachments, parts, and after-sales service'
+  }
+];
+
 const createAiMessage = (content, extra = {}) => ({
   id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   sender: 'ai',
@@ -2660,42 +2707,144 @@ export default function App() {
 
   const getAiAssistantReply = (question) => {
     const normalized = question.toLowerCase();
+    const matchedProduct = aiProductKnowledge.find(product => (
+      product.aliases.some(alias => normalized.includes(alias))
+    ));
+    const asksPrice = /\b(price|pricing|cost|quote|how much|payment|finance|financing)\b/.test(normalized);
+    const asksDelivery = /\b(delivery|deliver|shipping|ship|freight|logistics|transport|california|texas|florida|new york|warehouse)\b/.test(normalized);
+    const asksStock = /\b(stock|available|availability|inventory|in stock|warehouse|pickup)\b/.test(normalized);
+    const asksSupport = /\b(support|warranty|service|after-sales|parts|manual|repair|maintenance)\b/.test(normalized);
+    const asksAttachments = /\b(attachment|attachments|bucket|auger|breaker|hammer|rake|fork|trencher|coupler)\b/.test(normalized);
+    const asksCompare = /\b(compare|versus| vs |difference|better|which one|choose)\b/.test(` ${normalized} `);
+    const asksRecommendation = /\b(recommend|find|best machine|which machine|what machine|need machine|looking for)\b/.test(normalized);
+    const slopeUse = /\b(slope|hillside|hill|orchard|vineyard|wetland|riverbank|soft ground|forest|forestry)\b/.test(normalized);
+    const loadingUse = /\b(load|loader|material|gravel|soil|mulch|pallet|warehouse|yard)\b/.test(normalized);
+    const diggingUse = /\b(dig|digging|trench|trenching|drainage|foundation|excavat|utility)\b/.test(normalized);
 
-    if (normalized.includes('compare')) {
-      return 'I can compare machines by terrain, digging work, attachments, transport needs, and daily production. KUVUO 2.7 is best for compact construction and trenching, while Spider One is best for slopes, orchards, farms, and hard-to-reach ground.';
+    if (/\b(hi|hello|hey|good morning|good afternoon)\b/.test(normalized)) {
+      return {
+        content: 'Hello. Tell me the job you need to do, the ground condition, and your delivery state. I can recommend a machine, compare options, explain delivery, and help prepare a quote.'
+      };
     }
 
-    if (normalized.includes('delivery') || normalized.includes('california') || normalized.includes('logistics')) {
-      return 'Delivery is available to California and most U.S. locations. Typical delivery timing is 5-7 business days after order confirmation, with freight details confirmed in your written quote.';
+    if (asksCompare) {
+      return {
+        content: [
+          'Here is the practical comparison:',
+          'KUVUO 2.7 Mini Excavator: best for digging, trenching, drainage, utility work, and residential construction.',
+          'SKOOP II Wheel Loader: best for loading, moving gravel/soil/mulch, pallets, and daily material handling.',
+          'Spider One Walking Excavator: best for slopes, orchards, vineyards, soft ground, and places a normal tracked excavator cannot reach.',
+          'Tell me your terrain and main task, and I can narrow it to one machine.'
+        ].join('\n')
+      };
     }
 
-    if (normalized.includes('quote') || normalized.includes('price') || normalized.includes('pricing')) {
-      return 'Most machinery pricing is confirmed by quote because freight, attachments, and destination can change the final number. I can help prepare a quote request with your location, machine, and work requirements.';
+    if (asksRecommendation || slopeUse || loadingUse || diggingUse) {
+      const recommendation = slopeUse
+        ? aiProductKnowledge[2]
+        : loadingUse
+          ? aiProductKnowledge[1]
+          : diggingUse
+            ? aiProductKnowledge[0]
+            : null;
+
+      if (recommendation) {
+        return {
+          content: [
+            `Best match: ${recommendation.name}`,
+            `Machine type: ${recommendation.type}`,
+            `Best for: ${recommendation.bestFor}.`,
+            `Terrain: ${recommendation.terrain}.`,
+            'For an accurate quote, I would need your delivery state, preferred attachments, and how soon you need the machine.'
+          ].join('\n'),
+          cta: 'Request Quote'
+        };
+      }
     }
 
-    if (normalized.includes('support') || normalized.includes('warranty') || normalized.includes('service') || normalized.includes('parts')) {
-      return 'Warranty, replacement parts, and after-sales service are available. Tell me your machine model, issue, and hours of use, and the support team can help with manuals, service steps, or parts quotes.';
+    if (matchedProduct && (asksPrice || asksDelivery || asksStock || asksSupport || asksAttachments)) {
+      const lines = [
+        `${matchedProduct.name}`,
+        `Type: ${matchedProduct.type}`,
+        `Starting price: ${matchedProduct.price}`,
+        `Delivery: ${matchedProduct.delivery}`,
+        `Estimated timing: ${matchedProduct.leadTime}`,
+        `Support: ${matchedProduct.support}`
+      ];
+
+      if (asksStock) {
+        lines.push('Stock changes quickly, so the team should confirm live availability before you promise a customer or schedule a crew.');
+      }
+
+      if (asksAttachments) {
+        lines.push('Attachment fitment depends on coupler type, hydraulic flow, machine size, and the job you plan to do.');
+      }
+
+      return {
+        content: lines.join('\n'),
+        cta: asksPrice || asksDelivery || asksStock ? 'Request Quote' : 'Contact Support'
+      };
     }
 
-    if (normalized.includes('attachment')) {
-      return 'KONSTRUCTZ can help match buckets, augers, breakers, rakes, trenching tools, and other attachments to your machine and application. Attachment fitment depends on machine size, coupler, hydraulic flow, and job type.';
+    if (matchedProduct) {
+      return {
+        content: [
+          `${matchedProduct.name} is a ${matchedProduct.type}.`,
+          `Best for: ${matchedProduct.bestFor}.`,
+          `Typical terrain: ${matchedProduct.terrain}.`,
+          'Ask me about price, delivery, stock, attachments, warranty, or whether it fits your job.'
+        ].join('\n')
+      };
     }
 
-    if (normalized.includes('stock') || normalized.includes('available') || normalized.includes('warehouse') || normalized.includes('location')) {
-      return 'Stock and warehouse availability can change quickly. The team can confirm current inventory, warehouse location, pickup options, and delivery timing for your exact machine request.';
+    if (asksDelivery) {
+      return {
+        content: 'Delivery is available to most U.S. locations. Lead time depends on machine, warehouse stock, freight route, and delivery address. California delivery is available, and many machine quotes use a 5-7 business day estimate after order confirmation.',
+        cta: 'Request Quote'
+      };
     }
 
-    return 'I can help with product recommendations, machine comparisons, price questions, delivery, warehouse location, stock, logistics, warranty, after-sales service, attachments, and quote requests. Tell me what machine or jobsite you are planning for.';
+    if (asksPrice) {
+      return {
+        content: 'Most machines are listed as contact-for-quote because final price depends on model, attachments, freight, destination, taxes/fees, and stock status. Send the machine name and delivery location for a more accurate quote request.',
+        cta: 'Request Quote'
+      };
+    }
+
+    if (asksSupport) {
+      return {
+        content: 'Support is available for warranty, parts, maintenance, service questions, manuals, and after-sales help. Please include the machine model, serial number if available, hours of use, and a short description of the issue.',
+        cta: 'Contact Support'
+      };
+    }
+
+    if (asksAttachments) {
+      return {
+        content: 'I can help match attachments such as buckets, augers, breakers, forks, rakes, trenching tools, and couplers. The right choice depends on the machine model, hydraulic flow, coupler size, and job type.'
+      };
+    }
+
+    if (asksStock) {
+      return {
+        content: 'Live stock and warehouse availability should be confirmed by the sales team because inventory can change quickly. Tell me the machine and delivery state, and I can help prepare the request.',
+        cta: 'Request Quote'
+      };
+    }
+
+    return {
+      content: 'I can help with machine recommendations, product comparison, quote questions, delivery, warehouse stock, logistics, warranty, after-sales service, attachments, and support. Tell me what job you need the machine for and where it will be delivered.'
+    };
   };
 
   const handleAiAssistantSubmit = (messageText = aiChatInput) => {
     const trimmedMessage = messageText.trim();
     if (!trimmedMessage) return;
 
+    const aiReply = getAiAssistantReply(trimmedMessage);
     setAiChatMessages(prev => [
       ...prev,
       createUserMessage(trimmedMessage),
-      createAiMessage(getAiAssistantReply(trimmedMessage))
+      createAiMessage(aiReply.content, aiReply)
     ]);
     setAiChatInput('');
   };
@@ -2708,6 +2857,16 @@ export default function App() {
     }));
     setAiChatOpen(false);
     navigate('contact', { inquiry: 'Get a quote' });
+  };
+
+  const openAiSupportForm = () => {
+    setFormValues(prev => ({
+      ...prev,
+      inquiryType: 'Technical Support',
+      message: prev.message || 'I need support for warranty, parts, service, manuals, or after-sales help.'
+    }));
+    setAiChatOpen(false);
+    navigate('support');
   };
 
   // Sync state with URL query parameters on mount and back/forward browser buttons
@@ -7818,7 +7977,10 @@ export default function App() {
                       <>
                         <p>{message.content}</p>
                         {message.cta && (
-                          <button className="ai-message-cta" onClick={openAiQuoteForm}>
+                          <button
+                            className="ai-message-cta"
+                            onClick={message.cta === 'Contact Support' ? openAiSupportForm : openAiQuoteForm}
+                          >
                             {message.cta}
                           </button>
                         )}
