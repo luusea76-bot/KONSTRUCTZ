@@ -218,6 +218,33 @@ const konstructzAssistantFacts = {
   quoteTip: 'For the most accurate quote, share the machine name, delivery city/state, attachments, timeline, and your phone or email.'
 };
 
+const aiGeneralEquipmentGuide = {
+  miniExcavator: {
+    label: 'Mini excavators',
+    bestFor: 'digging trenches, drainage lines, foundations, landscaping, utility work, and residential construction',
+    buyerTip: 'Choose by operating weight, digging depth, hydraulic flow, attachment needs, and access width.',
+    questions: 'Ask for price, delivery, bucket options, warranty, parts, or whether it fits your jobsite.'
+  },
+  wheelLoader: {
+    label: 'Wheel loaders',
+    bestFor: 'moving soil, gravel, mulch, pallets, materials, and supplies across yards, farms, warehouses, and jobsites',
+    buyerTip: 'Choose by lift capacity, bucket size, machine width, tire type, hydraulic options, and daily material volume.',
+    questions: 'Ask for SKOOP II pricing, delivery, stock, warranty, attachments, or loader comparison.'
+  },
+  trackLoader: {
+    label: 'Skid steer and compact track loaders',
+    bestFor: 'grading, loading, property cleanup, material handling, attachment work, and tight-access jobs',
+    buyerTip: 'Choose by rated operating capacity, ground condition, hydraulic flow, track or wheel preference, and attachment use.',
+    questions: 'Ask about buckets, forks, augers, trenchers, breakers, warranty, or stock availability.'
+  },
+  attachments: {
+    label: 'Attachments',
+    bestFor: 'turning one machine into a digging, loading, trenching, grading, drilling, breaking, or material-handling tool',
+    buyerTip: 'Attachment fit depends on machine model, coupler size, hydraulic flow, weight limits, and the job you need to complete.',
+    questions: 'Tell me the machine model and job type, and I can suggest the right attachment category.'
+  }
+};
+
 const createAiMessage = (content, extra = {}) => ({
   id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   sender: 'ai',
@@ -2729,13 +2756,23 @@ export default function App() {
     const asksCompare = /\b(compare|versus| vs |difference|better|which one|choose)\b/.test(` ${normalized} `);
     const asksRecommendation = /\b(recommend|find|best machine|which machine|what machine|need machine|looking for)\b/.test(normalized);
     const asksContact = /\b(phone|number|call|contact|email|whatsapp|whats app|talk to sales|sales team)\b/.test(normalized);
-    const asksCompany = /\b(company|who are you|about|typhon|where are you|address|location)\b/.test(normalized);
+    const asksCompany = /\b(company|who are you|who is konstructz|about konstructz|about your website|where are you|address|location)\b/.test(normalized);
     const asksProducts = /\b(product|products|catalog|what do you sell|machines|equipment|range|list)\b/.test(normalized);
+    const asksProductInfo = /\b(about|info|information|details|tell me|can i ask|what is|what are|explain)\b/.test(normalized);
     const asksPayment = /\b(payment|pay|financing|finance|lease|loan|credit card|bank|wire)\b/.test(normalized);
     const asksReturn = /\b(return|refund|cancel|cancellation|exchange)\b/.test(normalized);
     const slopeUse = /\b(slope|hillside|hill|orchard|vineyard|wetland|riverbank|soft ground|forest|forestry)\b/.test(normalized);
     const loadingUse = /\b(load|loader|material|gravel|soil|mulch|pallet|warehouse|yard)\b/.test(normalized);
     const diggingUse = /\b(dig|digging|trench|trenching|drainage|foundation|excavat|utility)\b/.test(normalized);
+    const generalGuide = normalized.includes('mini excavator') || normalized.includes('excavator')
+      ? aiGeneralEquipmentGuide.miniExcavator
+      : normalized.includes('wheel loader') || normalized.includes('loader')
+        ? aiGeneralEquipmentGuide.wheelLoader
+        : normalized.includes('skid steer') || normalized.includes('track loader')
+          ? aiGeneralEquipmentGuide.trackLoader
+          : asksAttachments
+            ? aiGeneralEquipmentGuide.attachments
+            : null;
 
     if (asksContact) {
       return {
@@ -2754,8 +2791,35 @@ export default function App() {
       return {
         content: [
           `Hello. I can help with ${konstructzAssistantFacts.company} product selection, quotes, shipping, warranty, parts, and support.`,
-          `Product focus: ${konstructzAssistantFacts.productFocus}.`,
-          'Tell me the job, ground condition, delivery state, and machine size you prefer.'
+          'You can ask me about mini excavators, SKOOP II wheel loaders, skid steer loaders, walking excavators, attachments, delivery, stock, warranty, parts, and quotes.',
+          'Tell me your job, ground condition, delivery state, and machine size you prefer.'
+        ].join('\n')
+      };
+    }
+
+    if (matchedProduct && (asksProductInfo || asksProducts || asksRecommendation)) {
+      return {
+        content: [
+          `${matchedProduct.name}`,
+          `Type: ${matchedProduct.type}`,
+          `Best for: ${matchedProduct.bestFor}.`,
+          `Typical terrain: ${matchedProduct.terrain}.`,
+          `Price: ${matchedProduct.price}`,
+          `Delivery: ${matchedProduct.delivery}`,
+          `Support: ${matchedProduct.support}`,
+          'Tell me your delivery state and main job, and I can help prepare a quote request.'
+        ].join('\n'),
+        cta: 'Request Quote'
+      };
+    }
+
+    if (generalGuide && asksProductInfo) {
+      return {
+        content: [
+          `${generalGuide.label}`,
+          `Best for: ${generalGuide.bestFor}.`,
+          `Buyer tip: ${generalGuide.buyerTip}`,
+          generalGuide.questions
         ].join('\n')
       };
     }
