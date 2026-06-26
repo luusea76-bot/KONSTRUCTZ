@@ -178,10 +178,10 @@ const aiProductKnowledge = [
     type: 'Compact wheel loader',
     bestFor: 'moving soil, gravel, mulch, pallets, materials, and jobsite supplies',
     terrain: 'construction yards, farms, landscape sites, warehouses, and compact material-handling areas',
-    price: 'Contact for quote',
-    delivery: 'Available by freight with delivery confirmed by destination',
-    leadTime: 'confirmed with stock and freight schedule',
-    support: 'warranty, parts, operator guidance, and after-sales service'
+    price: '$15,499.00',
+    delivery: 'Free shipping is listed on Typhon Machinery for the SKOOP II',
+    leadTime: 'call sales to confirm current stock and delivery schedule',
+    support: '1-year warranty, manuals, parts, operator guidance, and after-sales service'
   },
   {
     name: 'Spider One Walking Excavator',
@@ -2725,9 +2725,10 @@ export default function App() {
     if (asksContact) {
       return {
         content: [
-          'You can contact KONSTRUCTZ here:',
+          'You can contact the Typhon Machinery team here:',
           'Phone: +1 213-214-2203',
-          'Email: sales@konstructz.com',
+          'Sales email: sales@typhonmachinery.com',
+          'Support email: support@typhonmachinery.com',
           'Address: 2522 S Malt Ave, Commerce, CA 90040',
           'For a faster quote, send the machine name, delivery city/state, and attachments you need.'
         ].join('\n')
@@ -2826,7 +2827,7 @@ export default function App() {
 
     if (asksSupport) {
       return {
-        content: 'Support is available for warranty, parts, maintenance, service questions, manuals, and after-sales help. Please include the machine model, serial number if available, hours of use, and a short description of the issue.',
+        content: 'Support is available for warranty, parts, maintenance, service questions, manuals, and after-sales help.\nPhone: +1 213-214-2203\nSupport email: support@typhonmachinery.com\nPlease include the machine model, serial number if available, hours of use, and a short description of the issue.',
         cta: 'Contact Support'
       };
     }
@@ -7978,10 +7979,10 @@ export default function App() {
                         <span className="ai-card-kicker">Recommended answer</span>
                         <h3>SKOOP II Wheel Loader</h3>
                         <ul>
-                          <li><strong>Starting Price:</strong> Contact for quote</li>
-                          <li><strong>Delivery to California:</strong> Available</li>
-                          <li><strong>Estimated Delivery Time:</strong> 5-7 business days</li>
-                          <li><strong>Support:</strong> Warranty, parts, and after-sales service available</li>
+                          <li><strong>Price:</strong> $15,499.00</li>
+                          <li><strong>Shipping:</strong> Free shipping listed by Typhon Machinery</li>
+                          <li><strong>Delivery to California:</strong> Available - call to confirm schedule</li>
+                          <li><strong>Support:</strong> 1-year warranty, parts, manuals, and after-sales service</li>
                         </ul>
                         <p>Would you like a detailed SKOOP II quote based on your delivery location and material-handling needs?</p>
                         <button onClick={openAiQuoteForm}>Request Detailed Quote</button>
