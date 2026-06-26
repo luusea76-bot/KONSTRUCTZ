@@ -1095,7 +1095,6 @@ export default function App() {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
-  const [aiAssistantHidden, setAiAssistantHidden] = useState(false);
   const [aiChatInput, setAiChatInput] = useState('');
   const [aiChatMessages, setAiChatMessages] = useState(() => [
     createAiMessage("Hello! I'm your AI Machinery Assistant. How can I help you today?"),
@@ -7769,7 +7768,6 @@ export default function App() {
         </div>
       )}
 
-      {!aiAssistantHidden && (
       <div className={`ai-assistant-widget ${aiChatOpen ? 'is-open' : ''}`}>
         {aiChatOpen && (
           <section className="ai-chat-panel" aria-label="AI Machinery Assistant">
@@ -7863,20 +7861,7 @@ export default function App() {
           </span>
           <span>Click me</span>
         </button>
-        {!aiChatOpen && (
-          <button
-            className="ai-floating-dismiss"
-            onClick={() => {
-              setAiAssistantHidden(true);
-              setAiChatOpen(false);
-            }}
-            aria-label="Hide AI assistant"
-          >
-            ×
-          </button>
-        )}
       </div>
-      )}
 
       {/* FOOTER */}
       <footer className="main-footer-dark">

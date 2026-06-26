@@ -2095,8 +2095,7 @@ section {
 }
 
 .ai-chat-panel,
-.ai-floating-button,
-.ai-floating-dismiss {
+.ai-floating-button {
   pointer-events: auto;
 }
 
@@ -2416,29 +2415,6 @@ section {
 .ai-floating-button:hover {
   background: #314126;
   transform: translateY(-2px);
-}
-
-.ai-floating-dismiss {
-  position: absolute;
-  top: -10px;
-  right: -8px;
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  border: 2px solid #fffaf1;
-  border-radius: 50%;
-  background: #1d2718;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 19px;
-  line-height: 1;
-  box-shadow: 0 12px 28px rgba(20, 28, 18, 0.28);
-}
-
-.ai-floating-dismiss:hover {
-  background: #6b2d28;
-  transform: translateY(-1px);
 }
 
 .ai-floating-icon {
