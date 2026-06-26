@@ -2717,9 +2717,22 @@ export default function App() {
     const asksAttachments = /\b(attachment|attachments|bucket|auger|breaker|hammer|rake|fork|trencher|coupler)\b/.test(normalized);
     const asksCompare = /\b(compare|versus| vs |difference|better|which one|choose)\b/.test(` ${normalized} `);
     const asksRecommendation = /\b(recommend|find|best machine|which machine|what machine|need machine|looking for)\b/.test(normalized);
+    const asksContact = /\b(phone|number|call|contact|email|whatsapp|whats app|talk to sales|sales team)\b/.test(normalized);
     const slopeUse = /\b(slope|hillside|hill|orchard|vineyard|wetland|riverbank|soft ground|forest|forestry)\b/.test(normalized);
     const loadingUse = /\b(load|loader|material|gravel|soil|mulch|pallet|warehouse|yard)\b/.test(normalized);
     const diggingUse = /\b(dig|digging|trench|trenching|drainage|foundation|excavat|utility)\b/.test(normalized);
+
+    if (asksContact) {
+      return {
+        content: [
+          'You can contact KONSTRUCTZ here:',
+          'Phone: +1 213-214-2203',
+          'Email: sales@konstructz.com',
+          'Address: 2522 S Malt Ave, Commerce, CA 90040',
+          'For a faster quote, send the machine name, delivery city/state, and attachments you need.'
+        ].join('\n')
+      };
+    }
 
     if (/\b(hi|hello|hey|good morning|good afternoon)\b/.test(normalized)) {
       return {
