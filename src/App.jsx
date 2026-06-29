@@ -216,7 +216,7 @@ const konstructzAssistantFacts = {
   site: 'https://konstructz.com/',
   phone: '+1 424-653-6764',
   whatsapp: '+1 323-532-5703',
-  email: 'sales@konstructz.com',
+  email: 'sales@cwqv.com',
   address: '7025 Slauson Ave, Commerce, CA 90040, United States',
   productFocus: 'compact construction equipment including SKOOP II wheel loaders, mini excavators, skid steer and compact track loaders, towable and walking excavators, trenchers, dumpers, stone crushers, and jobsite attachments',
   quoteTip: 'For the most accurate quote, share the machine name, delivery city/state, attachments, timeline, and your phone or email.'
@@ -806,7 +806,7 @@ const topicFaqs = {
     {
       id: 'buying-1',
       question: 'How do I request a quote?',
-      answer: 'You can add equipment and attachments to your request list using the cart, then submit a quote request. Alternatively, contact us directly at sales@konstructz.com or call our support line.'
+      answer: 'You can add equipment and attachments to your request list using the cart, then submit a quote request. Alternatively, contact us directly at sales@cwqv.com or call our support line.'
     },
     {
       id: 'buying-2',
@@ -855,7 +855,7 @@ const topicFaqs = {
     {
       id: 'warranty-2',
       question: 'How do I file a warranty claim?',
-      answer: 'You can submit a claim online via our Support page or email support@konstructz.com with your machine serial number, operating hours, a description of the issue, and photos/videos.'
+      answer: 'You can submit a claim online via our Support page or email support@cwqv.com with your machine serial number, operating hours, a description of the issue, and photos/videos.'
     },
     {
       id: 'warranty-3',
@@ -872,7 +872,7 @@ const topicFaqs = {
     {
       id: 'service-1',
       question: 'How do I order replacement parts?',
-      answer: 'We maintain a fully stocked parts inventory. You can order replacement parts directly from our online support portal or email our parts specialists at support@konstructz.com.'
+      answer: 'We maintain a fully stocked parts inventory. You can order replacement parts directly from our online support portal or email our parts specialists at support@cwqv.com.'
     },
     {
       id: 'service-2',
@@ -2394,7 +2394,7 @@ export default function App() {
         id: `inq-${Date.now()}`,
         firstName: 'Cart',
         lastName: 'User',
-        email: 'customer@konstructz.com',
+        email: 'customer@cwqv.com',
         phone: 'N/A',
         inquiryType: 'Get a quote',
         message: productList ? `Cart Quote Request: ${productList}` : 'Requested quote for items.',
@@ -3373,7 +3373,7 @@ export default function App() {
           'addressCountry': 'US'
         },
         'telephone': '+1-555-234-9800',
-        'email': 'sales@konstructz.com',
+        'email': 'sales@cwqv.com',
         'url': siteUrl
       };
     }
@@ -6410,7 +6410,7 @@ export default function App() {
                     <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center' }}>Help Center General FAQs</h3>
                     <div className="topic-subpage-faq-section" style={{ maxWidth: '800px', margin: '0 auto' }}>
                       {[
-                        { id: 'gen-1', question: 'How do I contact customer support directly?', answer: 'You can email us directly at sales@konstructz.com, call our hotline, or submit a form through our Contact page. We respond to all inquiries within 24 hours.' },
+                        { id: 'gen-1', question: 'How do I contact customer support directly?', answer: 'You can email us directly at sales@cwqv.com, call our hotline, or submit a form through our Contact page. We respond to all inquiries within 24 hours.' },
                         { id: 'gen-2', question: 'Can I purchase spare parts directly from the site?', answer: 'Yes, select the parts under our "Service & Parts" section and click "Request Parts Quote". A sales representative will confirm availability and draft a secure invoice for your order.' }
                       ].map(item => (
                         <div key={item.id} className={`topic-faq-item ${openFaqId === item.id ? 'open' : ''}`}>
@@ -7755,7 +7755,7 @@ export default function App() {
                   <h3>Online Customer Service</h3>
                   <p className="hours-text">Monday to Sunday: 8:00 AM – 5:00 PM EST</p>
                   <p className="phone-text">Phone: +1 (555) 234-9800</p>
-                  <p className="email-text">Email: support@konstructz.com</p>
+                  <p className="email-text">Email: support@cwqv.com</p>
                   <p className="address-text">Address: 1200 Industrial Parkway, Suite A, Detroit, MI 48201</p>
                   <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="contact-service-link">
                     Contact the customer service &gt;
@@ -7794,7 +7794,7 @@ export default function App() {
                   <div className="card-icon">✉️</div>
                   <div className="card-body">
                     <h4>Email us</h4>
-                    <p className="highlight-text">sales@konstructz.com</p>
+                    <p className="highlight-text">sales@cwqv.com</p>
                     <p className="subtext">We respond to all inquiries within 24 hours on business days.</p>
                   </div>
                 </div>
@@ -7812,7 +7812,7 @@ export default function App() {
                   <div className="card-icon">🛠️</div>
                   <div className="card-body">
                     <h4>24/7 support</h4>
-                    <p className="highlight-text">support@konstructz.com</p>
+                    <p className="highlight-text">support@cwqv.com</p>
                     <p className="subtext">For urgent technical issues and breakdowns – we never sleep.</p>
                   </div>
                 </div>
@@ -7968,7 +7968,7 @@ export default function App() {
                   <div className="dep-icon">🛒</div>
                   <div className="dep-info">
                     <h5>Sales</h5>
-                    <a href="mailto:sales@konstructz.com">sales@konstructz.com</a>
+                    <a href="mailto:sales@cwqv.com">sales@cwqv.com</a>
                   </div>
                 </div>
 
@@ -7976,7 +7976,7 @@ export default function App() {
                   <div className="dep-icon">⚙️</div>
                   <div className="dep-info">
                     <h5>Technical support</h5>
-                    <a href="mailto:support@konstructz.com">support@konstructz.com</a>
+                    <a href="mailto:support@cwqv.com">support@cwqv.com</a>
                   </div>
                 </div>
 
@@ -7984,7 +7984,7 @@ export default function App() {
                   <div className="dep-icon">📰</div>
                   <div className="dep-info">
                     <h5>Media & press</h5>
-                    <a href="mailto:media@konstructz.com">media@konstructz.com</a>
+                    <a href="mailto:media@cwqv.com">media@cwqv.com</a>
                   </div>
                 </div>
               </div>
@@ -8285,7 +8285,7 @@ export default function App() {
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                 <polyline points="22,6 12,13 2,6" />
               </svg>
-              sales@konstructz.com
+              sales@cwqv.com
             </p>
           </div>
           
