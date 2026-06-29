@@ -12,6 +12,8 @@ import supportHeroAsset from './assets/support_hero.png'
 import supportCallCenterAsset from './assets/support_call_center.png'
 import kuvuoProductAsset from './assets/products/kuvuo.png'
 import spiderOneProductAsset from './assets/products/spider-one.png'
+import skoopIiLoaderShowcaseAsset from './assets/products/skoop-ii-loader-showcase.png'
+import skoopyDigProductAsset from './assets/products/skoopydig.png'
 import stoneCrusherAsset from './assets/products/skoop-ii-jobsite-loader.png'
 import stonekrusherLogoAsset from './assets/machine-logos/stonekrusher.png'
 import stonekrusherReflectionAsset from './assets/machine-logos/stonekrusher-reflection.png'
@@ -46,6 +48,8 @@ const supportHero = supportHeroAsset;
 const supportCallCenter = supportCallCenterAsset;
 const kuvuoProduct = kuvuoProductAsset;
 const spiderOneProduct = spiderOneProductAsset;
+const skoopIiLoaderShowcase = skoopIiLoaderShowcaseAsset;
+const skoopyDigProduct = skoopyDigProductAsset;
 
 const fallbackBlogImagesBySlug = {
   'excavator-maintenance-tips': '/about-skoop-park.png',
@@ -143,20 +147,20 @@ const engineLogos = [
 
 const machineComparisonFaqs = [
   {
-    question: 'Which excavator is better for slopes and orchards?',
-    answer: 'Spider One is the better choice for steep slopes, orchards, vineyards, wetland edges, riverbanks, and soft ground because its walking excavator design reaches areas conventional tracked excavators cannot.'
+    question: 'Which machine is better for loading and material handling?',
+    answer: 'Skoop II Loader is the better choice for moving soil, gravel, mulch, pallets, and jobsite materials when daily loading, hauling, and cleanup speed matter most.'
   },
   {
-    question: 'Which machine is better for construction, landscaping, and trenching?',
-    answer: 'KUVUO 2.7 is built for everyday compact excavation, trenching, landscaping, utility work, residential construction, and jobsites where strong digging performance matters on flat or prepared ground.'
+    question: 'Which machine is better for digging and trenching?',
+    answer: 'SkoopyDig is built for projects that need loader utility plus excavator-style digging reach, including trenching, drainage work, small foundations, and mixed landscaping jobs.'
   },
   {
-    question: 'What is the main difference between a mini excavator and a walking excavator?',
-    answer: 'A mini excavator focuses on productive digging, lifting, and grading in compact spaces. A walking excavator focuses on terrain access, flexible positioning, and low-impact work in places standard machines struggle to enter.'
+    question: 'What is the main difference between Skoop II Loader and SkoopyDig?',
+    answer: 'Skoop II Loader focuses on front-bucket loading and material movement. SkoopyDig adds backhoe-style digging capability for crews that need to load, dig, trench, and place material with one compact machine.'
   },
   {
-    question: 'Can KONSTRUCTZ help choose between KUVUO 2.7 and Spider One?',
-    answer: 'Yes. KONSTRUCTZ can help match the right excavator to the terrain, attachments, transport needs, and daily work you expect from the machine.'
+    question: 'Can KONSTRUCTZ help choose between Skoop II Loader and SkoopyDig?',
+    answer: 'Yes. KONSTRUCTZ can help match the right machine to your jobsite, attachments, digging needs, loading volume, delivery location, and daily production goals.'
   }
 ];
 
@@ -3425,23 +3429,23 @@ export default function App() {
       baseSchemaGraph.push(
         {
           '@type': 'ItemList',
-          '@id': `${siteUrl}/#kuvuo-spider-comparison`,
-          'name': 'KUVUO 2.7 Mini Excavator vs Spider One Walking Excavator',
-          'description': 'A practical comparison of compact mini excavator performance and walking excavator terrain access for construction, landscaping, farms, orchards, slopes, and hard-to-reach jobsites.',
+          '@id': `${siteUrl}/#skoop-ii-skoopydig-comparison`,
+          'name': 'Skoop II Loader vs SkoopyDig',
+          'description': 'A practical comparison of compact wheel loader material handling and SkoopyDig dig-and-load capability for construction, landscaping, farms, trenching, and tight-access jobsites.',
           'itemListElement': [
             {
               '@type': 'ListItem',
               'position': 1,
               'item': {
                 '@type': 'Product',
-                'name': 'KUVUO 2.7 Mini Excavator',
-                'image': `${siteUrl}${kuvuoProduct}`,
-                'description': 'Compact mini excavator for construction, landscaping, trenching, utility work, residential projects, and everyday digging performance.',
+                'name': 'Skoop II Loader',
+                'image': `${siteUrl}${skoopIiLoaderShowcase}`,
+                'description': 'Compact wheel loader for loading, moving soil, gravel, mulch, pallets, jobsite supplies, farm materials, and landscape materials.',
                 'brand': {
                   '@type': 'Brand',
                   'name': 'KONSTRUCTZ'
                 },
-                'category': 'Mini Excavator'
+                'category': 'Compact Wheel Loader'
               }
             },
             {
@@ -3449,14 +3453,14 @@ export default function App() {
               'position': 2,
               'item': {
                 '@type': 'Product',
-                'name': 'Spider One Walking Excavator',
-                'image': `${siteUrl}${spiderOneProduct}`,
-                'description': 'Walking excavator for slopes, orchards, vineyards, forestry, farms, wetland edges, soft ground, and hard-to-reach terrain.',
+                'name': 'SkoopyDig',
+                'image': `${siteUrl}${skoopyDigProduct}`,
+                'description': 'Compact dig-and-load machine for trenching, drainage, small excavation, landscaping, utility work, and mixed material handling.',
                 'brand': {
                   '@type': 'Brand',
                   'name': 'KONSTRUCTZ'
                 },
-                'category': 'Walking Excavator'
+                'category': 'Loader Backhoe'
               }
             }
           ]
@@ -4340,17 +4344,17 @@ export default function App() {
       </section>
 
       {/* MACHINE COMPARISON SECTION */}
-      <section id="kuvuo-vs-spider-one" className="machine-comparison-section white-bg">
+      <section id="skoop-ii-vs-skoopydig" className="machine-comparison-section white-bg">
         <div className="section-content machine-comparison-content">
           <div className="machine-comparison-heading">
             <h2>
-              <span>KUVUO 2.7 Mini Excavator</span>
+              <span>Skoop II Loader</span>
               <strong>VS</strong>
-              <span>Spider One Walking Excavator</span>
+              <span>SkoopyDig</span>
             </h2>
             <p>
-              Compare compact excavation power with slope-ready walking excavator access for construction,
-              landscaping, farms, orchards, trenching, and hard-to-reach jobsites.
+              Compare compact loader material handling with dig-and-load versatility for construction,
+              landscaping, farms, trenching, cleanup, and tight-access jobsites.
             </p>
           </div>
 
@@ -4358,8 +4362,8 @@ export default function App() {
             <div className="machine-comparison-visuals">
               <div className="machine-comparison-machine">
                 <img
-                  src={kuvuoProduct}
-                  alt="KUVUO 2.7 mini excavator for compact construction, landscaping, and trenching"
+                  src={skoopIiLoaderShowcase}
+                  alt="Skoop II compact wheel loader for loading soil, gravel, mulch, and jobsite materials"
                   loading="lazy"
                   decoding="async"
                 />
@@ -4367,8 +4371,8 @@ export default function App() {
               <div className="machine-comparison-vs">VS</div>
               <div className="machine-comparison-machine">
                 <img
-                  src={spiderOneProduct}
-                  alt="Spider One walking excavator for slopes, orchards, farms, and soft ground"
+                  src={skoopyDigProduct}
+                  alt="SkoopyDig compact dig and load machine for trenching, landscaping, and utility work"
                   loading="lazy"
                   decoding="async"
                 />
@@ -4379,33 +4383,33 @@ export default function App() {
               {[
                 {
                   label: 'Best For',
-                  left: 'General construction, landscaping, trenching, and residential projects.',
-                  right: 'Hillsides, orchards, wetland areas, and hard-to-reach terrain.'
+                  left: 'Loading, carrying, dumping, pallet handling, cleanup, and daily material movement.',
+                  right: 'Digging, trenching, drainage, small excavation, loading, and mixed landscaping jobs.'
                 },
                 {
                   label: 'Terrain',
-                  left: 'Flat ground, construction sites, and urban environments.',
-                  right: 'Steep slopes, forests, farms, riverbanks, and soft ground.'
+                  left: 'Construction yards, farms, landscape sites, warehouses, nurseries, and compact job areas.',
+                  right: 'Residential lots, utility runs, farm lanes, garden projects, and tight work zones.'
                 },
                 {
                   label: 'Performance',
-                  left: 'Higher digging force, greater lifting capacity, and continuous heavy-duty operation.',
-                  right: 'Exceptional accessibility, flexible positioning, and operation where tracked excavators cannot reach.'
+                  left: 'Fast bucket cycles, strong pushing power, stable travel, and efficient load-and-carry work.',
+                  right: 'Loader utility with backhoe-style digging reach for jobs that need excavation and material movement.'
                 },
                 {
                   label: 'Selling Points',
-                  left: ['Powerful hydraulic performance', 'Zero-tail swing design', 'Comfortable operator station', 'High productivity in tight spaces', 'Compact size with strong output'],
-                  right: ['Unique walking excavator design', 'Accesses confined and remote locations', 'Lightweight and highly portable', 'Low ground pressure with minimal impact', 'Ideal for specialty applications']
+                  left: ['Compact wheel loader footprint', 'Front bucket productivity', 'Comfortable operator station', 'Great for repeated loading cycles', 'Useful with loader attachments'],
+                  right: ['Front loader plus rear digging arm', 'Handles trenching and loading in one machine', 'Good for tight-access excavation', 'Practical for farms and landscaping', 'Reduces machine swaps on small jobs']
                 },
                 {
                   label: 'Applications',
-                  left: ['Construction', 'Landscaping', 'Trenching', 'Utility work'],
-                  right: ['Orchards', 'Vineyards', 'Forestry', 'Municipal work']
+                  left: ['Material handling', 'Landscape supply', 'Farm work', 'Jobsite cleanup'],
+                  right: ['Trenching', 'Drainage', 'Light excavation', 'Backfill and grading']
                 },
                 {
                   label: 'Ideal Customer',
-                  left: ['Contractors', 'Rental companies', 'Landscapers', 'Utility installers'],
-                  right: ['Farmers', 'Vineyard owners', 'Orchard operators', 'Forestry and maintenance crews']
+                  left: ['Contractors', 'Landscapers', 'Farm owners', 'Rental companies'],
+                  right: ['Small contractors', 'Utility crews', 'Property owners', 'Landscape and farm crews']
                 }
               ].map((row) => (
                 <div className="machine-comparison-row" key={row.label}>
@@ -4437,28 +4441,28 @@ export default function App() {
 
           <div className="machine-comparison-choice-grid">
             <div className="machine-comparison-choice">
-              <span>Choose KUVUO 2.7</span>
-              <p>When you need a versatile mini excavator for everyday construction work with maximum power and efficiency.</p>
+              <span>Choose Skoop II Loader</span>
+              <p>When your main work is loading, carrying, dumping, moving pallets, and keeping materials flowing.</p>
             </div>
             <div className="machine-comparison-choice featured">
               <span>Choose the right machine</span>
-              <p>Match your machine to your terrain, application, and daily production goals.</p>
+              <p>Match your machine to how much you load, how much you dig, and how often the job needs both.</p>
             </div>
             <div className="machine-comparison-choice">
-              <span>Choose Spider One</span>
-              <p>When you need an excavator that can reach places conventional machines simply cannot.</p>
+              <span>Choose SkoopyDig</span>
+              <p>When you need one compact machine that can dig trenches, load material, backfill, and clean up.</p>
             </div>
           </div>
 
           <div className="machine-comparison-seo">
             <div>
-              <span className="machine-comparison-kicker">Excavator buying guide</span>
-              <h3>Mini excavator vs walking excavator: choose by terrain first.</h3>
+              <span className="machine-comparison-kicker">Machine buying guide</span>
+              <h3>Loader vs dig-and-load machine: choose by the work cycle.</h3>
               <p>
-                For flat ground, prepared construction sites, residential trenching, drainage work, and landscaping,
-                KUVUO 2.7 gives operators compact size with productive digging power. For hillsides, orchard rows,
-                vineyard maintenance, forestry edges, wet soil, and uneven farm terrain, Spider One is designed to
-                reach and position where a standard tracked excavator may not be practical.
+                For repeated loading, stockpile work, pallet movement, farm chores, and jobsite cleanup,
+                Skoop II Loader keeps material moving quickly. For trenching, drainage, light excavation,
+                backfilling, and jobs that shift between digging and loading, SkoopyDig gives crews a more
+                versatile dig-and-load setup.
               </p>
             </div>
             <button className="machine-comparison-quote" onClick={() => navigate('contact', { inquiry: 'Quote Request' })}>
@@ -4466,7 +4470,7 @@ export default function App() {
             </button>
           </div>
 
-          <div className="machine-comparison-faq-grid" aria-label="Mini excavator and walking excavator questions">
+          <div className="machine-comparison-faq-grid" aria-label="Skoop II Loader and SkoopyDig questions">
             {machineComparisonFaqs.map((faq) => (
               <article className="machine-comparison-faq" key={faq.question}>
                 <h3>{faq.question}</h3>
