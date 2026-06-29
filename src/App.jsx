@@ -7408,12 +7408,6 @@ export default function App() {
                         >
                           Proceed to Checkout
                         </button>
-                        <button
-                          className="cta-button white-pill-dark-border cart-quote-btn"
-                          onClick={requestCartQuote}
-                        >
-                          Request Quote
-                        </button>
                       </>
                     ) : (
                       <button
