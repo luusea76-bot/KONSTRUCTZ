@@ -5839,12 +5839,52 @@ section {
 .social-link-item {
   display: flex;
   align-items: center;
+  gap: 8px;
   color: var(--text-dark-bg-secondary);
   transition: all 0.3s ease;
 }
 
 .social-link-item:hover {
   color: var(--accent-hover);
+}
+
+.social-link-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 18px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.social-link-mark.tiktok,
+.social-link-mark.x {
+  background: #050505;
+}
+
+.social-link-mark.pin {
+  background: #bd081c;
+}
+
+.social-link-mark.reddit {
+  background: #ff4500;
+}
+
+.social-link-mark.tumblr {
+  background: #001935;
+}
+
+.social-link-mark.fb {
+  background: #1877f2;
+}
+
+.social-link-mark.ig {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aec 90%);
 }
 
 .social-icon-svg {
@@ -8802,9 +8842,24 @@ section {
   box-shadow: var(--shadow-sm);
 }
 
+.social-icon::before {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+}
+
 .social-icon:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.social-icon.tiktok {
+  background-color: #050505;
+}
+
+.social-icon.tiktok::before {
+  content: "♪";
 }
 
 .social-icon.fb {
@@ -8825,6 +8880,22 @@ section {
 .social-icon.pin {
   background-color: #bd081c;
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFF'%3E%3Cpath d='M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.907 2.167-2.907 1.02 0 1.513.769 1.513 1.689 0 1.029-.656 2.568-.994 3.995-.28.1.18 1.209.925 1.209 1.832 0 3.251-1.929 3.251-4.717 0-2.466-1.77-4.189-4.3-4.189-2.93 0-4.646 2.199-4.646 4.466 0 .886.341 1.837.767 2.354a.434.434 0 01.1.413c-.111.461-.358 1.458-.407 1.657a.326.326 0 01-.304.201c-1.3-.605-2.114-2.502-2.114-4.026 0-3.277 2.382-6.286 6.864-6.286 3.604 0 6.405 2.569 6.405 6.002 0 3.582-2.257 6.467-5.388 6.467-1.052 0-2.042-.546-2.38-1.189l-.65 2.477c-.235.9-.87 2.03-1.298 2.727 1.13.349 2.327.538 3.567.538 6.62 0 11.988-5.367 11.988-11.987C24.007 5.367 18.64 0 12.017 0z'/%3E%3C/svg%3E");
+}
+
+.social-icon.reddit {
+  background-color: #ff4500;
+}
+
+.social-icon.reddit::before {
+  content: "r";
+}
+
+.social-icon.tumblr {
+  background-color: #001935;
+}
+
+.social-icon.tumblr::before {
+  content: "t";
 }
 
 .social-icon.x {

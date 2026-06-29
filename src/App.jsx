@@ -913,6 +913,52 @@ const topicFaqs = {
     }
   ]
 };
+
+const socialLinks = [
+  {
+    label: 'TikTok',
+    url: 'https://www.tiktok.com/@impossiblemachinery',
+    className: 'tiktok',
+    shortLabel: '♪'
+  },
+  {
+    label: 'Pinterest',
+    url: 'https://www.pinterest.com/ImpossibleMachinery',
+    className: 'pin',
+    shortLabel: 'P'
+  },
+  {
+    label: 'Reddit',
+    url: 'https://www.reddit.com/user/ImpossibleMachinery',
+    className: 'reddit',
+    shortLabel: 'r'
+  },
+  {
+    label: 'Tumblr',
+    url: 'https://www.tumblr.com/impossiblemachinery',
+    className: 'tumblr',
+    shortLabel: 't'
+  },
+  {
+    label: 'X',
+    url: 'https://x.com/impss_machinery',
+    className: 'x',
+    shortLabel: 'X'
+  },
+  {
+    label: 'Facebook',
+    url: 'https://www.facebook.com/ImpossibleMachinery',
+    className: 'fb',
+    shortLabel: 'f'
+  },
+  {
+    label: 'Instagram',
+    url: 'https://www.instagram.com/impossiblemachinery',
+    className: 'ig',
+    shortLabel: 'I'
+  }
+];
+
 const parseTextareaMedia = (text) => {
   if (!text) return [];
   const lines = text.split('\n');
@@ -7934,11 +7980,18 @@ export default function App() {
                 <div className="follow-us-section">
                   <h3 className="follow-title">FOLLOW US</h3>
                   <div className="social-icons-row">
-                    <a href="#fb" className="social-icon fb">Facebook</a>
-                    <a href="#ig" className="social-icon ig">Instagram</a>
-                    <a href="#yt" className="social-icon yt">YouTube</a>
-                    <a href="#pin" className="social-icon pin">Pinterest</a>
-                    <a href="#x" className="social-icon x">X</a>
+                    {socialLinks.map(social => (
+                      <a
+                        key={social.label}
+                        href={social.url}
+                        className={`social-icon ${social.className}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={social.label}
+                      >
+                        {social.label}
+                      </a>
+                    ))}
                   </div>
                 </div>
 
@@ -8324,34 +8377,20 @@ export default function App() {
           <div className="footer-links-col">
             <h4>Connect</h4>
             <div className="social-links-grid">
-              <a href="#fb" className="social-link-item">
-                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-                Facebook
-              </a>
-              <a href="#pin" className="social-link-item">
-                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
-                  <line x1="12" y1="8" x2="12" y2="22" />
-                  <path d="M12 2a10 10 0 0 0-3 19.5c0-1.7 0-3.9.4-5.6l1-4.2c-.3-.6-.6-1.5-.6-2.5 0-2.3 1.3-4 3-4 1.4 0 2.1 1.1 2.1 2.4 0 1.4-.9 3.5-1.4 5.5-.4 1.7.9 3.1 2.6 3.1 3.1 0 5.2-4 5.2-8.7 0-3.6-2.4-6.3-6.9-6.3-5 0-8 3.7-8 7.8 0 1.5.4 2.6 1 3.4.1.2.2.3.1.6l-.3 1.1c-.1.3-.3.4-.6.3-1.8-.7-2.6-2.7-2.6-4.9 0-5.7 4.8-12.5 13.6-12.5 7.3 0 12.1 5.3 12.1 11 0 7.6-4.2 13-10.4 13-2 0-4-1.1-4.7-2.3L12 18.5" />
-                </svg>
-                Pinterest
-              </a>
-              <a href="#ig" className="social-link-item">
-                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                </svg>
-                Instagram
-              </a>
-              <a href="#yt" className="social-link-item">
-                <svg className="social-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '8px', verticalAlign: 'middle' }}>
-                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.41 19c1.71.46 8.59.46 8.59.46s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96 29 29 0 0 0 .46-5.29 29 29 0 0 0-.46-5.33z" />
-                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
-                </svg>
-                YouTube
-              </a>
+              {socialLinks.map(social => (
+                <a
+                  key={social.label}
+                  href={social.url}
+                  className="social-link-item"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className={`social-link-mark ${social.className}`} aria-hidden="true">
+                    {social.shortLabel}
+                  </span>
+                  {social.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
