@@ -6,6 +6,8 @@ import stompV950Image from '../assets/products/stomp-v950.png';
 import stoneKrusherImage from '../assets/products/stone-krusher.webp';
 import stompV980Image from '../assets/products/stomp-v980.webp';
 import thunderDumpImage from '../assets/products/thunderdump-180.webp';
+import scoopyDigImage from '../assets/products/skoopydig.png';
+import kuvuo25Image from '../assets/products/kuvuo-25.png';
 
 import laravelProducts from './equipment-products.json';
 
@@ -18,6 +20,8 @@ const featuredCatalogProducts = [
   { id: "featured-6", name: "Stone Krusher K3", category: "Konstructz", subcategory: "Stone Crasher", weight: "3.0 Ton", engine: "Diesel Engine", cap: "Call for pricing", price: "Call for pricing", image: stoneKrusherImage },
   { id: "featured-7", name: "Stomp V980 Compact Track Loader", category: "Konstructz", subcategory: "Skid Steer", weight: "0.98 Ton", engine: "Gasoline Engine", cap: "Call for pricing", price: "Call for pricing", image: stompV980Image },
   { id: "featured-8", name: "ThunderDump 180", category: "Konstructz", subcategory: "Dumper", weight: "1.8 Ton", engine: "Gasoline Engine", cap: "Call for pricing", price: "Call for pricing", image: thunderDumpImage },
+  { id: "featured-9", name: "ScoopyDig", category: "Konstructz", subcategory: "Backhoe", weight: "1.5 Ton", engine: "Gasoline Engine", cap: "Call for pricing", price: "Call for pricing", image: scoopyDigImage },
+  { id: "featured-10", name: "KUVUO 2.5", category: "Konstructz", subcategory: "Excavator", weight: "2.5 Ton", engine: "Gasoline Engine", cap: "Call for pricing", price: "Call for pricing", image: kuvuo25Image },
 ];
 
 const categoryMap = {
