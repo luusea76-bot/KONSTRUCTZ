@@ -7886,10 +7886,14 @@ export default function App() {
                             onChange={handleFormInputChange}
                           >
                             <option value="">Select topic</option>
+                            <option value="General Inquiry">General Inquiry</option>
                             <option value="Product inquiry">Product inquiry</option>
                             <option value="Request a demo">Request a demo</option>
                             <option value="Get a quote">Get a quote</option>
                             <option value="Business Support">Business Support</option>
+                            <option value="Financing & Leases">Financing & Leases</option>
+                            <option value="Financing Application">Financing Application</option>
+                            <option value="Technical Service">Technical Service</option>
                             <option value="Technical Support">Technical Support</option>
                             <option value="Warranty Registration">Warranty Registration</option>
                             <option value="Order Spare Parts">Order Spare Parts</option>
@@ -8290,8 +8294,8 @@ export default function App() {
             <h4>Get in touch</h4>
             <a href="?page=contact&inquiry=General%20Inquiry" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'General Inquiry' }); }}>General Inquiry</a>
             <a href="?page=contact&inquiry=Business%20Support" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Business Support' }); }}>Business Support</a>
-            <a href="?page=contact&inquiry=Financing%20Application" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Financing Application' }); }}>Financing & Leases</a>
-            <a href="?page=contact&inquiry=Technical%20Support" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Technical Support' }); }}>Technical Service</a>
+            <a href="?page=contact&inquiry=Financing%20%26%20Leases" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Financing & Leases' }); }}>Financing & Leases</a>
+            <a href="?page=contact&inquiry=Technical%20Service" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Technical Service' }); }}>Technical Service</a>
           </div>
 
           <div className="footer-links-col">
