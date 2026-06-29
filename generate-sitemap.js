@@ -19,6 +19,7 @@ const pages = [
   { path: '/?page=about', priority: '0.7', changefreq: 'monthly' },
   { path: '/?page=contact', priority: '0.7', changefreq: 'monthly' },
   { path: '/?page=support', priority: '0.7', changefreq: 'monthly' },
+  { path: '/?page=cart', priority: '0.5', changefreq: 'monthly' },
 ];
 
 const categories = [

@@ -213,7 +213,7 @@ const aiProductKnowledge = [
 
 const konstructzAssistantFacts = {
   company: 'KONSTRUCTZ',
-  site: 'https://konstructz.com/',
+  site: 'https://cwqv.com/',
   phone: '+1 424-653-6764',
   whatsapp: '+1 323-532-5703',
   email: 'sales@cwqv.com',
@@ -3135,7 +3135,7 @@ export default function App() {
 
   // Dynamic Page Title, Meta Description, and JSON-LD Structured Data
   useEffect(() => {
-    const siteUrl = 'https://konstructz.com';
+    const siteUrl = 'https://cwqv.com';
     const siteName = 'KONSTRUCTZ';
     const defaultImage = `${siteUrl}/favicon.svg`;
     let title = 'KONSTRUCTZ | Premium Construction Equipment';
@@ -3166,7 +3166,6 @@ export default function App() {
       title = 'Blog Admin Dashboard | KONSTRUCTZ';
       description = 'Create, edit, and manage KONSTRUCTZ blog posts.';
       canonicalPath = '/?page=admin-blog';
-      robotsContent = 'noindex, nofollow';
     } else if (currentView === 'topic') {
       if (activeTopicCategory === 'Machines') {
         title = 'Mini Skid Steer Safety & Technical Performance | KONSTRUCTZ';
@@ -3219,12 +3218,10 @@ export default function App() {
       title = 'Product Cart | KONSTRUCTZ';
       description = 'Review selected KONSTRUCTZ machinery and attachments, adjust quantities, and request a quote from our sales team.';
       canonicalPath = '/?page=cart';
-      robotsContent = 'noindex, nofollow';
     } else if (currentView === 'checkout' && checkoutItem) {
       title = `Checkout ${checkoutItem.name} | KONSTRUCTZ`;
       description = `Complete checkout for ${checkoutItem.name}.`;
       canonicalPath = `/?page=checkout&id=${encodeURIComponent(checkoutItem.slug || checkoutItem.id)}`;
-      robotsContent = 'noindex, nofollow';
     } else if (currentView === 'product-detail' && selectedProduct) {
       title = `${selectedProduct.name} | KONSTRUCTZ`;
       description = selectedProduct.desc || selectedProduct.fullDesc || `${selectedProduct.name} specs, pricing, and availability from KONSTRUCTZ. Built for contractors and operators.`;
@@ -3242,7 +3239,6 @@ export default function App() {
       title = 'Product Data Store | Konstructz Admin';
       description = 'Internal product CSV upload and preview utility for KONSTRUCTZ product data.';
       canonicalPath = '/?page=store-data';
-      robotsContent = 'noindex, nofollow';
     }
 
     document.title = title;
@@ -3338,7 +3334,7 @@ export default function App() {
         '@type': 'BlogPosting',
         'headline': selectedBlogPost.title,
         'description': (selectedBlogPost.seoDescription || selectedBlogPost.desc).substring(0, 300),
-        'image': 'https://konstructz.com/favicon.svg',
+        'image': 'https://cwqv.com/favicon.svg',
         'datePublished': selectedBlogPost.publishedDate,
         'dateModified': selectedBlogPost.updatedDate || selectedBlogPost.publishedDate,
         'author': {
@@ -3350,7 +3346,7 @@ export default function App() {
           'name': 'KONSTRUCTZ',
           'logo': {
             '@type': 'ImageObject',
-            'url': 'https://konstructz.com/favicon.svg'
+            'url': 'https://cwqv.com/favicon.svg'
           }
         },
         'mainEntityOfPage': {
@@ -3363,7 +3359,7 @@ export default function App() {
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
         'name': 'KONSTRUCTZ',
-        'image': 'https://konstructz.com/favicon.svg',
+        'image': 'https://cwqv.com/favicon.svg',
         'address': {
           '@type': 'PostalAddress',
           'streetAddress': '1200 Industrial Parkway, Suite A',
