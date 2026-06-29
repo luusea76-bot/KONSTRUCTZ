@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const baseUrl = 'https://konstructz.com';
+const baseUrl = 'https://cwqv.com';
 const lastmod = '2026-06-19';
 
 // 1. Core pages
