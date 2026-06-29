@@ -8292,10 +8292,25 @@ export default function App() {
           
           <div className="footer-links-col">
             <h4>Get in touch</h4>
-            <a href="?page=contact&inquiry=General%20Inquiry" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'General Inquiry' }); }}>General Inquiry</a>
-            <a href="?page=contact&inquiry=Business%20Support" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Business Support' }); }}>Business Support</a>
-            <a href="?page=contact&inquiry=Financing%20%26%20Leases" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Financing & Leases' }); }}>Financing & Leases</a>
-            <a href="?page=contact&inquiry=Technical%20Service" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Technical Service' }); }}>Technical Service</a>
+            {[
+              'Machines',
+              'Buying & pricing',
+              'Delivery',
+              'Warranty',
+              'Service & parts',
+              'Financing'
+            ].map(category => (
+              <a
+                key={category}
+                href={`?page=topic&topic-category=${encodeURIComponent(category)}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('topic', { 'topic-category': category });
+                }}
+              >
+                {category}
+              </a>
+            ))}
           </div>
 
           <div className="footer-links-col">
