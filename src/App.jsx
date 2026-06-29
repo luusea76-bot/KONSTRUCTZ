@@ -919,7 +919,7 @@ const socialLinks = [
     label: 'TikTok',
     url: 'https://www.tiktok.com/@impossiblemachinery',
     className: 'tiktok',
-    shortLabel: '♪'
+    shortLabel: 'T'
   },
   {
     label: 'Pinterest',
@@ -955,7 +955,7 @@ const socialLinks = [
     label: 'Instagram',
     url: 'https://www.instagram.com/impossiblemachinery',
     className: 'ig',
-    shortLabel: 'I'
+    shortLabel: 'IG'
   }
 ];
 
