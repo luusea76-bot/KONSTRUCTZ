@@ -7889,6 +7889,7 @@ export default function App() {
                             <option value="Product inquiry">Product inquiry</option>
                             <option value="Request a demo">Request a demo</option>
                             <option value="Get a quote">Get a quote</option>
+                            <option value="Business Support">Business Support</option>
                             <option value="Technical Support">Technical Support</option>
                             <option value="Warranty Registration">Warranty Registration</option>
                             <option value="Order Spare Parts">Order Spare Parts</option>
@@ -8287,10 +8288,10 @@ export default function App() {
           
           <div className="footer-links-col">
             <h4>Get in touch</h4>
-            <a href="#inquiry">General Inquiry</a>
-            <a href="#support">Business Support</a>
-            <a href="#leases">Financing & Leases</a>
-            <a href="#service">Technical Service</a>
+            <a href="?page=contact&inquiry=General%20Inquiry" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'General Inquiry' }); }}>General Inquiry</a>
+            <a href="?page=contact&inquiry=Business%20Support" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Business Support' }); }}>Business Support</a>
+            <a href="?page=contact&inquiry=Financing%20Application" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Financing Application' }); }}>Financing & Leases</a>
+            <a href="?page=contact&inquiry=Technical%20Support" onClick={(e) => { e.preventDefault(); navigate('contact', { inquiry: 'Technical Support' }); }}>Technical Service</a>
           </div>
 
           <div className="footer-links-col">
