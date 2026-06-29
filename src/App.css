@@ -5839,7 +5839,7 @@ section {
 .social-link-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   color: var(--text-dark-bg-secondary);
   font-size: 14px;
   line-height: 1.4;
@@ -5862,10 +5862,14 @@ section {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-dark-bg-secondary);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
   transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.social-link-glyph {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  display: block;
 }
 
 .social-link-item:hover .social-link-mark {
@@ -8829,11 +8833,12 @@ section {
   box-shadow: none;
 }
 
-.social-icon::before {
+.social-icon-glyph {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
   color: currentColor;
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
+  display: block;
 }
 
 .social-icon:hover {
@@ -8847,26 +8852,13 @@ section {
   background-color: #ffffff;
 }
 
-.social-icon.tiktok::before {
-  content: "T";
-}
-
 .social-icon.fb {
   background-color: #ffffff;
-}
-
-.social-icon.fb::before {
-  content: "f";
 }
 
 .social-icon.ig {
   background: #ffffff;
   background-image: none;
-}
-
-.social-icon.ig::before {
-  content: "IG";
-  font-size: 11px;
 }
 
 .social-icon.yt {
@@ -8878,32 +8870,16 @@ section {
   background-color: #ffffff;
 }
 
-.social-icon.pin::before {
-  content: "P";
-}
-
 .social-icon.reddit {
   background-color: #ffffff;
-}
-
-.social-icon.reddit::before {
-  content: "r";
 }
 
 .social-icon.tumblr {
   background-color: #ffffff;
 }
 
-.social-icon.tumblr::before {
-  content: "t";
-}
-
 .social-icon.x {
   background-color: #ffffff;
-}
-
-.social-icon.x::before {
-  content: "X";
 }
 
 .map-wrapper {

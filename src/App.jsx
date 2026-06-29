@@ -919,43 +919,43 @@ const socialLinks = [
     label: 'TikTok',
     url: 'https://www.tiktok.com/@impossiblemachinery',
     className: 'tiktok',
-    shortLabel: 'T'
+    iconPath: 'M12.7 2h3.1c.2 1.5.9 2.8 1.9 3.8 1 .9 2.2 1.4 3.6 1.5v3.1c-2-.1-3.8-.7-5.4-1.9v7.1c0 1.9-.7 3.5-2 4.7-1.2 1.2-2.8 1.8-4.7 1.8-1.8 0-3.3-.6-4.5-1.7C3.6 19.3 3 17.9 3 16.2c0-1.8.6-3.2 1.8-4.3 1.2-1.1 2.8-1.7 4.7-1.7.4 0 .8 0 1.2.1v3.2c-.4-.1-.8-.2-1.2-.2-1 0-1.8.3-2.4.8-.6.5-.9 1.2-.9 2.1 0 .8.3 1.5.8 2 .6.5 1.3.8 2.1.8.9 0 1.7-.3 2.3-.9.7-.7 1-1.6 1-2.9V2h.3Z'
   },
   {
     label: 'Pinterest',
     url: 'https://www.pinterest.com/ImpossibleMachinery',
     className: 'pin',
-    shortLabel: 'P'
+    iconPath: 'M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2.1 0-3l1.2-5s-.3-.7-.3-1.7c0-1.6.9-2.8 2.1-2.8 1 0 1.5.7 1.5 1.6 0 1-.6 2.5-.9 3.9-.3 1.2.6 2.1 1.8 2.1 2.2 0 3.7-2.8 3.7-6.1 0-2.5-1.7-4.4-4.8-4.4-3.5 0-5.7 2.6-5.7 5.5 0 1 .3 1.8.8 2.4.2.2.2.3.1.6l-.3 1.2c-.1.4-.3.5-.7.4-1.5-.6-2.2-2.4-2.2-4.3C4.7 8 7.8 4 13 4c4.4 0 7.3 3.2 7.3 6.7 0 4.6-2.5 8-6.3 8-1.2 0-2.4-.7-2.8-1.4l-.8 3c-.3 1-1 2.1-1.4 2.8A10 10 0 1 0 12 2Z'
   },
   {
     label: 'Reddit',
     url: 'https://www.reddit.com/user/ImpossibleMachinery',
     className: 'reddit',
-    shortLabel: 'r'
+    iconPath: 'M21 12.2c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.3-.8-3.1-1.3-5-1.4l.9-4.1 2.9.6c.1 1 .9 1.8 2 1.8 1.1 0 2-.9 2-2s-.9-2-2-2c-.8 0-1.5.5-1.8 1.2l-3.6-.8c-.3-.1-.6.1-.7.4L11 9.2c-2 .1-3.8.6-5.2 1.4-.4-.4-.9-.6-1.5-.6C3 10 2 11 2 12.2c0 .8.4 1.5 1.1 1.9 0 .2-.1.5-.1.7 0 3.1 4 5.7 9 5.7s9-2.5 9-5.7c0-.2 0-.5-.1-.7.7-.4 1.1-1.1 1.1-1.9ZM8.6 13.8c0-.8.6-1.4 1.4-1.4s1.4.6 1.4 1.4-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4Zm6.7 3.6c-.9.9-2.7 1-3.3 1s-2.4-.1-3.3-1c-.2-.2-.2-.6 0-.8s.6-.2.8 0c.5.5 1.7.7 2.5.7s2-.2 2.5-.7c.2-.2.6-.2.8 0s.2.6 0 .8Zm-1.3-2.2c-.8 0-1.4-.6-1.4-1.4s.6-1.4 1.4-1.4 1.4.6 1.4 1.4-.6 1.4-1.4 1.4Z'
   },
   {
     label: 'Tumblr',
     url: 'https://www.tumblr.com/impossiblemachinery',
     className: 'tumblr',
-    shortLabel: 't'
+    iconPath: 'M14.5 22c-3.7 0-6.1-1.9-6.1-5.7V10H5.3V6.8c3.2-.9 4.5-3.3 4.7-5.8h3.2v5.3h4.3V10h-4.3v5.5c0 1.7.9 2.3 2.3 2.3.7 0 1.4-.2 2-.4v3.8c-.8.5-1.8.8-3 .8Z'
   },
   {
     label: 'X',
     url: 'https://x.com/impss_machinery',
     className: 'x',
-    shortLabel: 'X'
+    iconPath: 'M18.2 2.8h3.3l-7.2 8.3 8.5 10.1h-6.7l-5.2-6.2-6 6.2H1.6l7.7-8L1.2 2.8H8l4.7 5.8 5.5-5.8Zm-1.1 16.6h1.8L7 4.5H5.1l12 14.9Z'
   },
   {
     label: 'Facebook',
     url: 'https://www.facebook.com/ImpossibleMachinery',
     className: 'fb',
-    shortLabel: 'f'
+    iconPath: 'M14.2 22v-8.1h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7V4.3c-.8-.1-1.7-.2-2.5-.2-2.5 0-4.3 1.5-4.3 4.3v2.3H7.8v3.2h2.9V22h3.5Z'
   },
   {
     label: 'Instagram',
     url: 'https://www.instagram.com/impossiblemachinery',
     className: 'ig',
-    shortLabel: 'IG'
+    iconPath: 'M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9Zm4.5 3.2A4.8 4.8 0 1 1 12 16.8a4.8 4.8 0 0 1 0-9.6Zm0 2A2.8 2.8 0 1 0 12 14.8a2.8 2.8 0 0 0 0-5.6Zm5.1-2.4a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z'
   }
 ];
 
@@ -7989,7 +7989,9 @@ export default function App() {
                         rel="noopener noreferrer"
                         aria-label={social.label}
                       >
-                        {social.label}
+                        <svg className="social-icon-glyph" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d={social.iconPath} />
+                        </svg>
                       </a>
                     ))}
                   </div>
@@ -8386,7 +8388,9 @@ export default function App() {
                   rel="noopener noreferrer"
                 >
                   <span className={`social-link-mark ${social.className}`} aria-hidden="true">
-                    {social.shortLabel}
+                    <svg className="social-link-glyph" viewBox="0 0 24 24">
+                      <path d={social.iconPath} />
+                    </svg>
                   </span>
                   {social.label}
                 </a>
