@@ -10,11 +10,17 @@ const STORE_OPTIONS = [
   `id=${STORE_ID}`
 ];
 
-export default function StoreEmbed() {
+export default function StoreEmbed({ cartItems }) {
   const [status, setStatus] = useState('Loading checkout...');
 
   useEffect(() => {
     let cancelled = false;
+
+    const getEcwidProductId = (item) => {
+      const storeUrl = item?.checkoutUrl || item?.externalUrl || item?.hash || '';
+      const match = storeUrl.match(/(?:-p|\/p\/)(\d+)/);
+      return match ? parseInt(match[1], 10) : null;
+    };
 
     const initStore = () => {
       if (cancelled) {
@@ -30,6 +36,47 @@ export default function StoreEmbed() {
       container.innerHTML = '';
       window.xProductBrowser(...STORE_OPTIONS);
       setStatus('');
+
+      if (cartItems && cartItems.length > 0 && window.Ecwid) {
+        const loadCartCheckout = () => {
+          if (cancelled || !window.Ecwid?.Cart) {
+            return;
+          }
+
+          // Clear cart first, then add items sequentially to avoid race conditions
+          window.Ecwid.Cart.clear(() => {
+            const itemsToAdd = cartItems
+              .map(item => {
+                const ecwidId = getEcwidProductId(item);
+                return ecwidId ? { id: ecwidId, quantity: item.quantity } : null;
+              })
+              .filter(Boolean);
+
+            if (itemsToAdd.length === 0) {
+              window.Ecwid.openPage('cart');
+              return;
+            }
+
+            const addNext = (index) => {
+              if (index >= itemsToAdd.length) {
+                window.Ecwid.openPage('cart');
+                return;
+              }
+              window.Ecwid.Cart.addProduct(itemsToAdd[index], () => {
+                addNext(index + 1);
+              });
+            };
+
+            addNext(0);
+          });
+        };
+
+        if (window.Ecwid.Cart) {
+          loadCartCheckout();
+        } else {
+          window.Ecwid.OnAPILoaded.add(loadCartCheckout);
+        }
+      }
     };
 
     const existingScript = document.querySelector(`script[src="${ECWID_SCRIPT_SRC}"]`);
@@ -64,7 +111,7 @@ export default function StoreEmbed() {
         container.innerHTML = '';
       }
     };
-  }, []);
+  }, [cartItems]);
 
   return (
     <div className="store-embed-wrap">

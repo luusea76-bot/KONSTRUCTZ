@@ -2427,15 +2427,31 @@ export default function App() {
   const getCartCheckoutItem = () => cartItems.find(item => getStoreHash(item));
 
   const openCheckoutPage = (item) => {
-    const storeHash = getStoreHash(item);
     const itemId = item?.slug || item?.id || '';
-    const checkoutUrl = `${window.location.pathname}?page=checkout&id=${encodeURIComponent(itemId)}${storeHash}`;
+    const checkoutUrl = `${window.location.pathname}?page=checkout&id=${encodeURIComponent(itemId)}#!/~/cart`;
 
     window.history.pushState({}, '', checkoutUrl);
     setCheckoutItem(item);
     setCurrentView('checkout');
     window.scrollTo(0, 0);
   };
+
+  const openCartCheckoutPage = () => {
+    const checkoutUrl = `${window.location.pathname}?page=checkout&type=cart#!/~/cart`;
+
+    window.history.pushState({}, '', checkoutUrl);
+    setCheckoutItem({ isCartCheckout: true });
+    setCurrentView('checkout');
+    window.scrollTo(0, 0);
+  };
+
+  const hasCheckoutableItems = useMemo(() => {
+    return cartItems.some(item => {
+      const storeUrl = item?.checkoutUrl || item?.externalUrl || item?.hash || '';
+      return /(?:-p|\/p\/)\d+/.test(storeUrl);
+    });
+  }, [cartItems]);
+
 
   const handleCsvUpload = (event) => {
     const file = event.target.files?.[0];
@@ -7215,6 +7231,7 @@ export default function App() {
         <main className="checkout-page">
           {(() => {
             const productForCheckout = checkoutItem || selectedProduct;
+            const isCart = !!productForCheckout.isCartCheckout;
             return (
               <>
                 <section className="checkout-hero dark-bg">
@@ -7222,13 +7239,23 @@ export default function App() {
                     <span className="black-pill-tag">Secure checkout</span>
                     <h1 className="checkout-title">Complete Your Purchase</h1>
                     <p className="checkout-subtitle">
-                      You are checking out {productForCheckout.name}. The store loads only on this checkout page after Buy Now is selected.
+                      {isCart ? (
+                        "You are checking out your cart items. The store loads only on this checkout page after Proceed to Checkout is selected."
+                      ) : (
+                        `You are checking out ${productForCheckout.name}. The store loads only on this checkout page after Buy Now is selected.`
+                      )}
                     </p>
                     <button
                       className="checkout-back-link"
-                      onClick={() => handleProductDetail(productForCheckout)}
+                      onClick={() => {
+                        if (isCart) {
+                          navigate('cart');
+                        } else {
+                          handleProductDetail(productForCheckout);
+                        }
+                      }}
                     >
-                      Back to product
+                      {isCart ? 'Back to cart' : 'Back to product'}
                     </button>
                   </div>
                 </section>
@@ -7236,31 +7263,61 @@ export default function App() {
                 <section className="checkout-body white-bg">
                   <div className="section-content">
                     <div className="checkout-shell">
-                      <div className="checkout-summary-card">
-                        <div className="checkout-summary-media">
-                          {productForCheckout.image ? (
-                            <img src={productForCheckout.image} alt={productForCheckout.name} />
-                          ) : (
-                            getFallbackSvg(productForCheckout.category)
-                          )}
+                      {isCart ? (
+                        <div className="checkout-summary-card" style={{ display: 'block', padding: '24px' }}>
+                          <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px', textTransform: 'uppercase' }}>Selected Items</h2>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {cartItems.map(item => (
+                              <div key={item.id} style={{ display: 'flex', gap: '12px', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '12px' }}>
+                                <div style={{ width: '60px', height: '60px', borderRadius: '6px', background: '#f8fafc', border: '1px solid #eee', display: 'grid', placeItems: 'center', overflow: 'hidden' }}>
+                                  {item.image ? (
+                                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
+                                  ) : (
+                                    <span style={{ fontSize: '9px', fontWeight: '800' }}>ITEM</span>
+                                  )}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <h3 style={{ fontSize: '14px', fontWeight: '700', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</h3>
+                                  <p style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>Qty: {item.quantity} · {item.price || 'Quote on request'}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', fontWeight: '800', fontSize: '16px' }}>
+                            <span>Total Estimated:</span>
+                            <span>{cartSubtotal > 0 ? `$${cartSubtotal.toLocaleString()}` : 'Quote needed'}</span>
+                          </div>
                         </div>
-                        <div>
-                          <span className="checkout-summary-label">
-                            {categoryLabels[productForCheckout.category] || productForCheckout.category || 'Equipment'}
-                          </span>
-                          <h2>{productForCheckout.name}</h2>
-                          <p>{productForCheckout.price || 'Quote on request'}</p>
+                      ) : (
+                        <div className="checkout-summary-card">
+                          <div className="checkout-summary-media">
+                            {productForCheckout.image ? (
+                              <img src={productForCheckout.image} alt={productForCheckout.name} />
+                            ) : (
+                              getFallbackSvg(productForCheckout.category)
+                            )}
+                          </div>
+                          <div>
+                            <span className="checkout-summary-label">
+                              {categoryLabels[productForCheckout.category] || productForCheckout.category || 'Equipment'}
+                            </span>
+                            <h2>{productForCheckout.name}</h2>
+                            <p>{productForCheckout.price || 'Quote on request'}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div className="hidden-checkout-panel checkout-store-panel">
                         <div className="hidden-checkout-header">
                           <div>
                             <span className="hidden-checkout-kicker">Store checkout</span>
-                            <h2>Checkout for {productForCheckout.name}</h2>
+                            <h2>{isCart ? 'Checkout for Cart Items' : `Checkout for ${productForCheckout.name}`}</h2>
                           </div>
                         </div>
-                        <StoreEmbed key={`${productForCheckout.id}-${getStoreHash(productForCheckout)}`} />
+                        <StoreEmbed
+                          key={isCart ? 'cart-checkout' : `${productForCheckout.id}-${getStoreHash(productForCheckout)}`}
+                          cartItems={isCart ? cartItems : [{ ...productForCheckout, quantity: productForCheckout.quantity || 1 }]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -7321,9 +7378,6 @@ export default function App() {
                               />
                               <button onClick={() => updateCartQuantity(item.id, item.quantity + 1)} aria-label="Increase quantity">+</button>
                             </div>
-                            {getStoreHash(item) && (
-                              <button className="cart-remove-btn" onClick={() => openCheckoutPage(item)}>Checkout</button>
-                            )}
                             <button className="cart-remove-btn" onClick={() => removeCartItem(item.id)}>Remove</button>
                           </div>
                         </article>
@@ -7346,19 +7400,29 @@ export default function App() {
                         Some items require current quote pricing. Freight, taxes, and lead time are confirmed by our sales team.
                       </p>
                     )}
-                    <button
-                      className="cta-button black-pill-btn cart-checkout-btn"
-                      onClick={() => {
-                        const checkoutItemFromCart = getCartCheckoutItem();
-                        if (checkoutItemFromCart) {
-                          openCheckoutPage(checkoutItemFromCart);
-                        } else {
-                          requestCartQuote();
-                        }
-                      }}
-                    >
-                      {getCartCheckoutItem() ? 'Checkout' : 'Request Quote'}
-                    </button>
+                    {hasCheckoutableItems ? (
+                      <>
+                        <button
+                          className="cta-button black-pill-btn cart-checkout-btn"
+                          onClick={openCartCheckoutPage}
+                        >
+                          Proceed to Checkout
+                        </button>
+                        <button
+                          className="cta-button white-pill-dark-border cart-quote-btn"
+                          onClick={requestCartQuote}
+                        >
+                          Request Quote
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="cta-button black-pill-btn cart-checkout-btn"
+                        onClick={requestCartQuote}
+                      >
+                        Request Quote
+                      </button>
+                    )}
                     <button className="cta-button white-pill-dark-border cart-shop-btn" onClick={() => navigate('all-products', { category: 'All' })}>
                       Continue Shopping
                     </button>
