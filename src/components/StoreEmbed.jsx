@@ -15,11 +15,39 @@ export default function StoreEmbed({ cartItems }) {
 
   useEffect(() => {
     let cancelled = false;
+    const timers = [];
+
+    const queueTimer = (callback, delay) => {
+      const timer = window.setTimeout(callback, delay);
+      timers.push(timer);
+      return timer;
+    };
 
     const getEcwidProductId = (item) => {
       const storeUrl = item?.checkoutUrl || item?.externalUrl || item?.hash || '';
       const match = storeUrl.match(/(?:-p|\/p\/)(\d+)/);
       return match ? parseInt(match[1], 10) : null;
+    };
+
+    const getCheckoutItems = () => {
+      const itemsById = new Map();
+
+      (cartItems || []).forEach(item => {
+        const ecwidId = getEcwidProductId(item);
+
+        if (!ecwidId) {
+          return;
+        }
+
+        const quantity = Math.max(1, Number(item.quantity) || 1);
+        const existing = itemsById.get(ecwidId);
+        itemsById.set(ecwidId, {
+          id: ecwidId,
+          quantity: (existing?.quantity || 0) + quantity
+        });
+      });
+
+      return Array.from(itemsById.values());
     };
 
     const initStore = () => {
@@ -38,37 +66,73 @@ export default function StoreEmbed({ cartItems }) {
       setStatus('');
 
       if (cartItems && cartItems.length > 0 && window.Ecwid) {
+        setStatus('Preparing cart checkout...');
+
         const loadCartCheckout = () => {
           if (cancelled || !window.Ecwid?.Cart) {
             return;
           }
 
-          // Clear cart first, then add items sequentially to avoid race conditions
-          window.Ecwid.Cart.clear(() => {
-            const itemsToAdd = cartItems
-              .map(item => {
-                const ecwidId = getEcwidProductId(item);
-                return ecwidId ? { id: ecwidId, quantity: item.quantity } : null;
-              })
-              .filter(Boolean);
-
-            if (itemsToAdd.length === 0) {
+          const itemsToAdd = getCheckoutItems();
+          const openCart = () => {
+            if (!cancelled && window.Ecwid?.openPage) {
+              setStatus('');
               window.Ecwid.openPage('cart');
+            }
+          };
+
+          const addNext = (index) => {
+            if (cancelled) {
               return;
             }
 
-            const addNext = (index) => {
-              if (index >= itemsToAdd.length) {
-                window.Ecwid.openPage('cart');
+            if (index >= itemsToAdd.length) {
+              queueTimer(openCart, 400);
+              return;
+            }
+
+            let continued = false;
+            const continueOnce = () => {
+              if (continued || cancelled) {
                 return;
               }
-              window.Ecwid.Cart.addProduct(itemsToAdd[index], () => {
-                addNext(index + 1);
-              });
+
+              continued = true;
+              queueTimer(() => addNext(index + 1), 250);
             };
 
+            try {
+              window.Ecwid.Cart.addProduct(itemsToAdd[index], continueOnce, continueOnce);
+              queueTimer(continueOnce, 1600);
+            } catch (error) {
+              console.error('Could not add product to Ecwid cart', error);
+              continueOnce();
+            }
+          };
+
+          let clearCompleted = false;
+          const afterClear = () => {
+            if (clearCompleted || cancelled) {
+              return;
+            }
+
+            clearCompleted = true;
+
+            if (itemsToAdd.length === 0) {
+              openCart();
+              return;
+            }
+
             addNext(0);
-          });
+          };
+
+          try {
+            window.Ecwid.Cart.clear(afterClear);
+            queueTimer(afterClear, 1600);
+          } catch (error) {
+            console.error('Could not clear Ecwid cart', error);
+            afterClear();
+          }
         };
 
         if (window.Ecwid.Cart) {
@@ -105,6 +169,7 @@ export default function StoreEmbed({ cartItems }) {
 
     return () => {
       cancelled = true;
+      timers.forEach(timer => window.clearTimeout(timer));
       existingScript?.removeEventListener('load', initStore);
       const container = document.getElementById(STORE_ID);
       if (container) {
