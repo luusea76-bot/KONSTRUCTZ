@@ -2424,6 +2424,8 @@ export default function App() {
     return hashIndex >= 0 ? storeUrl.slice(hashIndex) : '';
   };
 
+  const getCartCheckoutItem = () => cartItems.find(item => getStoreHash(item));
+
   const openCheckoutPage = (item) => {
     const storeHash = getStoreHash(item);
     const itemId = item?.slug || item?.id || '';
@@ -7319,6 +7321,9 @@ export default function App() {
                               />
                               <button onClick={() => updateCartQuantity(item.id, item.quantity + 1)} aria-label="Increase quantity">+</button>
                             </div>
+                            {getStoreHash(item) && (
+                              <button className="cart-remove-btn" onClick={() => openCheckoutPage(item)}>Checkout</button>
+                            )}
                             <button className="cart-remove-btn" onClick={() => removeCartItem(item.id)}>Remove</button>
                           </div>
                         </article>
@@ -7341,8 +7346,18 @@ export default function App() {
                         Some items require current quote pricing. Freight, taxes, and lead time are confirmed by our sales team.
                       </p>
                     )}
-                    <button className="cta-button black-pill-btn cart-checkout-btn" onClick={requestCartQuote}>
-                      Request Quote
+                    <button
+                      className="cta-button black-pill-btn cart-checkout-btn"
+                      onClick={() => {
+                        const checkoutItemFromCart = getCartCheckoutItem();
+                        if (checkoutItemFromCart) {
+                          openCheckoutPage(checkoutItemFromCart);
+                        } else {
+                          requestCartQuote();
+                        }
+                      }}
+                    >
+                      {getCartCheckoutItem() ? 'Checkout' : 'Request Quote'}
                     </button>
                     <button className="cta-button white-pill-dark-border cart-shop-btn" onClick={() => navigate('all-products', { category: 'All' })}>
                       Continue Shopping
