@@ -34,6 +34,7 @@ import recycleBatteryLogoAsset from './assets/engine-logos/recycle-battery.png'
 const heroLoader = heroLoaderAsset;
 const heroVideo = '/media/hero-wheel-loader.mp4';
 const aboutHeroPoster = '/about-machine-panorama-poster.png';
+const blogHeroPoster = '/blog-hero-panorama-poster.png';
 const aboutKonstructzMachinery = '/about-skoop-typhon-banner.png';
 const stoneCrusher = stoneCrusherAsset;
 const constructionBg = stoneCrusherAsset;
@@ -6162,7 +6163,7 @@ export default function App() {
         </main>
       ) : currentView === 'blog' ? (
         <main className="blog-page">
-          <section className="blog-page-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.5)), url(${stoneCrusher})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <section className="blog-page-hero" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.52)), url(${blogHeroPoster})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             <div className="blog-page-hero-overlay"></div>
             <div className="section-content blog-page-hero-content">
               <h1>KONSTRUCTZ Blog</h1>
