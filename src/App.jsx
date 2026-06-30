@@ -2541,6 +2541,15 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
+  const openCartCheckoutPage = () => {
+    const checkoutUrl = `${window.location.pathname}?page=checkout&type=cart#!/~/cart`;
+
+    window.history.pushState({}, '', checkoutUrl);
+    setCheckoutItem({ isCartCheckout: true });
+    setCurrentView('checkout');
+    window.scrollTo(0, 0);
+  };
+
 
   const handleCsvUpload = (event) => {
     const file = event.target.files?.[0];
@@ -7653,9 +7662,9 @@ export default function App() {
                     )}
                     <button
                       className="cta-button black-pill-btn cart-checkout-btn"
-                      onClick={requestCartQuote}
+                      onClick={openCartCheckoutPage}
                     >
-                      Request Fast Quote
+                      Proceed to Checkout
                     </button>
                     <button className="cta-button white-pill-dark-border cart-shop-btn" onClick={() => navigate('all-products', { category: 'All' })}>
                       Continue Shopping
