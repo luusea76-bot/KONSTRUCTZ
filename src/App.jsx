@@ -2541,22 +2541,6 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const openCartCheckoutPage = () => {
-    const checkoutUrl = `${window.location.pathname}?page=checkout&type=cart#!/~/cart`;
-
-    window.history.pushState({}, '', checkoutUrl);
-    setCheckoutItem({ isCartCheckout: true });
-    setCurrentView('checkout');
-    window.scrollTo(0, 0);
-  };
-
-  const hasCheckoutableItems = useMemo(() => {
-    return cartItems.some(item => {
-      const storeUrl = item?.checkoutUrl || item?.externalUrl || item?.hash || '';
-      return /(?:-p|\/p\/)\d+/.test(storeUrl);
-    });
-  }, [cartItems]);
-
 
   const handleCsvUpload = (event) => {
     const file = event.target.files?.[0];
@@ -7667,23 +7651,12 @@ export default function App() {
                         Some items require current quote pricing. Freight, taxes, and lead time are confirmed by our sales team.
                       </p>
                     )}
-                    {hasCheckoutableItems ? (
-                      <>
-                        <button
-                          className="cta-button black-pill-btn cart-checkout-btn"
-                          onClick={openCartCheckoutPage}
-                        >
-                          Proceed to Checkout
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        className="cta-button black-pill-btn cart-checkout-btn"
-                        onClick={requestCartQuote}
-                      >
-                        Request Quote
-                      </button>
-                    )}
+                    <button
+                      className="cta-button black-pill-btn cart-checkout-btn"
+                      onClick={requestCartQuote}
+                    >
+                      Request Fast Quote
+                    </button>
                     <button className="cta-button white-pill-dark-border cart-shop-btn" onClick={() => navigate('all-products', { category: 'All' })}>
                       Continue Shopping
                     </button>
