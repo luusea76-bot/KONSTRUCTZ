@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 const baseUrl = 'https://cwqv.com';
-const lastmod = '2026-06-19';
+const lastmod = '2026-06-30';
 
 // 1. Core pages
 const pages = [
@@ -19,7 +19,6 @@ const pages = [
   { path: '/?page=about', priority: '0.7', changefreq: 'monthly' },
   { path: '/?page=contact', priority: '0.7', changefreq: 'monthly' },
   { path: '/?page=support', priority: '0.7', changefreq: 'monthly' },
-  { path: '/?page=cart', priority: '0.5', changefreq: 'monthly' },
 ];
 
 const categories = [
@@ -30,7 +29,10 @@ const categories = [
   'Forklift',
   'Road Roller',
   'Scissor Lifts',
-  'Backhoe'
+  'Backhoe',
+  'Stone Crusher',
+  'Mini Dumper',
+  'Trencher'
 ];
 
 categories.forEach(category => {

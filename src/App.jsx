@@ -12,7 +12,7 @@ import supportHeroAsset from './assets/support_hero.png'
 import supportCallCenterAsset from './assets/support_call_center.png'
 import kuvuoProductAsset from './assets/products/kuvuo.png'
 import spiderOneProductAsset from './assets/products/spider-one.png'
-import skoopIiLoaderShowcaseAsset from './assets/products/skoop-ii-loader-showcase.webp'
+import skoopIiLoaderShowcaseAsset from './assets/products/skoop-ii.png'
 import skoopyDigProductAsset from './assets/products/skoopydig.png'
 import stoneCrusherAsset from './assets/products/skoop-ii-jobsite-loader.png'
 import stonekrusherLogoAsset from './assets/machine-logos/stonekrusher.png'
@@ -60,6 +60,12 @@ const fallbackBlogImagesBySlug = {
 
 const systemAttachmentSlides = [
   {
+    name: 'ScoopyDig',
+    module: 'SDG-15',
+    registry: 'TYPH-8025',
+    image: '/system-attachments/scoopydig.jpg'
+  },
+  {
     name: 'Lawnmower Tool',
     module: 'SEC-08',
     registry: 'TYPH-8023',
@@ -77,6 +83,7 @@ const systemAttachmentSlides = [
     registry: 'TYPH-8015',
     image: '/system-attachments/skoop-loader.png'
   },
+
   {
     name: 'Spider One Towable Excavator',
     module: 'SPN-10',
@@ -3183,9 +3190,117 @@ export default function App() {
   useEffect(() => {
     const siteUrl = 'https://cwqv.com';
     const siteName = 'KONSTRUCTZ';
-    const defaultImage = `${siteUrl}/favicon.svg`;
-    let title = 'KONSTRUCTZ | Premium Construction Equipment';
-    let description = 'Explore the future of construction with KONSTRUCTZ. Discover our premium line of mini excavators, wheel loaders, attachments, and stone crushers built for contractors who demand performance and durability.';
+    const companyPhone = '+1-424-653-6764';
+    const companyEmail = 'sales@cwqv.com';
+    const companyAddress = {
+      streetAddress: '7025 Slauson Ave',
+      addressLocality: 'Commerce',
+      addressRegion: 'CA',
+      postalCode: '90040',
+      addressCountry: 'US'
+    };
+    const defaultImage = `${siteUrl}/favicon.png`;
+    const coreSeoKeywords = [
+      'KONSTRUCTZ',
+      'kontructz',
+      'konstruz',
+      'construcz',
+      'CWQV',
+      'construction equipment',
+      'heavy machinery',
+      'compact machinery',
+      'mini excavator',
+      'excavator',
+      'skid steer',
+      'skis steer',
+      'wheel loader',
+      'road roller',
+      'road rollor',
+      'scissor lift',
+      'sciscor lift',
+      'forklift',
+      'backhoe loader',
+      'stone crusher',
+      'trencher',
+      'mini dumper',
+      'compact track loader',
+      'loader attachments',
+      'excavator attachments',
+      'skid steer attachments',
+      'machinery for sale'
+    ];
+    const pageKeywordMap = {
+      home: ['compact construction equipment', 'equipment dealer', 'jobsite machinery'],
+      'all-products': ['construction equipment for sale', activeCategory && activeCategory !== 'All' ? `${activeCategory} for sale` : 'equipment inventory'],
+      attachments: ['mini excavator attachments', 'skid steer attachments', 'auger attachment', 'bucket attachment', 'hydraulic hammer'],
+      contact: ['equipment quote', 'machinery sales support'],
+      support: ['equipment parts', 'machinery service', 'equipment warranty'],
+      topic: ['equipment buying guide', 'machinery financing', 'equipment delivery'],
+      blog: ['construction equipment guides', 'machine maintenance tips'],
+      'blog-post': selectedBlogPost ? [selectedBlogPost.title, ...(selectedBlogPost.tags || [])] : [],
+      'product-detail': selectedProduct ? [selectedProduct.name, selectedProduct.category, selectedProduct.subcategory, selectedProduct.fitmentCategory].filter(Boolean) : []
+    };
+    const pageKeywords = Array.from(new Set([
+      ...coreSeoKeywords,
+      ...(pageKeywordMap[currentView] || [])
+    ].filter(Boolean))).join(', ');
+    const cleanText = (value, maxLength = 300) => (
+      String(value || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, maxLength)
+    );
+    const getNumericPrice = (value) => {
+      const numeric = parseFloat(String(value || '').replace(/[^0-9.]/g, ''));
+      return Number.isFinite(numeric) && numeric > 0 ? numeric.toFixed(2) : null;
+    };
+    const createProductSchema = (product, url, position = null) => {
+      const numericPrice = getNumericPrice(product.price);
+      const productSchema = {
+        '@type': 'Product',
+        'name': product.name,
+        'image': product.image
+          ? (String(product.image).startsWith('http') ? product.image : `${siteUrl}${String(product.image).startsWith('/') ? product.image : `/${product.image}`}`)
+          : defaultImage,
+        'description': cleanText(product.desc || product.fullDesc || product.specs || `${product.name} specs, pricing, and availability from KONSTRUCTZ.`),
+        'brand': {
+          '@type': 'Brand',
+          'name': 'KONSTRUCTZ'
+        },
+        'category': product.category || product.fitmentCategory || product.subcategory || 'Construction equipment',
+        'url': url
+      };
+
+      if (product.id || product.slug) {
+        productSchema.sku = product.slug || product.id;
+      }
+
+      if (numericPrice) {
+        productSchema.offers = {
+          '@type': 'Offer',
+          'priceCurrency': 'USD',
+          'price': numericPrice,
+          'availability': 'https://schema.org/InStock',
+          'url': url,
+          'seller': {
+            '@id': `${siteUrl}/#organization`
+          }
+        };
+      }
+
+      if (position) {
+        return {
+          '@type': 'ListItem',
+          'position': position,
+          'url': url,
+          'item': productSchema
+        };
+      }
+
+      return productSchema;
+    };
+    let title = 'KONSTRUCTZ | Compact Construction Equipment For Sale';
+    let description = 'KONSTRUCTZ sells compact construction equipment, mini excavators, excavators, skid steers, wheel loaders, road rollers, scissor lifts, forklifts, stone crushers, and jobsite attachments.';
     let publishedDate = null;
     let modifiedDate = null;
     let canonicalPath = '/';
@@ -3194,13 +3309,17 @@ export default function App() {
     let image = defaultImage;
     
     if (currentView === 'home') {
-      title = 'KONSTRUCTZ | Mini Excavators, Walking Excavators & Compact Machinery';
-      description = 'Compare KUVUO 2.7 mini excavators, Spider One walking excavators, compact loaders, attachments, and construction equipment built for contractors, farms, landscaping, trenching, slopes, and tough jobsites.';
+      title = 'KONSTRUCTZ | Mini Excavators, Wheel Loaders & Compact Machinery';
+      description = 'Shop KONSTRUCTZ compact construction equipment including mini excavators, excavators, SKOOP II wheel loaders, skid steers, road rollers, scissor lifts, forklifts, backhoes, and attachments.';
       canonicalPath = '/';
       image = `${siteUrl}${kuvuoProduct}`;
     } else if (currentView === 'all-products') {
-      title = 'Heavy Machinery Inventory | KONSTRUCTZ';
-      description = 'Browse our complete inventory of heavy construction machinery. Premium mini excavators, loaders, rollers, and stone crushers available for sale.';
+      title = activeCategory && activeCategory !== 'All'
+        ? `${activeCategory} For Sale | KONSTRUCTZ Equipment`
+        : 'Construction Equipment For Sale | KONSTRUCTZ Inventory';
+      description = activeCategory && activeCategory !== 'All'
+        ? `Browse ${activeCategory.toLowerCase()} equipment for sale from KONSTRUCTZ, including compact machinery, jobsite-ready specs, pricing, and U.S. sales support.`
+        : 'Browse KONSTRUCTZ construction equipment for sale, including mini excavators, excavators, skid steers, wheel loaders, road rollers, scissor lifts, forklifts, backhoes, and compact machinery.';
       canonicalPath = activeCategory && activeCategory !== 'All'
         ? `/?page=all-products&category=${encodeURIComponent(activeCategory)}`
         : '/?page=all-products';
@@ -3212,6 +3331,7 @@ export default function App() {
       title = 'Blog Admin Dashboard | KONSTRUCTZ';
       description = 'Create, edit, and manage KONSTRUCTZ blog posts.';
       canonicalPath = '/?page=admin-blog';
+      robotsContent = 'noindex, nofollow';
     } else if (currentView === 'topic') {
       if (activeTopicCategory === 'Machines') {
         title = 'Mini Skid Steer Safety & Technical Performance | KONSTRUCTZ';
@@ -3248,8 +3368,8 @@ export default function App() {
       canonicalPath = '/?page=support';
       image = `${siteUrl}${supportHero}`;
     } else if (currentView === 'attachments') {
-      title = 'Excavator & Mini Skid Steer Attachments | Konstructz';
-      description = 'High-performance heavy machinery attachments built for real jobsite work. Search buckets, augers, hammers, rakes, and landscape tools.';
+      title = 'Mini Excavator & Skid Steer Attachments For Sale | KONSTRUCTZ';
+      description = 'Shop mini excavator, excavator, skid steer, wheel loader, and compact machine attachments for buckets, augers, hammers, rakes, grapples, mowers, trenching, and grading.';
       canonicalPath = '/?page=attachments';
     } else if (currentView === 'about') {
       title = 'About Us | KONSTRUCTZ & KOUEGIE Series';
@@ -3258,16 +3378,18 @@ export default function App() {
       image = `${siteUrl}${typhonFactoryEngineer}`;
     } else if (currentView === 'contact') {
       title = 'Contact Us | KONSTRUCTZ';
-      description = 'Get in touch with the KONSTRUCTZ sales, support, and technical team. Request quotes, ask questions, or visit our Detroit, MI location.';
+      description = 'Contact KONSTRUCTZ sales and support in Commerce, California. Request equipment quotes, ask product questions, or get help with machinery and attachments.';
       canonicalPath = '/?page=contact';
     } else if (currentView === 'cart') {
       title = 'Product Cart | KONSTRUCTZ';
       description = 'Review selected KONSTRUCTZ machinery and attachments, adjust quantities, and request a quote from our sales team.';
       canonicalPath = '/?page=cart';
+      robotsContent = 'noindex, follow';
     } else if (currentView === 'checkout' && checkoutItem) {
       title = `Checkout ${checkoutItem.name} | KONSTRUCTZ`;
       description = `Complete checkout for ${checkoutItem.name}.`;
       canonicalPath = `/?page=checkout&id=${encodeURIComponent(checkoutItem.slug || checkoutItem.id)}`;
+      robotsContent = 'noindex, nofollow';
     } else if (currentView === 'product-detail' && selectedProduct) {
       title = `${selectedProduct.name} | KONSTRUCTZ`;
       description = selectedProduct.desc || selectedProduct.fullDesc || `${selectedProduct.name} specs, pricing, and availability from KONSTRUCTZ. Built for contractors and operators.`;
@@ -3285,11 +3407,12 @@ export default function App() {
       title = 'Product Data Store | Konstructz Admin';
       description = 'Internal product CSV upload and preview utility for KONSTRUCTZ product data.';
       canonicalPath = '/?page=store-data';
+      robotsContent = 'noindex, nofollow';
     }
 
     document.title = title;
     const canonicalUrl = `${siteUrl}${canonicalPath}`;
-    const shortDescription = description.substring(0, 160);
+    const shortDescription = cleanText(description, 160);
     const metaImage = image.startsWith('http')
       ? image
       : `${siteUrl}${image.startsWith('/') ? image : `/${image}`}`;
@@ -3326,6 +3449,11 @@ export default function App() {
 
     upsertLink('link[rel="canonical"]', { rel: 'canonical', href: canonicalUrl });
     upsertMeta('meta[name="robots"]', { name: 'robots', content: robotsContent });
+    upsertMeta('meta[name="googlebot"]', { name: 'googlebot', content: robotsContent.includes('noindex') ? robotsContent : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' });
+    upsertMeta('meta[name="keywords"]', { name: 'keywords', content: pageKeywords });
+    upsertMeta('meta[name="author"]', { name: 'author', content: 'KONSTRUCTZ' });
+    upsertMeta('meta[name="geo.region"]', { name: 'geo.region', content: 'US-CA' });
+    upsertMeta('meta[name="geo.placename"]', { name: 'geo.placename', content: 'Commerce, California' });
     upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name', content: siteName });
     upsertMeta('meta[property="og:type"]', { property: 'og:type', content: pageType });
     upsertMeta('meta[property="og:title"]', { property: 'og:title', content: title });
@@ -3352,35 +3480,17 @@ export default function App() {
     }
 
     // Dynamic JSON-LD Structured Data
-    let schemaData = null;
+    let schemaData;
 
     if (currentView === 'product-detail' && selectedProduct) {
-      schemaData = {
-        '@context': 'https://schema.org/',
-        '@type': 'Product',
-        'name': selectedProduct.name,
-        'image': metaImage,
-        'description': (selectedProduct.desc || selectedProduct.fullDesc || `Specification of ${selectedProduct.name}`).substring(0, 300),
-        'brand': {
-          '@type': 'Brand',
-          'name': 'Konstructz'
-        },
-        'category': selectedProduct.category || selectedProduct.fitmentCategory || 'Machinery',
-        'offers': {
-          '@type': 'Offer',
-          'priceCurrency': 'USD',
-          'price': parseFloat(String(selectedProduct.price || '').replace(/[^0-9.]/g, '')) || 0,
-          'availability': 'https://schema.org/InStock',
-          'url': canonicalUrl
-        }
-      };
+      schemaData = createProductSchema(selectedProduct, canonicalUrl);
     } else if (currentView === 'blog-post' && selectedBlogPost) {
       schemaData = {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         'headline': selectedBlogPost.title,
-        'description': (selectedBlogPost.seoDescription || selectedBlogPost.desc).substring(0, 300),
-        'image': 'https://cwqv.com/favicon.svg',
+        'description': cleanText(selectedBlogPost.seoDescription || selectedBlogPost.desc),
+        'image': defaultImage,
         'datePublished': selectedBlogPost.publishedDate,
         'dateModified': selectedBlogPost.updatedDate || selectedBlogPost.publishedDate,
         'author': {
@@ -3392,7 +3502,7 @@ export default function App() {
           'name': 'KONSTRUCTZ',
           'logo': {
             '@type': 'ImageObject',
-            'url': 'https://cwqv.com/favicon.svg'
+            'url': defaultImage
           }
         },
         'mainEntityOfPage': {
@@ -3403,20 +3513,21 @@ export default function App() {
     } else {
       schemaData = {
         '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        '@type': 'Store',
+        '@id': `${siteUrl}/#localbusiness`,
         'name': 'KONSTRUCTZ',
-        'image': 'https://cwqv.com/favicon.svg',
+        'alternateName': ['kontructz', 'konstruz', 'construcz', 'CWQV'],
+        'image': defaultImage,
         'address': {
           '@type': 'PostalAddress',
-          'streetAddress': '1200 Industrial Parkway, Suite A',
-          'addressLocality': 'Detroit',
-          'addressRegion': 'MI',
-          'postalCode': '48201',
-          'addressCountry': 'US'
+          ...companyAddress
         },
-        'telephone': '+1-555-234-9800',
-        'email': 'sales@cwqv.com',
-        'url': siteUrl
+        'telephone': companyPhone,
+        'email': companyEmail,
+        'url': siteUrl,
+        'priceRange': '$$',
+        'areaServed': 'US',
+        'description': 'KONSTRUCTZ provides compact construction equipment, machinery, attachments, parts, and sales support for contractors, farms, landscaping crews, and jobsite operators.'
       };
     }
 
@@ -3442,18 +3553,24 @@ export default function App() {
         '@type': 'Organization',
         '@id': `${siteUrl}/#organization`,
         'name': siteName,
+        'alternateName': ['kontructz', 'konstruz', 'construcz', 'CWQV'],
         'url': siteUrl,
         'logo': {
           '@type': 'ImageObject',
           'url': defaultImage
         },
+        'address': {
+          '@type': 'PostalAddress',
+          ...companyAddress
+        },
         'contactPoint': {
           '@type': 'ContactPoint',
-          'telephone': '+1-555-234-9800',
+          'telephone': companyPhone,
           'contactType': 'sales',
           'areaServed': 'US',
           'availableLanguage': 'English'
-        }
+        },
+        'email': companyEmail
       },
       {
         '@type': 'WebSite',
@@ -3540,6 +3657,62 @@ export default function App() {
       );
     }
 
+    if (currentView === 'all-products') {
+      const visibleProducts = allInventory
+        .filter(item => {
+          const matchesCategory = activeCategory === 'All'
+            ? item.type === 'Machinery'
+            : item.category === activeCategory;
+          const matchesKonstructzSubcategory = activeCategory !== 'Konstructz' ||
+            activeKonstructzSubcategory === 'All' ||
+            item.subcategory === activeKonstructzSubcategory;
+          const searchValue = inventorySearchQuery.toLowerCase();
+          const matchesSearch = item.name.toLowerCase().includes(searchValue) ||
+            item.category.toLowerCase().includes(searchValue) ||
+            (item.fitmentCategory && item.fitmentCategory.toLowerCase().includes(searchValue)) ||
+            (item.subcategory && item.subcategory.toLowerCase().includes(searchValue)) ||
+            (item.engine && item.engine.toLowerCase().includes(searchValue)) ||
+            (item.cap && item.cap.toLowerCase().includes(searchValue));
+
+          return matchesCategory && matchesKonstructzSubcategory && matchesSearch;
+        })
+        .slice(0, 12);
+      if (visibleProducts.length > 0) {
+        baseSchemaGraph.push({
+          '@type': 'ItemList',
+          '@id': `${canonicalUrl}#equipment-list`,
+          'name': title.split(' | ')[0],
+          'numberOfItems': visibleProducts.length,
+          'itemListElement': visibleProducts.map((product, index) => (
+            createProductSchema(
+              product,
+              `${siteUrl}/?page=product-detail&id=${encodeURIComponent(product.slug || product.id)}`,
+              index + 1
+            )
+          ))
+        });
+      }
+    }
+
+    if (currentView === 'attachments') {
+      const visibleAttachments = attachmentProducts.slice(0, 12);
+      if (visibleAttachments.length > 0) {
+        baseSchemaGraph.push({
+          '@type': 'ItemList',
+          '@id': `${canonicalUrl}#attachment-list`,
+          'name': 'Mini excavator and skid steer attachments for sale',
+          'numberOfItems': visibleAttachments.length,
+          'itemListElement': visibleAttachments.map((product, index) => (
+            createProductSchema(
+              product,
+              `${siteUrl}/?page=product-detail&id=${encodeURIComponent(product.slug || product.id)}`,
+              index + 1
+            )
+          ))
+        });
+      }
+    }
+
     schemaData = {
       '@context': 'https://schema.org',
       '@graph': schemaData ? [...baseSchemaGraph, schemaData] : baseSchemaGraph
@@ -3557,7 +3730,7 @@ export default function App() {
       script.innerHTML = JSON.stringify(schemaData);
       document.head.appendChild(script);
     }
-  }, [currentView, selectedProduct, selectedBlogPost, checkoutItem, activeCategory, activeTopicCategory]);
+  }, [currentView, selectedProduct, selectedBlogPost, checkoutItem, activeCategory, activeKonstructzSubcategory, activeTopicCategory, allInventory, inventorySearchQuery]);
 
 
   const filteredInventory = allInventory.filter(item => {
@@ -7786,7 +7959,7 @@ export default function App() {
           </section>
 
           {/* Contact Us Section */}
-          <section className="support-contact-section white-bg border-top">
+          <section id="service" className="support-contact-section white-bg border-top">
             <div className="section-content">
               <h2 className="support-section-title text-black" style={{ marginBottom: '40px' }}>Contact Us</h2>
               <div className="support-contact-container">
@@ -7795,10 +7968,10 @@ export default function App() {
                 </div>
                 <div className="contact-details-col glass-panel">
                   <h3>Online Customer Service</h3>
-                  <p className="hours-text">Monday to Sunday: 8:00 AM – 5:00 PM EST</p>
-                  <p className="phone-text">Phone: +1 (555) 234-9800</p>
+                  <p className="hours-text">Monday to Sunday: 8:00 AM – 5:00 PM PT</p>
+                  <p className="phone-text">Phone: +1 (424) 653-6764</p>
                   <p className="email-text">Email: support@cwqv.com</p>
-                  <p className="address-text">Address: 1200 Industrial Parkway, Suite A, Detroit, MI 48201</p>
+                  <p className="address-text">Address: 7025 Slauson Ave, Commerce, CA 90040</p>
                   <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="contact-service-link">
                     Contact the customer service &gt;
                   </a>
@@ -7827,8 +8000,8 @@ export default function App() {
                   <div className="card-icon">📞</div>
                   <div className="card-body">
                     <h4>Call us</h4>
-                    <p className="highlight-text">+1 (555) 234-9800</p>
-                    <p className="subtext">Mon – Fri, 8:00 AM – 6:00 PM EST. Our sales and support team is standing by.</p>
+                    <p className="highlight-text">+1 (424) 653-6764</p>
+                    <p className="subtext">Mon – Fri, 8:00 AM – 6:00 PM PT. Our sales and support team is standing by.</p>
                   </div>
                 </div>
 
@@ -7845,8 +8018,8 @@ export default function App() {
                   <div className="card-icon">📍</div>
                   <div className="card-body">
                     <h4>Visit us</h4>
-                    <p className="highlight-text">1200 Industrial Parkway</p>
-                    <p className="subtext">Suite A, Detroit, MI 48201</p>
+                    <p className="highlight-text">7025 Slauson Ave</p>
+                    <p className="subtext">Commerce, CA 90040</p>
                   </div>
                 </div>
 
@@ -8000,7 +8173,7 @@ export default function App() {
                 <div className="map-wrapper">
                   <iframe 
                     title="KONSTRUCTZ Location Map"
-                    src="https://maps.google.com/maps?q=1200%20Industrial%20Parkway%2C%20Detroit%2C%20MI%2048201&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                    src="https://maps.google.com/maps?q=7025%20Slauson%20Ave%2C%20Commerce%2C%20CA%2090040&t=&z=13&ie=UTF8&iwloc=&output=embed"
                     width="100%" 
                     height="320" 
                     style={{ border: 0, borderRadius: '12px' }} 
