@@ -7621,7 +7621,7 @@ export default function App() {
         </main>
       ) : currentView === 'cart' ? (
         <main className="cart-page">
-          <section className="cart-page-hero dark-bg">
+          <section className="cart-page-hero dark-bg" style={{ backgroundImage: `linear-gradient(rgba(15, 17, 14, 0.44), rgba(15, 17, 14, 0.66)), url(${aboutHeroPoster})` }}>
             <div className="section-content cart-page-hero-content">
               <span className="black-pill-tag">Product Cart</span>
               <h1 className="cart-page-title">Review Your Selected Equipment</h1>
@@ -8061,7 +8061,7 @@ export default function App() {
       ) : currentView === 'contact' ? (
         <main className="contact-page">
           {/* Hero Banner Section */}
-          <section className="contact-hero dark-bg" style={{ backgroundImage: `linear-gradient(rgba(15, 17, 14, 0.75), rgba(15, 17, 14, 0.75)), url(${heroLoader})` }}>
+          <section className="contact-hero dark-bg" style={{ backgroundImage: `linear-gradient(rgba(15, 17, 14, 0.42), rgba(15, 17, 14, 0.64)), url(${aboutHeroPoster})` }}>
             <div className="section-content">
               <h1 className="contact-hero-title text-white">Let's talk. We're ready to help.</h1>
               <p className="contact-hero-subtitle">
