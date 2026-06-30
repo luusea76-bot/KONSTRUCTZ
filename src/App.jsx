@@ -174,6 +174,85 @@ const machineComparisonFaqs = [
   }
 ];
 
+const seoMachineKeywordGroups = {
+  brand: ['KONSTRUCTZ', 'kontructz', 'konstruz', 'construcz', 'CWQV'],
+  excavators: ['mini excavator', 'excavator', 'compact excavator', 'towable excavator', 'walking excavator', 'digger'],
+  loaders: ['skid steer', 'skis steer', 'mini skid steer', 'compact track loader', 'wheel loader', 'loader'],
+  lifting: ['forklift', 'electric forklift', 'scissor lift', 'sciscor lift'],
+  compaction: ['road roller', 'road rollor', 'vibratory roller', 'compactor'],
+  attachments: ['excavator attachments', 'mini excavator attachments', 'skid steer attachments', 'bucket attachment', 'auger attachment', 'hydraulic hammer', 'trencher attachment'],
+  machines: ['construction equipment', 'heavy machinery', 'compact machinery', 'machine for sale', 'machinery for sale', 'jobsite equipment']
+};
+
+const seoCategoryProfiles = {
+  Konstructz: {
+    label: 'KONSTRUCTZ machines',
+    title: 'KONSTRUCTZ Machines For Sale | Excavators, Loaders, Dumpers',
+    description: 'Browse KONSTRUCTZ compact machines for sale, including KUVUO excavators, SKOOP II wheel loaders, STOMP skid steers, backhoe loaders, dumpers, trenchers, and stone crushers.',
+    keywords: ['KONSTRUCTZ machines', 'KONSTRUCTZ equipment', 'KUVUO excavator', 'SKOOP II wheel loader', 'STOMP skid steer', 'ThunderDump', 'StoneKrusher']
+  },
+  'Mini Excavator': {
+    label: 'mini excavators',
+    title: 'Mini Excavators For Sale | Compact Excavators | KONSTRUCTZ',
+    description: 'Shop mini excavators and compact excavators for trenching, digging, drainage, landscaping, utility work, and jobsite excavation with U.S. quote support.',
+    keywords: ['mini excavator for sale', 'compact excavator for sale', 'small excavator', 'mini digger', 'excavator with attachments']
+  },
+  'Wheel Loader': {
+    label: 'wheel loaders',
+    title: 'Wheel Loaders For Sale | Compact Loader Equipment | KONSTRUCTZ',
+    description: 'Browse compact wheel loaders for loading soil, gravel, pallets, farm materials, landscape supplies, and jobsite materials with practical machine specs.',
+    keywords: ['wheel loader for sale', 'compact wheel loader', 'small wheel loader', 'loader equipment', 'SKOOP II loader']
+  },
+  'Skid Steer': {
+    label: 'mini skid steers',
+    title: 'Mini Skid Steers For Sale | Track Loaders | KONSTRUCTZ',
+    description: 'Shop skid steers, mini skid steers, and compact track loaders for grading, loading, clearing, property work, and attachment-driven jobsite tasks.',
+    keywords: ['skid steer for sale', 'skis steer', 'mini skid steer', 'compact track loader', 'track loader for sale']
+  },
+  Forklift: {
+    label: 'forklifts',
+    title: 'Forklifts For Sale | Electric Lift Trucks | KONSTRUCTZ',
+    description: 'Browse forklifts and electric lift trucks for warehouse, yard, farm, construction, and material-handling work with pricing and quote support.',
+    keywords: ['forklift for sale', 'electric forklift', 'lift truck', 'jitney', 'material handling equipment']
+  },
+  'Road Roller': {
+    label: 'road rollers',
+    title: 'Road Rollers For Sale | Vibratory Compactors | KONSTRUCTZ',
+    description: 'Shop road rollers, road rollor searches, vibratory rollers, and compactors for asphalt, driveway, trench, farm road, and jobsite compaction.',
+    keywords: ['road roller for sale', 'road rollor', 'vibratory roller', 'asphalt roller', 'soil compactor']
+  },
+  'Scissor Lifts': {
+    label: 'scissor lifts',
+    title: 'Scissor Lifts For Sale | Electric Lift Platforms | KONSTRUCTZ',
+    description: 'Browse scissor lifts and electric lift platforms for indoor and outdoor work, elevated maintenance, warehouse service, and construction access.',
+    keywords: ['scissor lift for sale', 'sciscor lift', 'electric scissor lift', 'aerial work platform', 'lift platform']
+  },
+  Backhoe: {
+    label: 'backhoe loaders',
+    title: 'Backhoe Loaders For Sale | Dig And Load Machines | KONSTRUCTZ',
+    description: 'Shop backhoe loaders and dig-and-load compact machines for trenching, loading, backfilling, utility work, landscaping, and all-around site duty.',
+    keywords: ['backhoe loader for sale', 'compact backhoe', 'loader backhoe', 'dig and load machine']
+  },
+  'Stone Crusher': {
+    label: 'stone crushers',
+    title: 'Stone Crushers For Sale | Compact Crushing Equipment | KONSTRUCTZ',
+    description: 'Browse compact stone crushers and crushing equipment for jobsite material reduction, rock processing, demolition cleanup, and contractor workflows.',
+    keywords: ['stone crusher for sale', 'compact stone crusher', 'rock crusher', 'jobsite crusher', 'StoneKrusher']
+  },
+  'Mini Dumper': {
+    label: 'mini dumpers',
+    title: 'Mini Dumpers For Sale | Compact Site Dumpers | KONSTRUCTZ',
+    description: 'Shop mini dumpers and compact site dumpers for moving soil, concrete, gravel, mulch, landscaping material, and jobsite debris.',
+    keywords: ['mini dumper for sale', 'compact dumper', 'site dumper', 'tracked dumper', 'ThunderDump']
+  },
+  Trencher: {
+    label: 'trenchers',
+    title: 'Trenchers For Sale | Compact Trenching Machines | KONSTRUCTZ',
+    description: 'Browse trenchers and trenching equipment for irrigation, drainage, utility lines, landscaping, and compact jobsite digging work.',
+    keywords: ['trencher for sale', 'compact trencher', 'trenching machine', 'Grand Ripper trencher']
+  }
+};
+
 const aiProductKnowledge = [
   {
     name: 'KUVUO 2.7 Mini Excavator',
@@ -3246,38 +3325,16 @@ export default function App() {
       addressCountry: 'US'
     };
     const defaultImage = `${siteUrl}/favicon.png`;
-    const coreSeoKeywords = [
-      'KONSTRUCTZ',
-      'kontructz',
-      'konstruz',
-      'construcz',
-      'CWQV',
-      'construction equipment',
-      'heavy machinery',
-      'compact machinery',
-      'mini excavator',
-      'excavator',
-      'skid steer',
-      'skis steer',
-      'wheel loader',
-      'road roller',
-      'road rollor',
-      'scissor lift',
-      'sciscor lift',
-      'forklift',
-      'backhoe loader',
-      'stone crusher',
-      'trencher',
-      'mini dumper',
-      'compact track loader',
-      'loader attachments',
-      'excavator attachments',
-      'skid steer attachments',
-      'machinery for sale'
-    ];
+    const coreSeoKeywords = Object.values(seoMachineKeywordGroups).flat();
+    const activeCategorySeo = activeCategory && activeCategory !== 'All' ? seoCategoryProfiles[activeCategory] : null;
     const pageKeywordMap = {
       home: ['compact construction equipment', 'equipment dealer', 'jobsite machinery'],
-      'all-products': ['construction equipment for sale', activeCategory && activeCategory !== 'All' ? `${activeCategory} for sale` : 'equipment inventory'],
+      'all-products': [
+        'construction equipment for sale',
+        activeCategory && activeCategory !== 'All' ? `${activeCategory} for sale` : 'equipment inventory',
+        ...(activeCategorySeo?.keywords || []),
+        activeKonstructzSubcategory && activeKonstructzSubcategory !== 'All' ? `KONSTRUCTZ ${activeKonstructzSubcategory}` : null
+      ],
       attachments: ['mini excavator attachments', 'skid steer attachments', 'auger attachment', 'bucket attachment', 'hydraulic hammer'],
       contact: ['equipment quote', 'machinery sales support'],
       support: ['equipment parts', 'machinery service', 'equipment warranty'],
@@ -3296,25 +3353,50 @@ export default function App() {
         .trim()
         .substring(0, maxLength)
     );
+    const toAbsoluteUrl = (value) => {
+      if (!value) return defaultImage;
+      const stringValue = String(value);
+      return stringValue.startsWith('http')
+        ? stringValue
+        : `${siteUrl}${stringValue.startsWith('/') ? stringValue : `/${stringValue}`}`;
+    };
     const getNumericPrice = (value) => {
       const numeric = parseFloat(String(value || '').replace(/[^0-9.]/g, ''));
       return Number.isFinite(numeric) && numeric > 0 ? numeric.toFixed(2) : null;
     };
+    const inferProductKeywords = (product) => (
+      [
+        product.name,
+        product.category,
+        product.subcategory,
+        product.fitmentCategory,
+        ...(seoCategoryProfiles[product.category]?.keywords || []),
+        ...(String(product.name || '').toLowerCase().includes('excavator') ? seoMachineKeywordGroups.excavators : []),
+        ...(String(product.name || '').toLowerCase().includes('skid') ? seoMachineKeywordGroups.loaders : []),
+        ...(String(product.name || '').toLowerCase().includes('loader') ? seoMachineKeywordGroups.loaders : []),
+        ...(String(product.name || '').toLowerCase().includes('forklift') ? seoMachineKeywordGroups.lifting : []),
+        ...(String(product.name || '').toLowerCase().includes('roller') ? seoMachineKeywordGroups.compaction : []),
+        ...(String(product.name || '').toLowerCase().includes('scissor') ? seoMachineKeywordGroups.lifting : []),
+        ...(product.fitmentCategory ? seoMachineKeywordGroups.attachments : [])
+      ].filter(Boolean)
+    );
     const createProductSchema = (product, url, position = null) => {
       const numericPrice = getNumericPrice(product.price);
       const productSchema = {
         '@type': 'Product',
         'name': product.name,
-        'image': product.image
-          ? (String(product.image).startsWith('http') ? product.image : `${siteUrl}${String(product.image).startsWith('/') ? product.image : `/${product.image}`}`)
-          : defaultImage,
+        'image': product.images?.length ? product.images.map(toAbsoluteUrl).slice(0, 6) : toAbsoluteUrl(product.image),
         'description': cleanText(product.desc || product.fullDesc || product.specs || `${product.name} specs, pricing, and availability from KONSTRUCTZ.`),
         'brand': {
           '@type': 'Brand',
           'name': 'KONSTRUCTZ'
         },
+        'manufacturer': {
+          '@id': `${siteUrl}/#organization`
+        },
         'category': product.category || product.fitmentCategory || product.subcategory || 'Construction equipment',
-        'url': url
+        'url': url,
+        'keywords': inferProductKeywords(product).join(', ')
       };
 
       if (product.id || product.slug) {
@@ -3327,6 +3409,7 @@ export default function App() {
           'priceCurrency': 'USD',
           'price': numericPrice,
           'availability': 'https://schema.org/InStock',
+          'itemCondition': 'https://schema.org/NewCondition',
           'url': url,
           'seller': {
             '@id': `${siteUrl}/#organization`
@@ -3360,14 +3443,18 @@ export default function App() {
       canonicalPath = '/';
       image = `${siteUrl}${kuvuoProduct}`;
     } else if (currentView === 'all-products') {
-      title = activeCategory && activeCategory !== 'All'
-        ? `${activeCategory} For Sale | KONSTRUCTZ Equipment`
+      title = activeCategorySeo
+        ? activeCategorySeo.title
         : 'Construction Equipment For Sale | KONSTRUCTZ Inventory';
-      description = activeCategory && activeCategory !== 'All'
-        ? `Browse ${activeCategory.toLowerCase()} equipment for sale from KONSTRUCTZ, including compact machinery, jobsite-ready specs, pricing, and U.S. sales support.`
+      description = activeCategorySeo
+        ? activeCategorySeo.description
         : 'Browse KONSTRUCTZ construction equipment for sale, including mini excavators, excavators, skid steers, wheel loaders, road rollers, scissor lifts, forklifts, backhoes, and compact machinery.';
+      if (activeCategory === 'Konstructz' && activeKonstructzSubcategory !== 'All') {
+        title = `KONSTRUCTZ ${activeKonstructzSubcategory} Machines For Sale`;
+        description = `Browse KONSTRUCTZ ${activeKonstructzSubcategory.toLowerCase()} machines for sale with compact equipment specs, pricing, attachments, U.S. quote support, delivery help, and parts support.`;
+      }
       canonicalPath = activeCategory && activeCategory !== 'All'
-        ? `/?page=all-products&category=${encodeURIComponent(activeCategory)}`
+        ? `/?page=all-products&category=${encodeURIComponent(activeCategory)}${activeCategory === 'Konstructz' && activeKonstructzSubcategory !== 'All' ? `&subcategory=${encodeURIComponent(activeKonstructzSubcategory)}` : ''}`
         : '/?page=all-products';
     } else if (currentView === 'blog') {
       title = 'KONSTRUCTZ Blog | Machinery Guides, News & Field Tips';
@@ -3437,8 +3524,9 @@ export default function App() {
       canonicalPath = `/?page=checkout&id=${encodeURIComponent(checkoutItem.slug || checkoutItem.id)}`;
       robotsContent = 'noindex, nofollow';
     } else if (currentView === 'product-detail' && selectedProduct) {
-      title = `${selectedProduct.name} | KONSTRUCTZ`;
-      description = selectedProduct.desc || selectedProduct.fullDesc || `${selectedProduct.name} specs, pricing, and availability from KONSTRUCTZ. Built for contractors and operators.`;
+      const productType = selectedProduct.category || selectedProduct.subcategory || selectedProduct.fitmentCategory || 'Construction Equipment';
+      title = `${selectedProduct.name} | ${productType} For Sale | KONSTRUCTZ`;
+      description = selectedProduct.desc || selectedProduct.fullDesc || `${selectedProduct.name} specs, price, availability, attachments, delivery, and quote support from KONSTRUCTZ. Built for contractors and operators.`;
       canonicalPath = `/?page=product-detail&id=${encodeURIComponent(selectedProduct.slug || selectedProduct.id)}`;
       pageType = 'product';
       image = selectedProduct.image || defaultImage;
@@ -3506,6 +3594,7 @@ export default function App() {
     upsertMeta('meta[property="og:description"]', { property: 'og:description', content: shortDescription });
     upsertMeta('meta[property="og:url"]', { property: 'og:url', content: canonicalUrl });
     upsertMeta('meta[property="og:image"]', { property: 'og:image', content: metaImage });
+    upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: title });
     upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
     upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: title });
     upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: shortDescription });
@@ -3623,6 +3712,7 @@ export default function App() {
         '@id': `${siteUrl}/#website`,
         'url': siteUrl,
         'name': siteName,
+        'alternateName': ['KONSTRUCTZ Equipment', 'CWQV Machinery', 'kontructz', 'konstruz', 'construcz'],
         'publisher': {
           '@id': `${siteUrl}/#organization`
         },
@@ -3638,6 +3728,11 @@ export default function App() {
         'url': canonicalUrl,
         'name': title,
         'description': shortDescription,
+        'primaryImageOfPage': {
+          '@type': 'ImageObject',
+          'url': metaImage
+        },
+        'keywords': pageKeywords,
         'isPartOf': {
           '@id': `${siteUrl}/#website`
         }
@@ -3650,6 +3745,18 @@ export default function App() {
 
     if (currentView === 'home') {
       baseSchemaGraph.push(
+        {
+          '@type': 'ItemList',
+          '@id': `${siteUrl}/#equipment-category-list`,
+          'name': 'Construction equipment categories for sale',
+          'description': 'KONSTRUCTZ construction equipment categories include mini excavators, wheel loaders, skid steers, forklifts, road rollers, scissor lifts, backhoes, stone crushers, trenchers, mini dumpers, and attachments.',
+          'itemListElement': Object.entries(seoCategoryProfiles).map(([category, profile], index) => ({
+            '@type': 'ListItem',
+            'position': index + 1,
+            'name': profile.label,
+            'url': `${siteUrl}/?page=all-products&category=${encodeURIComponent(category)}`
+          }))
+        },
         {
           '@type': 'ItemList',
           '@id': `${siteUrl}/#skoop-ii-skoopydig-comparison`,
@@ -8400,6 +8507,26 @@ export default function App() {
                   <p>Try checking your spelling or adjusting your category and search filters.</p>
                   <button className="cta-button black-pill-btn reset-filters-btn" onClick={() => { setInventorySearchQuery(''); setActiveCategory('All'); }}>Reset Filters</button>
                 </div>
+              )}
+
+              {sortedInventory.length > 0 && (
+                <section className="inventory-seo-summary" aria-labelledby="inventory-seo-title">
+                  <p className="inventory-seo-kicker">Equipment buyer guide</p>
+                  <h2 id="inventory-seo-title">
+                    {activeCategory === 'All'
+                      ? 'Compact construction equipment for contractors, farms, yards, and jobsites'
+                      : activeCategory === 'Konstructz' && activeKonstructzSubcategory !== 'All'
+                        ? `KONSTRUCTZ ${activeKonstructzSubcategory} machines for sale`
+                        : `${seoCategoryProfiles[activeCategory]?.label || categoryLabels[activeCategory] || activeCategory} for sale`}
+                  </h2>
+                  <p>
+                    {activeCategory === 'All'
+                      ? 'KONSTRUCTZ helps buyers compare mini excavators, excavators, skid steers, wheel loaders, road rollers, scissor lifts, forklifts, backhoe loaders, stone crushers, trenchers, mini dumpers, and jobsite attachments with practical pricing and quote support.'
+                      : activeCategory === 'Konstructz' && activeKonstructzSubcategory !== 'All'
+                        ? `Compare KONSTRUCTZ ${activeKonstructzSubcategory.toLowerCase()} machines by job type, size, engine, attachment needs, delivery location, and quote timing.`
+                        : seoCategoryProfiles[activeCategory]?.description || 'Compare compact machinery by job type, operating weight, engine, attachment needs, delivery location, and quote timing.'}
+                  </p>
+                </section>
               )}
             </div>
           </section>

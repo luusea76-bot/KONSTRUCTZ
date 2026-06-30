@@ -35,10 +35,29 @@ const categories = [
   'Trencher'
 ];
 
+const konstructzSubcategories = [
+  'Backhoe Loader',
+  'Dumper',
+  'Excavator',
+  'Towable Excavator',
+  'Stone Crasher',
+  'Trenchers',
+  'Wheel Loader',
+  'Skid Steer'
+];
+
 categories.forEach(category => {
   pages.push({
     path: `/?page=all-products&category=${encodeURIComponent(category)}`,
     priority: '0.8',
+    changefreq: 'weekly'
+  });
+});
+
+konstructzSubcategories.forEach(subcategory => {
+  pages.push({
+    path: `/?page=all-products&category=Konstructz&subcategory=${encodeURIComponent(subcategory)}`,
+    priority: '0.75',
     changefreq: 'weekly'
   });
 });

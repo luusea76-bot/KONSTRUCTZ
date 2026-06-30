@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://cwqv.com/sitemap.xml
+Host: https://cwqv.com

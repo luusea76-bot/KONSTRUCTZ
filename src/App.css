@@ -7509,6 +7509,39 @@ section {
   width: 100%;
 }
 
+.inventory-seo-summary {
+  margin-top: 34px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  max-width: 980px;
+}
+
+.inventory-seo-kicker {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.inventory-seo-summary h2 {
+  margin: 0;
+  color: var(--text-light-bg);
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.inventory-seo-summary p:last-child {
+  margin: 12px 0 0;
+  max-width: 850px;
+  color: var(--text-light-bg-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
 /* PRODUCT CSV STORE PAGE */
 .store-data-page {
   width: 100%;
