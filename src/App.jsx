@@ -1236,6 +1236,8 @@ export default function App() {
     message: ''
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isContactSubmitting, setIsContactSubmitting] = useState(false);
+  const [contactFormStatus, setContactFormStatus] = useState('');
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [aiChatInput, setAiChatInput] = useState('');
   const [aiChatMessages, setAiChatMessages] = useState(() => [
@@ -1370,28 +1372,76 @@ export default function App() {
     setFormValues(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
+    setIsContactSubmitting(true);
+    setContactFormStatus('Sending your message to support@cwqv.com...');
+
+    const newInquiry = {
+      id: `inq-${Date.now()}`,
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      email: formValues.email,
+      phone: formValues.phone,
+      inquiryType: formValues.inquiryType || 'Product inquiry',
+      message: formValues.message,
+      date: new Date().toLocaleString('en-US', { hour12: true, month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      status: 'Pending'
+    };
+
     try {
       const savedInquiries = localStorage.getItem('konstructzInquiries');
       const inquiriesList = savedInquiries ? JSON.parse(savedInquiries) : defaultInquiries;
-      const newInquiry = {
-        id: `inq-${Date.now()}`,
-        firstName: formValues.firstName,
-        lastName: formValues.lastName,
-        email: formValues.email,
-        phone: formValues.phone,
-        inquiryType: formValues.inquiryType || 'Product inquiry',
-        message: formValues.message,
-        date: new Date().toLocaleString('en-US', { hour12: true, month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-        status: 'Pending'
-      };
       const nextInquiries = [newInquiry, ...inquiriesList];
       setInquiries(nextInquiries);
       localStorage.setItem('konstructzInquiries', JSON.stringify(nextInquiries));
     } catch (err) {
       console.error('Failed to save inquiry:', err);
+    }
+
+    try {
+      const response = await fetch('/contact-submit.php', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newInquiry)
+      });
+
+      const responseType = response.headers.get('content-type') || '';
+      const payload = responseType.includes('application/json')
+        ? await response.json()
+        : {};
+
+      if (!response.ok || payload.ok === false) {
+        throw new Error(payload.error || 'The mail server could not send this message.');
+      }
+
+      setFormSubmitted(true);
+      setContactFormStatus('');
+      setFormValues({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        inquiryType: '',
+        message: ''
+      });
+    } catch (err) {
+      console.error('Failed to email inquiry:', err);
+      const fallbackSubject = encodeURIComponent(`KONSTRUCTZ ${newInquiry.inquiryType}`);
+      const fallbackBody = encodeURIComponent([
+        `Name: ${newInquiry.firstName} ${newInquiry.lastName}`,
+        `Email: ${newInquiry.email}`,
+        `Phone: ${newInquiry.phone || 'Not provided'}`,
+        `Inquiry type: ${newInquiry.inquiryType}`,
+        '',
+        newInquiry.message
+      ].join('\n'));
+      setContactFormStatus(`The website saved your message, but email did not send automatically. Please email support@cwqv.com or open: mailto:support@cwqv.com?subject=${fallbackSubject}&body=${fallbackBody}`);
+    } finally {
+      setIsContactSubmitting(false);
     }
   };
 
@@ -8160,8 +8210,23 @@ export default function App() {
                         ></textarea>
                       </div>
 
-                      <button type="submit" className="cta-button submit-btn accent-pill-btn">
-                        <span>Send Message</span>
+                      {contactFormStatus && (
+                        <p
+                          className="form-submit-status"
+                          style={{
+                            margin: '0',
+                            color: contactFormStatus.startsWith('The website saved') ? '#b45309' : '#607a4e',
+                            fontSize: '14px',
+                            fontWeight: 700,
+                            lineHeight: 1.5
+                          }}
+                        >
+                          {contactFormStatus}
+                        </p>
+                      )}
+
+                      <button type="submit" className="cta-button submit-btn accent-pill-btn" disabled={isContactSubmitting}>
+                        <span>{isContactSubmitting ? 'Sending...' : 'Send Message'}</span>
                         <span className="btn-icon">➡️</span>
                       </button>
                     </form>
@@ -8170,7 +8235,7 @@ export default function App() {
                   <div className="success-state-container text-black">
                     <div className="success-icon">✓</div>
                     <h2 className="success-title">Message sent successfully!</h2>
-                    <p className="success-text">Thank you for reaching out. Our team will get back to you within 24 hours.</p>
+                    <p className="success-text">Thank you for reaching out. Your message was sent to support@cwqv.com and our team will get back to you within 24 hours.</p>
                   </div>
                 )}
               </div>
