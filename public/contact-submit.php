@@ -31,7 +31,7 @@ if ($firstName === '' || $lastName === '' || !$email || $message === '') {
     exit;
 }
 
-$to = 'support@cwqv.com';
+$to = 'support@cwqv.com, digital@typhonmachinery.com';
 $subject = 'New KONSTRUCTZ website message: ' . $inquiryType;
 $submittedAt = gmdate('Y-m-d H:i:s') . ' UTC';
 

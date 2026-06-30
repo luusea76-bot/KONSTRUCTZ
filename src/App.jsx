@@ -1375,7 +1375,7 @@ export default function App() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsContactSubmitting(true);
-    setContactFormStatus('Sending your message to support@cwqv.com...');
+    setContactFormStatus('Sending your message to support@cwqv.com and digital@typhonmachinery.com...');
 
     const newInquiry = {
       id: `inq-${Date.now()}`,
@@ -1439,7 +1439,7 @@ export default function App() {
         '',
         newInquiry.message
       ].join('\n'));
-      setContactFormStatus(`The website saved your message, but email did not send automatically. Please email support@cwqv.com or open: mailto:support@cwqv.com?subject=${fallbackSubject}&body=${fallbackBody}`);
+      setContactFormStatus(`The website saved your message, but email did not send automatically. Please email support@cwqv.com and digital@typhonmachinery.com or open: mailto:support@cwqv.com,digital@typhonmachinery.com?subject=${fallbackSubject}&body=${fallbackBody}`);
     } finally {
       setIsContactSubmitting(false);
     }
@@ -8235,7 +8235,7 @@ export default function App() {
                   <div className="success-state-container text-black">
                     <div className="success-icon">✓</div>
                     <h2 className="success-title">Message sent successfully!</h2>
-                    <p className="success-text">Thank you for reaching out. Your message was sent to support@cwqv.com and our team will get back to you within 24 hours.</p>
+                    <p className="success-text">Thank you for reaching out. Your message was sent to support@cwqv.com and digital@typhonmachinery.com, and our team will get back to you within 24 hours.</p>
                   </div>
                 )}
               </div>
