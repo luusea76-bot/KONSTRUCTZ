@@ -4143,22 +4143,6 @@ export default function App() {
                 </svg>
                 <span className="badge-count">{cartCount}</span>
               </div>
-              <a
-                href="?page=admin-blog"
-                className="cta-button nav-cta"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate('admin-blog');
-                }}
-              >
-                <svg className="action-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ width: '15px', height: '15px', marginRight: '7px' }}>
-                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                </svg>
-                <span>Dashboard</span>
-              </a>
               <a href="?page=contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="cta-button nav-cta">Get Quote</a>
             </div>
           </div>
@@ -4369,17 +4353,6 @@ export default function App() {
             onClick={(e) => { e.preventDefault(); navigate('contact'); setMobileMenuOpen(false); }}
           >
             Contact
-          </a>
-          <a
-            href="?page=admin-blog"
-            className={currentView === 'admin-blog' ? 'active' : ''}
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('admin-blog');
-              setMobileMenuOpen(false);
-            }}
-          >
-            Dashboard
           </a>
         </nav>
 
