@@ -33,6 +33,7 @@ import recycleBatteryLogoAsset from './assets/engine-logos/recycle-battery.png'
 // Image references
 const heroLoader = heroLoaderAsset;
 const heroVideo = '/media/hero-wheel-loader.mp4';
+const aboutHeroPoster = '/about-machine-panorama-poster.png';
 const aboutKonstructzMachinery = '/about-skoop-typhon-banner.png';
 const stoneCrusher = stoneCrusherAsset;
 const constructionBg = stoneCrusherAsset;
@@ -7729,7 +7730,7 @@ export default function App() {
       ) : currentView === 'about' ? (
         <main className="about-page">
           {/* Hero Banner Section */}
-          <section className="about-hero dark-bg" style={{ backgroundImage: `linear-gradient(rgba(15, 17, 14, 0.8), rgba(15, 17, 14, 0.8)), url(${heroLoader})` }}>
+          <section className="about-hero dark-bg" style={{ backgroundImage: `linear-gradient(rgba(15, 17, 14, 0.38), rgba(15, 17, 14, 0.58)), url(${aboutHeroPoster})` }}>
             <div className="section-content about-hero-content">
               <div className="about-hero-logo-wrap">
                 <img src={konstructzLogo} alt="KONSTRUCTZ Brand Logo" className="about-hero-logo" />
